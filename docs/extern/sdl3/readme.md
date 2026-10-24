@@ -36,3 +36,4 @@ Python 3.11 or a later version.
 The GNU Affero General Public License, version 3 only. The file `license` holds the text.
 Each source of third-party code has its notice in `third_party/<source>/license`.
 SDL3 is under the zlib licence: `third_party/sdl3/license`.
+The Linux build of SDL3 also holds code of SDL_linux_deps: `third_party/sdl3_linux/license` holds its notices.

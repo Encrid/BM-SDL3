@@ -4,3 +4,6 @@ name = "BM-SDL3"
 [test]
 timeout = 120
 copies = 1
+
+[check]
+unicode = ["third_party/sdl3_linux/license"]
