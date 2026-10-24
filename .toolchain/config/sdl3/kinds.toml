@@ -1,0 +1,5 @@
+[kinds.sdl]
+output = "{name}{library}"
+steps = [
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{define}", "{defines}", "{include}", "{sources}", "{link}", "{flags}", "-o", "{output}"] },
+]

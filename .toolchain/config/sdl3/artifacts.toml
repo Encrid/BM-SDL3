@@ -1,0 +1,14 @@
+[[artifact]]
+name = "SDL3"
+kind = "sdl"
+sources = ["{sdl_common}", "{sdl_libm}", "{sdl_sources}"]
+include = ["{sdl_root}/include/build_config", "{sdl_root}/include", "{sdl_root}/src"]
+defines = ["{sdl_defines}"]
+flags = ["{sdl_flags}", "{sdl_system}"]
+
+[[artifact]]
+name = "smoke"
+kind = "program"
+sources = ["tests/smoke/smoke.c"]
+flags = ["-isystem", "{sdl_root}/include", "{sdl_link}"]
+test = true

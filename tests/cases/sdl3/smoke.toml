@@ -1,0 +1,5 @@
+[[case]]
+name = "SDL3 opens a hidden window with a GL 4.1 core context, clears it and reads the color back"
+run = ["{out}/smoke{exe}"]
+claims = { status = 0, line = ["pixel 51 102 153"] }
+false = { run = ["{out}/smoke{exe}", "red"] }

@@ -1,0 +1,14 @@
+[[source]]
+name = "sdl3"
+url = "https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-3.4.18.tar.gz"
+sha256 = "9c75cf16330322c217dedd2e0609f1124f1b54b8633e763467b4684d0f4334a3"
+into = "{build}/third_party/sdl3"
+top = "SDL3-3.4.18"
+patches = ["third_party/sdl3/build_config.patch"]
+
+[[source]]
+name = "sdl3_linux"
+url = "https://github.com/castholm/SDL_linux_deps/archive/86b2445cce38b014efeebcb0f3752aff623602fc.tar.gz"
+sha256 = "b08bb2a500daa8eb32019deaa1ab24e1759b0834a9701b61a404d62314d754c5"
+into = "{build}/third_party/sdl3_linux"
+top = "SDL_linux_deps-86b2445cce38b014efeebcb0f3752aff623602fc"
