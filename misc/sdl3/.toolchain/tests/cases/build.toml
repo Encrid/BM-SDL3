@@ -113,6 +113,12 @@ claims = { status_not = 0, has = ["no variable "] }
 false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/unknown", "--out", "{case}/out", "--set", "named=named.txt"] }
 
 [[case]]
+name = "a list variable as the sources"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/spliced", "--out", "{case}/out"]
+claims = { status = 0, line = ["spliced.txt"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/spliced", "--out", "{case}/out", "--set", "inputs=none.txt"] }
+
+[[case]]
 name = "a list variable in a text"
 run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/listed", "--out", "{case}/out"]
 claims = { status_not = 0, has = [" is a list inside a text: write "] }
