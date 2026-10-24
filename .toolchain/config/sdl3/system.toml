@@ -9,8 +9,8 @@ sdl_windows_system = [
 ]
 sdl_linux_system = ["-pthread", "-I", "{sdl_deps}/src", "-isystem", "{sdl_deps}/include"]
 sdl_macos_system = [
-    "-isysroot", "{macsdk}", "-iframework", "{macsdk}/System/Library/Frameworks",
-    "-F", "{macsdk}/System/Library/Frameworks", "-fobjc-arc",
+    "-isystem", "{macsdk}/usr/include", "-iframework", "{macsdk}/System/Library/Frameworks",
+    "-F", "{macsdk}/System/Library/Frameworks", "-L", "{macsdk}/usr/lib", "-fobjc-arc",
     "-framework", "CoreMedia", "-framework", "CoreVideo", "-framework", "Cocoa",
     "-weak_framework", "UniformTypeIdentifiers", "-framework", "IOKit", "-framework", "ForceFeedback",
     "-framework", "Carbon", "-framework", "CoreAudio", "-framework", "AudioToolbox",
