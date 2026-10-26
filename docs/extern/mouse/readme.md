@@ -21,6 +21,8 @@ Python 3.11 or a later version.
 | `python project.py clean` | Removes what the build made. Keeps what `fetch` downloaded. |
 | `python project.py distclean` | Removes the folder `build`, also what `fetch` downloaded. |
 
+The module `sdl3:mouse@1.0.0` runs on Bridge-Host with BB-Native. `docs/extern/sdl3_mouse.h.md` tells its components, its systems and its deployment.
+
 ## Contributing
 
 | Document | Content |
