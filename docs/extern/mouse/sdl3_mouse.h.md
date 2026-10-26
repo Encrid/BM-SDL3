@@ -70,13 +70,23 @@ The module leaves out a button of 0, or of more than 32.
 | `hidden` | `bool` | `true`: the cursor does not show. |
 | `relative` | `bool` | `true`: each window holds the mouse, and only the motion counts. |
 
+## The C types
+
+`include/sdl3_mouse.h` gives the C type of each type of the module, and its descriptor for Bridge.
+
+| Type of Bridge | C type | Descriptor |
+| --- | --- | --- |
+| `sdl3:MouseSettings` | `sdl3_mouse_settings_t` | `sdl3_mouse_settings_t_desc` |
+| `sdl3:Cursor` | `sdl3_cursor_t` | `sdl3_cursor_t_desc` |
+| `sdl3:Mouse` | `sdl3_mouse_t` | `sdl3_mouse_t_desc` |
+
 ## The deployment
 
 - The module needs `sdl3:events`, and `sdl3:video` for a window that takes the mouse.
 - A module that reads the mouse needs `read = ["sdl3:Mouse"]`, and the module that sets the cursor needs `write = ["sdl3:Cursor"]`.
 - A module that changes the setting, for example the app, needs `write = ["sdl3:MouseSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:mouse@1.0.0".config]`.
-- A deployment holds one SDL3 library, beside the SDL3 modules. A second copy is a second SDL3, which gets no event of the first.
+- A deployment holds one SDL3 library, beside the SDL3 modules, so that each module loads that one library.
 - The SDL3 library is no module, so `content.ignore` names it.
 - The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
@@ -84,4 +94,4 @@ The readme of Bridge-Host tells each key of a deployment.
 
 ## Messages
 
-- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load.
+- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
