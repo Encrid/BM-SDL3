@@ -67,13 +67,22 @@ After the load, a system with a grant to write it can change it at each round. `
 The module leaves out a key event with a scancode of 512 or more.
 A text of more than 63 bytes in a round is cut after its last whole character that fits. The rest of the text of that round is left out.
 
+## The C types
+
+`include/sdl3_keyboard.h` gives the C type of each type of the module, and its descriptor for Bridge.
+
+| Type of Bridge | C type | Descriptor |
+| --- | --- | --- |
+| `sdl3:KeyboardSettings` | `sdl3_keyboard_settings_t` | `sdl3_keyboard_settings_t_desc` |
+| `sdl3:Keyboard` | `sdl3_keyboard_t` | `sdl3_keyboard_t_desc` |
+
 ## The deployment
 
 - The module needs `sdl3:events`, and `sdl3:video` for a window that takes the keyboard focus.
 - A module that reads the keyboard needs `read = ["sdl3:Keyboard"]` in its table.
 - A module that changes the settings, for example the app, needs `write = ["sdl3:KeyboardSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:keyboard@1.0.0".config]`.
-- A deployment holds one SDL3 library, beside the SDL3 modules. A second copy is a second SDL3, which gets no event of the first.
+- A deployment holds one SDL3 library, beside the SDL3 modules, so that each module loads that one library.
 - The SDL3 library is no module, so `content.ignore` names it.
 - The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
@@ -81,4 +90,4 @@ The readme of Bridge-Host tells each key of a deployment.
 
 ## Messages
 
-- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load.
+- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
