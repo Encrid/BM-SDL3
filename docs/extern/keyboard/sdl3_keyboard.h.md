@@ -39,7 +39,7 @@ The full name of the system for `[order]` is `sdl3:keyboard:keys`.
 - The module needs `sdl3:events`, and `sdl3:video` for a window that takes the keyboard focus.
 - A module that reads the keyboard needs `read = ["sdl3:Keyboard"]` in its table.
 - The SDL3 library is no module, so `content.ignore` names it.
-- The backend of BB-Native keeps no limit, so the six limits of the module are `"none"`.
+- The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
 The readme of Bridge-Host tells each key of a deployment.
 ## Messages
