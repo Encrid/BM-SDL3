@@ -1,6 +1,6 @@
 # BM-SDL3
 
-SDL3 as a Bridge module: the window, its GL context, the input and the dropped files, as components.
+SDL3 3.4.18, built from source on 6 targets: the one SDL3 library of the SDL3 modules of Bridge.
 
 ## Install
 
@@ -16,9 +16,20 @@ Python 3.11 or a later version.
 | `python project.py test` | Runs the tests. |
 | `python project.py test --break` | Runs the tests with their claims made false. Each test must fail. |
 | `python project.py test --branches` | Runs the tests on a build with probes. Each branch of the code must run. |
+| `python project.py test --leaks` | Runs the tests on a build with counts. Each test must give back what the code takes. |
 | `python project.py check` | Checks the project. |
 | `python project.py clean` | Removes what the build made. Keeps what `fetch` downloaded. |
 | `python project.py distclean` | Removes the folder `build`, also what `fetch` downloaded. |
+
+Each release holds, for each target, the SDL3 library, the headers of SDL3 and the notices of its sources.
+BM-SDL3 holds no module. Each SDL3 module of Bridge fetches its release, and a deployment holds one copy of the SDL3 library, beside the modules.
+
+These rules let several modules share the one SDL3 of a process:
+
+- Each SDL3 module loads this SDL3 library, so all of them use one queue of events and one state.
+- Only the module `sdl3:events` calls `SDL_PumpEvents`, on the main thread, at the start of each round.
+- Each other module takes only the types of event that it covers, with `SDL_PeepEvents`.
+- No module calls `SDL_PollEvent` or `SDL_WaitEvent`, because they take the events of each module.
 
 ## Contributing
 

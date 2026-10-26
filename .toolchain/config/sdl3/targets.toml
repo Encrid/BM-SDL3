@@ -1,40 +1,34 @@
 [targets.x86_64-windows-gnu]
-section = ".bridge"
 sdl_sources = ["{sdl_windows}"]
 sdl_config = ["{sdl_config_windows}", "{sdl_simd_x86_64}"]
 sdl_system = ["{sdl_windows_system}"]
 sdl_link = "{out}/SDL3.dll.a"
 
 [targets.aarch64-windows-gnu]
-section = ".bridge"
 sdl_sources = ["{sdl_windows}"]
 sdl_config = ["{sdl_config_windows}", "{sdl_simd_aarch64}"]
 sdl_system = ["{sdl_windows_system}"]
 sdl_link = "{out}/SDL3.dll.a"
 
 [targets.x86_64-linux-gnu]
-section = ".bridge"
 sdl_sources = ["{sdl_linux}", "{sdl_wayland}"]
 sdl_config = ["{sdl_config_linux}", "{sdl_simd_x86_64}"]
 sdl_system = ["{sdl_linux_system}", "-isystem", "{sdl_deps}/include/x86_64-linux-gnu"]
 sdl_link = "{out}/SDL3.so"
 
 [targets.aarch64-linux-gnu]
-section = ".bridge"
 sdl_sources = ["{sdl_linux}", "{sdl_wayland}"]
 sdl_config = ["{sdl_config_linux}", "{sdl_simd_aarch64}"]
 sdl_system = ["{sdl_linux_system}", "-isystem", "{sdl_deps}/include/aarch64-linux-gnu"]
 sdl_link = "{out}/SDL3.so"
 
 [targets.x86_64-macos]
-section = "__TEXT,.bridge"
 sdl_sources = ["{sdl_macos}"]
 sdl_config = ["{sdl_config_macos}", "{sdl_simd_core2}"]
 sdl_system = ["{sdl_macos_system}"]
 sdl_link = "{out}/SDL3.dylib"
 
 [targets.aarch64-macos]
-section = "__TEXT,.bridge"
 sdl_sources = ["{sdl_macos}"]
 sdl_config = ["{sdl_config_macos}", "{sdl_simd_aarch64}"]
 sdl_system = ["{sdl_macos_system}"]
