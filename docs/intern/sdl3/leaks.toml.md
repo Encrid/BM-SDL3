@@ -14,5 +14,6 @@ A release ships the file as `leaks.toml`, and each SDL3 module names it in `[lea
 
 ## The subsystems
 
-A kind counts the subsystems of SDL3: `SDL_InitSubSystem` takes a subsystem by its flags, and `SDL_QuitSubSystem` gives it back.
+The kind `sdl3_subsystem` counts the subsystems of SDL3. `SDL_InitSubSystem` takes one at its result, which is true when the subsystem starts.
+`SDL_QuitSubSystem` gives one back at its first argument, the flags of the subsystem, which are not 0.
 Thus a module that starts its subsystem and does not stop it fails its count.

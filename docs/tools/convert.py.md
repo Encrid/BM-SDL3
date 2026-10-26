@@ -4,10 +4,22 @@
 It reads them from the zig build of SDL3 by castholm, and from the build of SDL_linux_deps. A `[[source]]` pins each of the two.
 
 ```sh
-python tools/convert.py <build of SDL3> <build of SDL_linux_deps> <folder of SDL3> <output>
+python tools/convert.py <build of SDL3> <build of SDL_linux_deps> <folder of SDL3> <output or ->
 ```
 
-Run it again when the pin of SDL3 changes. A case checks that its output is the file of the project.
+With `-` as the output, the tool writes to the standard output, so a case can compare the output with the file of the project.
+Run it again when the pin of SDL3 changes.
+
+## The input
+
+From the build of SDL3, the tool reads these parts, each from the line that starts it:
+
+- the block of the config: the line that names `SDL_build_config.h.cmake`, up to the line `});`;
+- the common sources: the line `sdl_mod.addCSourceFiles(.{`;
+- the sources of libm: the line `const sdl_uclibc_c_files = .{`;
+- the sources of each system: the lines `if (windows) {`, `if (linux) {` and `if (macos) {`, up to `if (emscripten) {`.
+
+From the build of SDL_linux_deps, it reads each line `pub const <name>_soname = "<soname>";`, and the list `wayland_c_files`.
 
 ## The defines
 
