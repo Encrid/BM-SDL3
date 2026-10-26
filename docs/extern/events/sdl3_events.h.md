@@ -27,7 +27,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 | `persistent` | `"none"` | The module keeps no data in the arena. |
 | `hot_reload` | `false` | The module cannot reload. |
 
-A deployment that raises `drops` also raises `spawns` to `drops`, and `changes` to 1072 bytes for each drop.
+A deployment that raises `drops` also raises `spawns` to `drops`, `changes` to 1072 bytes for each drop, and `log_ring` to `drops` plus 1.
 The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
 
 The file of the module is `sdl3_events`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BL-SDL3, which sits beside it.
@@ -64,13 +64,22 @@ After the load, a system with a grant to write it can change it at each round. `
 | --- | --- | --- |
 | `path` | `char[1024]` | The path of the file, in UTF-8. |
 
+## The C types
+
+`include/sdl3_events.h` gives the C type of each type of the module, and its descriptor for Bridge.
+
+| Type of Bridge | C type | Descriptor |
+| --- | --- | --- |
+| `sdl3:EventsSettings` | `sdl3_events_settings_t` | `sdl3_events_settings_t_desc` |
+| `sdl3:Drop` | `sdl3_drop_t` | `sdl3_drop_t_desc` |
+
 ## The deployment
 
 - `phases` lists `events` first, before the phases of the other SDL3 modules.
 - A module that reads the drops needs `read = ["sdl3:Drop"]` in its table.
 - A module that changes the settings, for example the app, needs `write = ["sdl3:EventsSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:events@1.0.0".config]`.
-- A deployment holds one SDL3 library, beside the SDL3 modules. A second copy is a second SDL3, which gets no event of the first.
+- A deployment holds one SDL3 library, beside the SDL3 modules, so that each module loads that one library.
 - The SDL3 library is no module, so `content.ignore` names it.
 - The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
@@ -80,4 +89,4 @@ The readme of Bridge-Host tells each key of a deployment.
 
 - `a dropped path of <bytes> bytes is left out, and 1023 is the most`: a path does not fit in `path`. The module writes it at the level 4.
 - `<count> dropped files are left out, and <drops> is the most in a round`: more files came than `drops`. The module writes it at the level 4.
-- `no events: <reason>`: SDL3 cannot start its events. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load.
+- `no events: <reason>`: SDL3 cannot start its events. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
