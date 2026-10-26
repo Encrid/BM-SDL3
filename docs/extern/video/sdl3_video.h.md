@@ -20,7 +20,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 | Key | Default | Reason |
 | --- | --- | --- |
 | `scratch` | `4096` | The declarations of `init`, and the value of `sdl3:Window` that it attaches. |
-| `log_ring` | `8` | The module writes at most one line in a call. |
+| `log_ring` | `256` | Room for 8 records of 32 bytes. The module writes at most one line in a call. |
 | `spans` | `1024` | A cell for each of the three types in each table, and the spans of the two systems. |
 | `spawns` | `"none"` | The module makes no entity. |
 | `changes` | `48` | The attach of `sdl3:Window` in `init`: 24 bytes, and its value of 24 bytes. |
