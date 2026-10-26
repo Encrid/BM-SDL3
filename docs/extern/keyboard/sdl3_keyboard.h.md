@@ -20,7 +20,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 | Key | Default | Reason |
 | --- | --- | --- |
 | `scratch` | `4096` | The declarations of `init`, and the value of `sdl3:Keyboard` that it attaches. |
-| `log_ring` | `8` | The module writes at most one line in a call. |
+| `log_ring` | `256` | Room for 8 records of 32 bytes. The module writes at most one line in a call. |
 | `spans` | `1024` | A cell for each of the two types in each table, and the spans of `keys`. |
 | `spawns` | `"none"` | The module makes no entity. |
 | `changes` | `1120` | The attach of `sdl3:Keyboard` in `init`: 24 bytes, and its value of 1096 bytes. |
