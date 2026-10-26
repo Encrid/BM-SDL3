@@ -21,7 +21,11 @@ Python 3.11 or a later version.
 | `python project.py clean` | Removes what the build made. Keeps what `fetch` downloaded. |
 | `python project.py distclean` | Removes the folder `build`, also what `fetch` downloaded. |
 
-Each release holds, for each target, the SDL3 library, the headers of SDL3 and the notices of its sources.
+Each release holds, for each target, the SDL3 library, the headers of SDL3 in `include/SDL3` and the notices of its sources.
+It also holds `leaks.toml`, which names the resources of SDL3 for `[leaks] with` of a module.
+
+The library is `SDL3.dll`, `SDL3.so` or `SDL3.dylib`. Its soname on Linux is `SDL3.so`, and its install name on macOS is `@rpath/SDL3.dylib`.
+A module links the library itself, so the release holds no import library for Windows.
 BM-SDL3 holds no module. Each SDL3 module of Bridge fetches its release, and a deployment holds one copy of the SDL3 library, beside the modules.
 
 These rules let several modules share the one SDL3 of a process:
