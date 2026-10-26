@@ -20,14 +20,15 @@ The manifest also gives a default for each of these keys of the module. A deploy
 | Key | Default | Reason |
 | --- | --- | --- |
 | `scratch` | `4096` | The declarations of `init`, and the value of one drop at a time. |
-| `log_ring` | `32` | A line for each drop that is left out, and one line for the drops past `drops`. |
+| `log_ring` | `1024` | A record of 32 bytes for each drop that is left out, and one for the drops past `drops`. |
 | `spans` | `1024` | A cell for each of the two types in each table, and the spans of `pump`. |
 | `spawns` | `16` | One entity for each drop of a round. |
 | `changes` | `17152` | 1072 bytes for each drop: the attach of its 1024 bytes and 24, and its destroy in the next round, 24. |
 | `persistent` | `"none"` | The module keeps no data in the arena. |
 | `hot_reload` | `false` | The module cannot reload. |
 
-A deployment that raises `drops` also raises `spawns` to `drops`, `changes` to 1072 bytes for each drop, and `log_ring` to `drops` plus 1.
+A deployment that raises `drops` also raises `spawns` to `drops`, and `changes` to 1072 bytes for each drop.
+It also raises `log_ring` to 32 bytes for each drop, plus 32.
 The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
 
 The file of the module is `sdl3_events`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BL-SDL3, which sits beside it.
