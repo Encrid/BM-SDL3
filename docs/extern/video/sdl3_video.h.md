@@ -40,7 +40,7 @@ The file of the module is `sdl3_video`, with the suffix of a library. It runs on
 
 The settings come after `init`, so the window opens at the first run of `window`.
 If the window does not open, `window` tries again at its next run.
-When the window is asked to close, `window` sets `closed` and sets `gl_proc` to 0 in that round.
+When the window is asked to close, `window` sets `closed` and sets `gl_proc` to 0 in that round. At its next run, it destroys the context and the window.
 The full names of the systems for `[order]` are `sdl3:video:window` and `sdl3:video:present`.
 
 ## sdl3:WindowSettings
@@ -52,26 +52,26 @@ The full names of the systems for `[order]` are `sdl3:video:window` and `sdl3:vi
 | `title` | `char[64]` | The title of the window. The default is `Bridge`. |
 | `width`, `height` | `uint32_t` | The size of the window, in the units of the screen. The defaults are 1280 and 720. |
 | `hidden` | `bool` | `true`: the window does not show. The default is `false`. |
-| `vsync` | `int32_t` | The swap interval: 0 does not wait, 1 waits for the screen, and -1 waits unless the frame is late. The default is 1. |
+| `vsync` | `int32_t` | The swap interval: 0 does not wait, 1 waits for the screen, and -1 waits unless the frame is late. If the driver refuses the interval, the swaps keep the interval of the driver. The default is 1. |
 | `resizable` | `bool` | `true`: the user can change the size of the window. The default is `false`. |
 | `fullscreen` | `bool` | `true`: the window covers the screen that it opens on. The default is `false`. |
-| `place` | `sdl3:Place` | Where the window opens. The default is `system`. |
-| `x`, `y` | `int32_t` | The place of the window for `at`, in the units of the screen. The defaults are 0 and 0. |
+| `place` | `sdl3_place_t` | Where the window opens. The default is `SDL3_PLACE_SYSTEM`. |
+| `x`, `y` | `int32_t` | The place of the window for `SDL3_PLACE_AT`, in the units of the screen. The defaults are 0 and 0. |
 | `gl_major`, `gl_minor` | `uint32_t` | The version of GL of the context. The defaults are 4 and 1. |
 | `core` | `bool` | `true`: the core profile. macOS gives GL 4.1 only in the core profile. The default is `true`. |
 | `depth`, `stencil` | `uint32_t` | The bits of depth and of stencil of each pixel. The defaults are 24 and 8. |
 | `samples` | `uint32_t` | The samples of each pixel. 0 is no multisampling. The default is 0. |
 | `high_dpi` | `bool` | `true`: on a screen of high density, the frame gets each pixel of the screen. The default is `false`. |
 
-## sdl3:Place
+## sdl3:sdl3_place_t
 
-`sdl3:Place` is an enum of `uint32_t`.
+`sdl3:sdl3_place_t` is an enum of `uint32_t`. A deployment states a constant by its name or by its value.
 
-| Name | Value | Where the window opens |
+| Constant | Value | Where the window opens |
 | --- | --- | --- |
-| `system` | 1 | Where the system puts it. |
-| `center` | 2 | At the center of the screen. |
-| `at` | 3 | At `x` and `y`. |
+| `SDL3_PLACE_SYSTEM` | 1 | Where the system puts it. |
+| `SDL3_PLACE_CENTER` | 2 | At the center of the screen. |
+| `SDL3_PLACE_AT` | 3 | At `x` and `y`. |
 
 ## sdl3:Window
 
@@ -86,6 +86,16 @@ The full names of the systems for `[order]` are `sdl3:video:window` and `sdl3:vi
 
 A renderer stops its GL calls in the round when `gl_proc` becomes 0, because the context goes after that round.
 
+## The C types
+
+`include/sdl3_video.h` gives the C type of each type of the module, and its descriptor for Bridge.
+
+| Type of Bridge | C type | Descriptor |
+| --- | --- | --- |
+| `sdl3:sdl3_place_t` | `sdl3_place_t` | `sdl3_place_t_desc` |
+| `sdl3:WindowSettings` | `sdl3_window_settings_t` | `sdl3_window_settings_t_desc` |
+| `sdl3:Window` | `sdl3_window_t` | `sdl3_window_t_desc` |
+
 ## The deployment
 
 - The module needs `sdl3:events`, which pumps the events of the window.
@@ -94,7 +104,7 @@ A renderer stops its GL calls in the round when `gl_proc` becomes 0, because the
 - `live = true`, because a round with no change and no record ends a run that is not live.
 - A module that reads the window needs `read = ["sdl3:Window"]` in its table.
 - A deployment gives the settings in `[module."sdl3:video@1.0.0".config]`.
-- A deployment holds one SDL3 library, beside the SDL3 modules. A second copy is a second SDL3, which gets no event of the first.
+- A deployment holds one SDL3 library, beside the SDL3 modules, so that each module loads that one library.
 - The SDL3 library is no module, so `content.ignore` names it.
 - The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
@@ -102,6 +112,5 @@ The readme of Bridge-Host tells each key of a deployment.
 
 ## Messages
 
-- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load.
-- `no window: <reason>`: the window or its context does not open. `<reason>` is the text of `SDL_GetError`. The system then gives 1.
-- `no swap interval <vsync>: <reason>`: the driver refuses the swap interval. The swaps keep the interval of the driver. The module writes it at the level 4.
+- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
+- `no window: <reason>`: the window or its context does not open. `<reason>` is the text of `SDL_GetError`. The system then gives 1. The module writes it at the level 3.
