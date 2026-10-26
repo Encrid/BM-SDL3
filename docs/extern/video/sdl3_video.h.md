@@ -60,7 +60,7 @@ A renderer stops its GL calls in the round when `gl_proc` becomes 0, because the
 - A module that reads the window needs `read = ["sdl3:Window"]` in its table.
 - A deployment gives the settings in `[module."sdl3:video@1.0.0".config]`.
 - The SDL3 library is no module, so `content.ignore` names it.
-- The backend of BB-Native keeps no limit, so the six limits of the module are `"none"`.
+- The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
 The readme of Bridge-Host tells each key of a deployment.
 ## Messages
