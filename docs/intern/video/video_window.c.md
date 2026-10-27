@@ -1,76 +1,99 @@
 # src/video_window.c
 
-This file holds the systems `window` and `present`: the window, its context, its events and its swaps.
+This file holds the system `window`. It opens the window, uses `src/video_settings.c` and `src/video_state.c` at each run, and destroys the window after its close.
+
+## The state
+
+A native module gets only its API at each call, so the window has no other place between two rounds.
+The file keeps it in one static `video_kept_t`, `kept`: the window, its Metal view, and the settings of the last run.
+A `[[style.exception]]` of the project excuses this struct from the rule G4, with that reason.
 
 ## A round
 
-`bridge_window` opens the window once, then reads its events at each round:
+`bridge_window` runs one time in each round, in the phase `input`:
 
 ```pseudo
-FUNCTION bridge_window(s : WindowSettings, w : Window) RETURNS I32
-   IF w.closed THEN
-      CALL close_window()
+FUNCTION bridge_window() RETURNS I32
+   s <- bridge_native_get_single(api, SETTINGS)
+   w <- bridge_native_get_single(api, WINDOW)
+   IF s = nullptr OR w = nullptr THEN
       RETURN 0
    ENDIF
-   IF w.gl_proc = 0 THEN
-      RETURN open_window(s, w)
+   IF w.closed THEN
+      CALL video_close_window()
+      RETURN 0
    ENDIF
-   CALL take_events(w)
+   now <- s
+   now.title[63] <- 0
+   IF kept.window = nullptr THEN
+      IF open_window(api, now, w) <> 0 THEN
+         RETURN 1
+      ENDIF
+   ENDIF
+   CALL video_apply_settings(api, kept.window, kept.last, now)
+   CALL video_take_events(kept.window, w)
    RETURN 0
 ENDFUNCTION
-
-PROCEDURE take_events(w : Window)
-   IF SDL_HasEvent(SDL_EVENT_WINDOW_CLOSE_REQUESTED) THEN
-      w.closed <- TRUE
-      w.gl_proc <- 0
-   ENDIF
-   CALL SDL_FlushEvents(SDL_EVENT_WINDOW_FIRST, SDL_EVENT_WINDOW_LAST)
-   CALL SDL_GetWindowSizeInPixels(SDL_GL_GetCurrentWindow(), w.width, w.height)
-ENDPROCEDURE
 ```
 
+`bridge_native_get_single` gives null for a singleton that a module detached, so the first `IF` gives 0: `docs/extern/sdl3_video.h.md`, *The system*.
 A window that closed never opens again, because `closed` comes first.
-`close_window` destroys the context and the window at the first run after the close. The next runs find nothing to destroy.
-`take_events` takes the whole range of the window, so no event of the window stays in the queue.
+`now` is a copy of the settings with a zero in the last byte of `title`. Thus SDL3 never reads past the title.
+In the run of the open, `video_apply_settings` finds no change, because `open_window` copies `now` into `kept.last`.
 
-## The opening
+## The open
 
 `open_window` does these steps:
 
-1. `set_attributes` gives the attributes of GL to SDL3, and gives the flags of the window.
-2. It makes the window with `title`, `width`, `height` and the flags.
-3. It moves the window when `place` is `center` or `at`.
-4. It makes the context of GL, which becomes the current context of the thread.
-5. It sets the swap interval of `vsync`, and goes on when the driver refuses it.
-6. It writes `gl_proc`, the size of the frame in pixels, and `samples`.
+1. `video_find_driver` gives the row of the video driver: `docs/intern/video_state.c.md`, *The driver*.
+2. It copies `now` into `kept.last`.
+3. If the driver has a row, `create_window` makes the window.
+4. If the window is there, it makes the Metal view with `SDL_Metal_CreateView`.
+5. If the window is there, `video_write_handles` writes the surface and the handles into a new value.
+6. If the new value holds a handle, it writes the value into `sdl3:Window`, and gives 0.
+7. Else, it calls `video_close_window`, writes `no window` and the error of SDL3, and gives 1.
 
-If step 2 or step 4 fails, `open_window` destroys what it made, writes `no window` and the error of SDL3, and gives 1.
+`SDL_Metal_CreateView` makes a view only on the driver `cocoa`. On each other driver, it gives null and does not change the window.
+The source of SDL3 shows it: https://github.com/libsdl-org/SDL/blob/release-3.4.18/src/video/SDL_video.c.
+Thus no step asks for the platform, and no condition of the file depends on the platform.
 
-| Attribute or flag | Value |
+A driver with no row, a window that fails, and a view that fails each leave the new value with no handle.
+So step 6 finds each of the three failures. A window that does not open leaves no handle in `sdl3:Window`.
+For a driver with no row, the reason is the error that `video_find_driver` sets.
+For a view that fails, the reason is the error of `SDL_Metal_GetLayer`, which gets no view.
+
+## The window of SDL3
+
+`create_window` gives the settings to `SDL_CreateWindowWithProperties` as properties, so the window opens at its place with one request.
+The properties are those of https://wiki.libsdl.org/SDL3/SDL_CreateWindowWithProperties.
+
+| Property | Value |
 | --- | --- |
-| `SDL_GL_CONTEXT_MAJOR_VERSION`, `SDL_GL_CONTEXT_MINOR_VERSION` | `gl_major` and `gl_minor`. |
-| `SDL_GL_CONTEXT_PROFILE_MASK` | The core profile when `core` is `true`, else the compatibility profile. |
-| `SDL_GL_CONTEXT_FLAGS` | Forward compatible when `core` is `true`, because macOS needs it for GL 4.1. |
-| `SDL_GL_DEPTH_SIZE`, `SDL_GL_STENCIL_SIZE` | `depth` and `stencil`. |
-| `SDL_GL_MULTISAMPLEBUFFERS`, `SDL_GL_MULTISAMPLESAMPLES` | 1 and `samples` when `samples` is more than 0, else 0 and 0. |
-| `SDL_GL_DOUBLEBUFFER` | 1, because `present` swaps two buffers. |
-| `SDL_WINDOW_OPENGL` | Always. |
-| `SDL_WINDOW_HIDDEN`, `SDL_WINDOW_RESIZABLE`, `SDL_WINDOW_FULLSCREEN`, `SDL_WINDOW_HIGH_PIXEL_DENSITY` | When `hidden`, `resizable`, `fullscreen` and `high_dpi` are `true`. |
+| `SDL_PROP_WINDOW_CREATE_TITLE_STRING` | `title`. |
+| `SDL_PROP_WINDOW_CREATE_X_NUMBER`, `SDL_PROP_WINDOW_CREATE_Y_NUMBER` | The point that `video_get_place` gives: `docs/intern/video_settings.c.md`, *The place*. |
+| `SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER`, `SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER` | `width` and `height`. |
+| `SDL_PROP_WINDOW_CREATE_HIDDEN_BOOLEAN`, `SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN` | `hidden` and `resizable`. |
+| `SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN`, `SDL_PROP_WINDOW_CREATE_HIGH_PIXEL_DENSITY_BOOLEAN` | `fullscreen` and `high_dpi`. |
+| `SDL_PROP_WINDOW_CREATE_METAL_BOOLEAN` | `true` if the row of the driver gives `SDL3_SURFACE_METAL`. |
 
-`samples` of `sdl3:Window` comes from `SDL_GL_GetAttribute`, because a driver can give fewer samples than it was asked.
+`set_flags` writes the five properties of the type `bool`.
+On macOS, SDL3 loads OpenGL for a window that names no graphics API, in `SDL_DefaultGraphicsBackends` of `SDL_video.c`.
+The property of Metal stops that load, because the module uses only the Metal view.
+The value of that property is a comparison, and not a condition. Thus it adds no outcome that only one platform reaches.
+The limits of the sides are in `docs/extern/sdl3_video.h.md`, *sdl3:WindowSettings*.
 
-## The swap
+## The close
 
-`bridge_present` swaps the buffers of the current window while `gl_proc` is not 0.
-In the round of the close, it does not swap, because the renderer stopped its GL calls.
+`video_close_window` destroys the Metal view, then the window, as https://wiki.libsdl.org/SDL3/SDL_Metal_DestroyView tells. Then it clears both in `kept`.
+If the module made no window, it does nothing. `SDL_Metal_DestroyView` does nothing with a null view, so one call serves each driver.
+`open_window` calls it after a failure, `bridge_window` at each run after the close, and `bridge_shutdown` at the stop.
 
 ## Functions
 
 | Function | Result |
 | --- | --- |
-| `bridge_window` | Opens the window at its first run, then writes `sdl3:Window` at each round. Gives 0, or 1 when the window does not open. |
-| `close_window` | Destroys what is left of the window and of its context. |
-| `take_events` | Reads the close and the size of the window, and takes the events of the window. |
-| `open_window` | Makes the window and its context. Gives 0, or 1 when one of them fails. |
-| `set_attributes` | Gives the attributes of GL to SDL3, and gives the flags of the window. |
-| `bridge_present` | Swaps the buffers while the context is there. Gives 0. |
+| `bridge_window` | Opens the window at the first run. Then asks SDL3 for the changed settings, and writes `sdl3:Window`. Gives 0, or 1 when the window does not open. |
+| `open_window` | Makes the window, its Metal view and its handles, or writes `no window`. Gives 0, or 1. |
+| `create_window` | Makes the window of SDL3 from the settings. Gives the window, or null. |
+| `set_flags` | Writes the five properties of the type `bool` of the window. |
+| `video_close_window` | Destroys the Metal view and the window that the module made, and forgets them. |

@@ -5,7 +5,7 @@ This file holds the manifest of the module, and its entries `init`, `shutdown` a
 ## The manifest
 
 The kind `native_module` gives the words of the manifest as the macro `MANIFEST`.
-The file puts that macro into the section of the target, with the line that the preset of the module tells.
+The file puts that macro into the section of the target, with the line of `.toolchain/docs/presets.md`, *native_module*.
 
 ## The start
 
@@ -13,21 +13,18 @@ The file puts that macro into the section of the target, with the line that the 
 
 1. It starts the video subsystem of SDL3.
 2. If SDL3 refuses, it writes `no video` with the reason of SDL3, and gives 1.
-3. It declares `sdl3:sdl3_place_t`, then the singletons `sdl3:WindowSettings` and `sdl3:Window`.
-4. It attaches a `sdl3:Window` with each field at zero to the entity 0.
-5. It adds the systems `window` in the phase `input`, and `present` in the phase `present`.
+3. `declare_types` declares the four types of the module, in the order of their slots.
+4. It attaches a `sdl3:Window` to the entity 0, with `surface` at `SDL3_SURFACE_NONE` and each other field at zero.
+5. It adds the system `window` in the phase `input`.
 
-`window` has two optional terms: it reads the settings, and it writes the window. `present` reads the window as an optional term.
-Bridge writes the settings after `init`, so the first run of `window` has them.
-
-## The state
-
-The module keeps no state of its own. SDL3 keeps the window and the context, and the thread of the phases holds the context as its current context.
-So `SDL_GL_GetCurrentWindow` and `SDL_GL_GetCurrentContext` give them back at each call.
+`window` has two optional terms: it reads the settings, and it writes the window.
+It states no change, because it attaches and detaches nothing.
+Step 4 does not leave `surface` at zero, because zero is no constant of `sdl3:sdl3_surface_t`: `docs/extern/sdl3_video.h.md`, *sdl3:sdl3_surface_t*.
 
 ## The stop
 
-`bridge_shutdown` destroys the context and the window, if they are there, then stops the video subsystem that `bridge_init` started.
+`bridge_shutdown` calls `video_close_window` of `src/video_window.c`, so the Metal view and the window go before the video of SDL3.
+Then it stops the video subsystem that `bridge_init` started.
 `SDL_Quit` does not count the modules that use SDL3. So `bridge_shutdown` calls it only after the last subsystem stops, when `SDL_WasInit(0)` gives 0.
 
 `bridge_reload` gives 1. Bridge needs the entry, but never calls it, because the manifest states `reloadable=false`.
@@ -36,6 +33,7 @@ So `SDL_GL_GetCurrentWindow` and `SDL_GL_GetCurrentContext` give them back at ea
 
 | Function | Result |
 | --- | --- |
-| `bridge_init` | Starts the video of SDL3, then declares the types and the systems. Gives 0, or 1 when SDL3 refuses. |
-| `bridge_shutdown` | Destroys the context and the window, stops the video subsystem of the module, and SDL3 after the last subsystem. Gives 0. |
+| `bridge_init` | Starts the video of SDL3, then declares the types and the system. Gives 0, or 1 when SDL3 refuses. |
+| `declare_types` | Declares the enums `sdl3:sdl3_place_t` and `sdl3:sdl3_surface_t`, then the singletons `sdl3:WindowSettings` and `sdl3:Window`. |
+| `bridge_shutdown` | Destroys the window, stops the video subsystem of the module, and SDL3 after the last subsystem. Gives 0. |
 | `bridge_reload` | Gives 1. |
