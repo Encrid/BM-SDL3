@@ -30,7 +30,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 A deployment that raises `drops` also raises `spawns` to `drops`, and `changes` to 1072 bytes for each drop.
 The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
 
-The file of the module is `sdl3_events`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BM-SDL3-Build, which sits beside it.
+The file of the module is `sdl3_events`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BL-SDL3, which sits beside it.
 
 ## The system pump
 
