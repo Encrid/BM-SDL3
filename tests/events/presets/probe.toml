@@ -1,0 +1,6 @@
+presets = ["test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+
+[module."test:probe@1.0.0"]
+read = ["sdl3:Drop"]

@@ -1,0 +1,26 @@
+[variables]
+probe_words = [
+    "abi=1", "config=test:Scene", "settings=scene module", "pinned=true", "reloadable=false",
+    "scratch=8192", "log_ring=1024", "spans=4096", "spawns=none", "changes=none", "persistent=none",
+    "hot_reload=false", "config.scene=none", "config.module=none",
+]
+
+[[artifact]]
+name = "probe"
+kind = "native_module"
+test = true
+sources = ["tests/probe/probe.c"]
+include = ["include", "{sdl3}/include"]
+link = ["{sdl3}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = ["test:probe@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "holder"
+defines = ["HOLD"]
+manifest = ["test:holder@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "starve"
+defines = ["STARVE"]
+manifest = ["probe:starve@1.0.0", "{probe_words}"]
