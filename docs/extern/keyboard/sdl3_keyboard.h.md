@@ -29,7 +29,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 
 The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
 
-The file of the module is `sdl3_keyboard`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BM-SDL3-Build, which sits beside it.
+The file of the module is `sdl3_keyboard`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BL-SDL3, which sits beside it.
 
 ## The system keys
 
