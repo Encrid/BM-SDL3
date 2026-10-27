@@ -29,7 +29,7 @@ ENDPROCEDURE
 
 `count_drops` calls `SDL_PeepEvents` with `SDL_PEEKEVENT` and no buffer for the events. SDL3 then gives the count of the events in the range, and takes none.
 
-`keep_drop` leaves out a drop with no path. A path of 1024 bytes or more does not fit, so `keep_drop` writes the message of the long path.
+`keep_drop` leaves out a path that is null or empty. A path of 1024 bytes or more does not fit, so `keep_drop` writes the message of the long path.
 Else it spawns an entity, and attaches a `sdl3:Drop` that holds a copy of the path.
 SDL3 keeps the text of an event until the next pump, so the copy happens in the same round.
 `say_left` writes the message of the drops that are left out. Both messages go through the helper `bridge_native_say` of BB-Native.

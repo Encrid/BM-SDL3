@@ -20,7 +20,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 | Key | Default | Reason |
 | --- | --- | --- |
 | `scratch` | `4096` | The declarations of `init`, and the value of one drop at a time. |
-| `log_ring` | `1024` | A record of 32 bytes for each drop that is left out, and one for the drops past `drops`. |
+| `log_ring` | `544` | A record of 32 bytes for each of the 16 drops that a round can leave out, and one for the drops past `drops`. |
 | `spans` | `1024` | A cell for each of the two types in each table, and the spans of `pump`. |
 | `spawns` | `16` | One entity for each drop of a round. |
 | `changes` | `17152` | 1072 bytes for each drop: the attach of its 1024 bytes and 24, and its destroy in the next round, 24. |
@@ -44,7 +44,8 @@ The file of the module is `sdl3_events`, with the suffix of a library. It runs o
 5. If `quit` is `true` and the queue holds `SDL_EVENT_QUIT`, it gives `BRIDGE_END`.
 
 SDL3 sends `SDL_EVENT_QUIT` when the last window asks to close, and when the system asks the program to quit.
-The module takes only the drops of files. It leaves out a dropped text, and a drop with no path.
+The module takes only the drops of files. It leaves out a dropped text, and a drop with no path or with an empty path.
+The other events of the drops stay in the queue in that round, and the next pump clears them.
 The full name of the system for `[order]` is `sdl3:events:pump`.
 
 ## sdl3:EventsSettings
@@ -89,5 +90,5 @@ The readme of Bridge-Host tells each key of a deployment.
 ## Messages
 
 - `a dropped path of <bytes> bytes is left out, and 1023 is the most`: a path does not fit in `path`. The module writes it at the level 4.
-- `<count> dropped files are left out, and <drops> is the most in a round`: more files came than `drops`. The module writes it at the level 4.
+- `the dropped files past <drops> in a round are left out: <count>`: more files came than `drops`. The module writes it at the level 4.
 - `no events: <reason>`: SDL3 cannot start its events. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
