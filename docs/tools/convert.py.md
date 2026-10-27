@@ -29,7 +29,7 @@ From the build of SDL_linux_deps, it reads each line `pub const <name>_soname = 
 
 1. It reads the block of `SDL_build_config.h.cmake`: a name and an expression of zig on each line.
 2. For each target, it evaluates each expression with the system and the features of the CPU of the target.
-3. A true value gives `<name>=1`. A false value, or `null`, gives no define.
+3. A true value gives `<name>=1`. A false value, `null` and an empty text give no define.
 4. On Linux, a soname of SDL_linux_deps gives its name in quotes.
 5. On Linux, a version comes from the build of SDL3, or from a version of SDL_linux_deps.
 
@@ -43,7 +43,7 @@ The evaluator runs no code of its input. It reads only these forms:
 - `if (linux_deps_values) |x| @as(i64, @intCast(x.<name>_version.<part>)) else null`, a part of a version.
 
 An expression that it cannot read stops the tool: `cannot evaluate <name> = <expression>`.
-An expression whose value is no boolean, no number and no text stops it too: `not a boolean: <name> = <expression>`.
+`and`, `or` and `!` take only booleans. An operand that is no boolean, for example `null`, stops the tool: `not a boolean: <name> = <expression>`.
 
 | Target | CPU | Features |
 | --- | --- | --- |
@@ -75,8 +75,8 @@ The defines of a CPU must be the same on each system. If they are not, the tool 
 | Function | Result |
 | --- | --- |
 | `config_block(lines)` | Gives the name and the expression of each entry of the build config. |
-| `evaluate(name, expr, system, cpu)` | Gives the value of one expression for a target, or nothing. Stops on an expression that it cannot read. |
+| `evaluate(name, expr, target, deps)` | Gives the value of one expression for a target, with the sonames and the versions of SDL_linux_deps in `deps`, or nothing. Stops on an expression that it cannot read, and on an operand that is no boolean. |
 | `sources_between(lines, first, last, skip)` | Gives the files of the lists between two lines, and leaves out the blocks that start with a line of `skip`. |
 | `toml_list(name, items)` | Gives the text of one list of TOML. |
-| `emit(per_target, lists)` | Writes the output. |
+| `emit(per_target, lists, folders)` | Writes the output: the two folders, the lists of the sources with the files of wayland, and the defines. |
 | `main()` | Reads the four paths, and writes the output. Stops with status 1 on a fault, and with 2 on another count of arguments. |
