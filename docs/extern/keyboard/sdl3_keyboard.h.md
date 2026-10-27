@@ -35,7 +35,7 @@ The file of the module is `sdl3_keyboard`, with the suffix of a library. It runs
 
 `keys` runs in the phase `input`, and does these steps:
 
-1. If `text` is `true`, it starts the text input on each window.
+1. If `text` is `true`, it starts the text input on each window. If it is `false`, it stops it.
 2. It clears the hits and the text of the round before.
 3. It takes the key events and the text events of the round, and writes `sdl3:Keyboard`.
 
@@ -45,10 +45,11 @@ The full name of the system for `[order]` is `sdl3:keyboard:keys`.
 ## sdl3:KeyboardSettings
 
 `sdl3:KeyboardSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
+After the load, a system with a grant to write it can change it at each round. `keys` uses the new values at its next run.
 
 | Field | C type | Value |
 | --- | --- | --- |
-| `text` | `bool` | `true`: `keys` starts the text input. The default is `true`. |
+| `text` | `bool` | `true`: `keys` starts the text input, and `false` stops it. The default is `true`. |
 | `repeat` | `bool` | `true`: a repeat of a held key is a hit too. The default is `false`. |
 
 ## sdl3:Keyboard
@@ -70,6 +71,7 @@ A text of more than 63 bytes in a round is cut after its last whole character th
 
 - The module needs `sdl3:events`, and `sdl3:video` for a window that takes the keyboard focus.
 - A module that reads the keyboard needs `read = ["sdl3:Keyboard"]` in its table.
+- A module that changes the settings, for example the app, needs `write = ["sdl3:KeyboardSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:keyboard@1.0.0".config]`.
 - A deployment holds one SDL3 library, beside the SDL3 modules. A second copy is a second SDL3, which gets no event of the first.
 - The SDL3 library is no module, so `content.ignore` names it.
