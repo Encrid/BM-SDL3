@@ -1,5 +1,5 @@
 [project]
-name = "BM-SDL3"
+name = "BM-SDL3-Build"
 
 [test]
 timeout = 120
