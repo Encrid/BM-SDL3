@@ -1,4 +1,4 @@
-# BM-SDL3
+# BM-SDL3-Build
 
 SDL3 3.4.18, built from source on 6 targets: the one SDL3 library of the SDL3 modules of Bridge.
 
@@ -26,7 +26,7 @@ It also holds `leaks.toml`, which names the resources of SDL3 for `[leaks] with`
 
 The library is `SDL3.dll`, `SDL3.so` or `SDL3.dylib`. Its soname on Linux is `SDL3.so`, and its install name on macOS is `@rpath/SDL3.dylib`.
 A module links the library itself, so the release holds no import library for Windows.
-BM-SDL3 holds no module. Each SDL3 module of Bridge fetches its release, and a deployment holds one copy of the SDL3 library, beside the modules.
+BM-SDL3-Build holds no module. Each SDL3 module of Bridge fetches its release, and a deployment holds one copy of the SDL3 library, beside the modules.
 
 These rules let several modules share the one SDL3 of a process:
 
