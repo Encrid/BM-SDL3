@@ -1,0 +1,495 @@
+[[case]]
+name = "a motion sets the position, and the motions of the round add up"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r1 position 12 25 0 0",
+    "record[6] test:probe@1.0.0/check: r1 motion 5 9 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "move"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "the position stays and the motion clears at the next round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r2 position 12 25 0 0",
+    "record[6] test:probe@1.0.0/check: r2 motion 0 0 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "move"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "a motion of a window that is gone counts one pixel a unit"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r1 position 7 9 0 0",
+    "record[6] test:probe@1.0.0/check: r1 motion 7 9 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "gone"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "a button that goes down sets held and pressed"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 buttons 1 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "click"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "a button that goes up clears held and sets released"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r3 buttons 0 0",
+    "record[6] test:probe@1.0.0/check: r3 released 1 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "click"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "pressed and released clear at the next round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r2 buttons 1 0",
+    "record[6] test:probe@1.0.0/check: r4 released 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "click"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "button 32 is the last bit"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 buttons 2147483648 2147483648"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "edge"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "over"
+'''
+
+[[case]]
+name = "a button of 0 or of more than 32 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r1 mouse 1 0",
+    "record[6] test:probe@1.0.0/check: r1 queue 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "over"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "edge"
+'''
+
+[[case]]
+name = "the wheel adds the turns of the round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 wheel 3 5 0 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "wheel"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "a flipped wheel turns back while natural is false"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 wheel -1 -2 0 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "flip"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "flip"
+[module."sdl3:mouse@1.0.0".config]
+natural = true
+'''
+
+[[case]]
+name = "natural true keeps the direction that the system gives"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 wheel 1 2 0 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "flip"
+[module."sdl3:mouse@1.0.0".config]
+natural = true
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "flip"
+[module."sdl3:mouse@1.0.0".config]
+natural = false
+'''
+
+[[case]]
+name = "the wheel clears at the next round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 wheel 0 0 0 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "wheel"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "mouse takes each event of its range and leaves out the events that are no motion, button or wheel"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r1 mouse 1 0",
+    "record[6] test:probe@1.0.0/check: r1 queue 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "range"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+phases = ["input", "drive", "check"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "range"
+'''

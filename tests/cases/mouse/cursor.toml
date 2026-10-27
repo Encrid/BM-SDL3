@@ -1,0 +1,351 @@
+[[case]]
+name = "with no sdl3:Cursor the module changes no cursor"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r1 visible 0 0",
+    "record[6] test:probe@1.0.0/check: r1 relative 1 1",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "own"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "zero"
+'''
+
+[[case]]
+name = "hidden hides the cursor, and false shows it again"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r1 visible 0 0",
+    "record[6] test:probe@1.0.0/check: r2 visible 1 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "hide"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "relative sets the relative mode of each window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 relative 2 2"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "relative"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "a window that opens later gets the relative mode at the next round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r1 relative 1 1",
+    "record[6] test:probe@1.0.0/check: r2 relative 2 2",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "later"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+phases = ["drive", "check", "input"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "later"
+'''
+
+[[case]]
+name = "relative false clears the relative mode"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 relative 0 2"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "free"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "relative"
+'''
+
+[[case]]
+name = "a shape that SDL3 refuses keeps the cursor"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 cursor 0 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "shape"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = false }
+
+[[case]]
+name = "a shape shows its system cursor"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = false }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 cursor 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "shape"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[[case]]
+name = "the same shape keeps its cursor"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = false }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 cursor 1 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "same"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "new"
+'''
+
+[[case]]
+name = "a new shape shows a new cursor"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = false }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 cursor 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "new"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "same"
+'''
+
+[[case]]
+name = "a shape of SDL_SYSTEM_CURSOR_COUNT or more changes nothing"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = false }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 cursor 1 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "count"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "new"
+'''

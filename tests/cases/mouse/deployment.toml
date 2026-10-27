@@ -1,0 +1,192 @@
+[[case]]
+name = "a module that reads the mouse needs the grant read sdl3:Mouse"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'sdl3:Mouse': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = []
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the module that sets the cursor needs the grant write sdl3:Cursor"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: system 'drive' may not attach or detach 'sdl3:Cursor': no grant says so 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = ["sdl3:Mouse", "sdl3:Cursor"]
+write = []
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = ["sdl3:Mouse", "sdl3:Cursor"]
+write = ["sdl3:Cursor"]
+'''
+
+[[case]]
+name = "content.ignore keeps the SDL3 library out of the modules"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["loaded: sdl3:mouse@1.0.0, native, m/sdl3_mouse{library}"]
+lacks = ["not a module: m/SDL3{library}"]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "BB-Native refuses a limit of the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'sdl3:mouse@1.0.0' is refused: it states work_limit, which backend 'native' cannot keep 0 0",
+    "not loaded: m/sdl3_mouse{library}: sdl3:mouse@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:mouse@1.0.0"]
+work_limit = 1000
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:mouse@1.0.0"]
+work_limit = "none"
+'''
+
+[[case]]
+name = "a setting of the wrong type does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'sdl3:mouse@1.0.0' did not load: its setting 'natural' is text, and the field it names is a bool 0 0",
+    "not loaded: m/sdl3_mouse{library}: sdl3:mouse@1.0.0 was refused",
+    "record[6] test:probe@1.0.0/check: r1 video 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "video"
+[module."sdl3:mouse@1.0.0".config]
+natural = "yes"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "video"
+[module."sdl3:mouse@1.0.0".config]
+natural = true
+'''
