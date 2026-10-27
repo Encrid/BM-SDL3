@@ -23,8 +23,9 @@ Python 3.11 or a later version.
 
 Each release holds, for each target, the SDL3 library, the headers of SDL3 in `include/SDL3` and the notices of its sources.
 It also holds `leaks.toml`, which names the resources of SDL3 for `[leaks] with` of a module.
-The build leaves out the GL, Vulkan and GPU parts of SDL3, because the modules draw with WebGPU.
-It keeps the Metal view of SDL3, which gives the CAMetalLayer of a window on macOS.
+The build keeps each part of SDL3, also GL, Vulkan and the GPU API, so that a module can use any of them.
+SDL3 loads the GL or Vulkan library of the system only when a module asks for it.
+The Metal view of SDL3 gives the CAMetalLayer of a window on macOS.
 
 The library is `SDL3.dll`, `SDL3.so` or `SDL3.dylib`. Its soname on Linux is `SDL3.so`, and its install name on macOS is `@rpath/SDL3.dylib`.
 A module links the library itself, so the release holds no import library for Windows.
@@ -41,7 +42,8 @@ These rules let several modules share the one SDL3 of a process:
 
 | Document | Content |
 | --- | --- |
-| `docs/contributing/needs.md` | The needs that each decision meets, and how to weigh a decision. |
+| `docs/contributing/needs.md` | The needs that each decision meets. |
+| `docs/contributing/decisions.md` | The steps of a decision. |
 | `docs/contributing/coding_style.md` | How to write the code. |
 | `docs/contributing/documentation_style.md` | How to write the documents. |
 | `docs/contributing/tests.md` | How to write the tests. |
