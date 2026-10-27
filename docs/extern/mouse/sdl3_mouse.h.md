@@ -54,7 +54,7 @@ After the load, a system with a grant to write it can change it at each round. `
 | --- | --- | --- |
 | `x`, `y` | `float` | The position of the last motion, in pixels of the frame of `sdl3:Window`, from the top left. |
 | `dx`, `dy` | `float` | The motion in the round, in the same pixels. |
-| `wheel_x`, `wheel_y` | `float` | The turn of the wheel in the round. A positive `wheel_x` turns to the right. A positive `wheel_y` turns away from the user, unless `natural` is `true`. |
+| `wheel_x`, `wheel_y` | `float` | The turn of the wheel in the round. A positive `wheel_x` turns to the right. A positive `wheel_y` turns away from the user. If `natural` is `true`, the module keeps the sign that the system gives, also for a wheel that the system flips. |
 | `held` | `uint32_t` | The buttons that are down, as the bits of `SDL_BUTTON_MASK`. |
 | `pressed`, `released` | `uint32_t` | The buttons that went down and up in the round, as the same bits. |
 
@@ -69,6 +69,8 @@ The module leaves out a button of 0, or of more than 32.
 | `shape` | `uint32_t` | A value of `SDL_SystemCursor`. A value of `SDL_SYSTEM_CURSOR_COUNT` or more changes nothing. |
 | `hidden` | `bool` | `true`: the cursor does not show. |
 | `relative` | `bool` | `true`: each window holds the mouse, and only the motion counts. |
+
+When `relative` changes on the window with the keyboard focus, SDL3 drops the motions that wait in the queue. So the motions of that round are lost.
 
 ## The C types
 
