@@ -19,7 +19,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `4096` | The declarations of the four types of `init`, and the value of `sdl3:Window` that it attaches. |
+| `scratch` | `4096` | The declarations of the four types of `init`, and the value of `sdl3:Window` that it attaches. At a run of `window`, the texts of its lines: at most 7. |
 | `log_ring` | `256` | Room for 8 records of 32 bytes. A run of `window` writes at most 7 lines, one for each setting that it cannot change. |
 | `spans` | `1024` | A cell for each of the four types in each table, and the spans of the system. |
 | `spawns` | `"none"` | The module makes no entity. |
@@ -47,7 +47,9 @@ SDL3 can apply a request later, and the windowing system can refuse it. Thus a c
 A change that the user makes, for example a new size with the mouse, changes `sdl3:Window` and not the settings.
 `high_dpi` acts only when the window opens. A later change of it does nothing, and `window` writes a line.
 
-When the window is asked to close, `window` sets `closed`, and sets `surface` to `SDL3_SURFACE_NONE` and each handle to 0, in that round.
+If a module detaches `sdl3:WindowSettings` or `sdl3:Window`, `window` does nothing and gives 0 while either is gone.
+
+When the window is asked to close, `window` sets `closed`, and sets `surface` to `SDL3_SURFACE_NONE` and each other field to 0, in that round.
 At its next run, it destroys the Metal view on macOS, and then the window.
 The full name of the system for `[order]` is `sdl3:video:window`.
 
@@ -59,12 +61,12 @@ After the load, a system with a grant to write it can change it at each round: *
 | Field | C type | Value |
 | --- | --- | --- |
 | `title` | `char[64]` | The title of the window, at most 63 bytes. The default is `Bridge`. |
-| `width`, `height` | `uint32_t` | The size of the window, in the units of the screen. The defaults are 1280 and 720. |
+| `width`, `height` | `uint32_t` | The size of the window, in the units of the screen. The defaults are 1280 and 720. SDL3 takes each side as an `int`: at the open, it makes a side below 1 into 1, and after the open, it refuses one. Thus 0, and a side above 2147483647, give `no change of size` after the open. |
 | `hidden` | `bool` | `true`: the window does not show. The default is `false`. |
 | `resizable` | `bool` | `true`: the user can change the size of the window. The default is `false`. |
 | `fullscreen` | `bool` | `true`: the window covers the screen that it opens on. A hidden window covers it only when it shows. The default is `false`. |
 | `place` | `sdl3_place_t` | Where the window opens. The default is `SDL3_PLACE_SYSTEM`. |
-| `x`, `y` | `int32_t` | The place of the window for `SDL3_PLACE_AT`, in the units of the screen. The defaults are 0 and 0. |
+| `x`, `y` | `int32_t` | The place of the window for `SDL3_PLACE_AT`, in the units of the screen. With another `place`, they do nothing. The defaults are 0 and 0. |
 | `high_dpi` | `bool` | `true`: on a screen of high density, the frame gets each pixel of the screen. The default is `false`. |
 
 ## sdl3:sdl3_place_t
@@ -73,9 +75,11 @@ After the load, a system with a grant to write it can change it at each round: *
 
 | Constant | Value | Where the window opens |
 | --- | --- | --- |
-| `SDL3_PLACE_SYSTEM` | 1 | Where the system puts it. With no place from the system, SDL3 puts it at the center. |
+| `SDL3_PLACE_SYSTEM` | 1 | Where the system puts it. With no place from the system, SDL3 puts it at the center. A change to it after the open leaves the window where it is. |
 | `SDL3_PLACE_CENTER` | 2 | At the center of the screen. |
 | `SDL3_PLACE_AT` | 3 | At `x` and `y`. |
+
+A system can write a value that is no constant. `window` takes it as `SDL3_PLACE_SYSTEM`.
 
 ## sdl3:Window
 
@@ -139,5 +143,6 @@ The readme of Bridge-Host tells each key of a deployment.
 
 - `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
 - `no window: <reason>`: the window, or its Metal view on macOS, does not open. `<reason>` is the text of `SDL_GetError`. The system then gives 1. The module writes it at the level 3.
-- `no change of <setting>: <reason>`: SDL3 refuses to change the window for a setting. `<setting>` is the name of the setting, and `<reason>` is the text of `SDL_GetError`. The window keeps its state, and the system gives 0. The module writes it at the level 4.
+  A video driver that gives no kind of *sdl3:sdl3_surface_t*, for example `offscreen` or `dummy`, opens no window. Its reason is `the video driver <name> gives no surface`.
+- `no change of <setting>: <reason>`: SDL3 refuses to change the window for a setting. `<setting>` is `title`, `size`, `hidden`, `resizable`, `fullscreen` or `place`. `size` is the request of `width` and `height`, and `place` is the request of `place`, `x` and `y`. `<reason>` is the text of `SDL_GetError`. The window keeps its state, and the system gives 0. The module writes it at the level 4.
 - `no change of high_dpi: it acts only when the window opens`: a system changed `high_dpi` after the open. The module writes it at the level 4.
