@@ -23,6 +23,8 @@ Python 3.11 or a later version.
 
 Each release holds, for each target, the SDL3 library, the headers of SDL3 in `include/SDL3` and the notices of its sources.
 It also holds `leaks.toml`, which names the resources of SDL3 for `[leaks] with` of a module.
+The build leaves out the GL, Vulkan and GPU parts of SDL3, because the modules draw with WebGPU.
+It keeps the Metal view of SDL3, which gives the CAMetalLayer of a window on macOS.
 
 The library is `SDL3.dll`, `SDL3.so` or `SDL3.dylib`. Its soname on Linux is `SDL3.so`, and its install name on macOS is `@rpath/SDL3.dylib`.
 A module links the library itself, so the release holds no import library for Windows.
