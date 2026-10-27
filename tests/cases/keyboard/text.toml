@@ -123,7 +123,7 @@ env = { SDL_VIDEO_DRIVER = "dummy" }
 
 [case.claims]
 status = 0
-line = ["record[6] test:probe@1.0.0/check: r1 text \"café\" 5 5"]
+line = ["record[6] test:probe@1.0.0/check: r1 text \"caf\u00e9\" 5 5"]
 
 [case.folders]
 "{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
