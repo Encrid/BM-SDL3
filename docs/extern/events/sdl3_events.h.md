@@ -49,6 +49,7 @@ The full name of the system for `[order]` is `sdl3:events:pump`.
 ## sdl3:EventsSettings
 
 `sdl3:EventsSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
+After the load, a system with a grant to write it can change it at each round. `pump` uses the new values at its next run.
 
 | Field | C type | Value |
 | --- | --- | --- |
@@ -67,6 +68,7 @@ The full name of the system for `[order]` is `sdl3:events:pump`.
 
 - `phases` lists `events` first, before the phases of the other SDL3 modules.
 - A module that reads the drops needs `read = ["sdl3:Drop"]` in its table.
+- A module that changes the settings, for example the app, needs `write = ["sdl3:EventsSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:events@1.0.0".config]`.
 - A deployment holds one SDL3 library, beside the SDL3 modules. A second copy is a second SDL3, which gets no event of the first.
 - The SDL3 library is no module, so `content.ignore` names it.
