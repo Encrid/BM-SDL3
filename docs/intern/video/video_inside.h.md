@@ -6,7 +6,7 @@ It includes the headers of SDL3 and of BB-Native, and gives the slot of each typ
 ## The slots
 
 Bridge numbers the types of a module from 0, in the order of their declarations.
-`PLACE` is 0 for `sdl3:Place`, `SETTINGS` is 1 for `sdl3:WindowSettings`, and `WINDOW` is 2 for `sdl3:Window`.
+`PLACE` is 0 for `sdl3:sdl3_place_t`, `SETTINGS` is 1 for `sdl3:WindowSettings`, and `WINDOW` is 2 for `sdl3:Window`.
 Each slot is a `constexpr`, and `bridge_init` of `src/sdl3_video.c` declares the types in that order.
 The enum comes first, because the settings use it.
 

@@ -39,7 +39,7 @@ The file of the module is `sdl3_video`, with the suffix of a library. It runs on
 | `present` | `present` | While `gl_proc` is not 0, it swaps the buffers of the window, so the frame of the round shows. |
 
 The settings come after `init`, so the window opens at the first run of `window`.
-If the window does not open, `window` tries again at its next run.
+If the window does not open, `window` tries again at its next run, until `max_system_failures` stops the module.
 When the window is asked to close, `window` sets `closed` and sets `gl_proc` to 0 in that round. At its next run, it destroys the context and the window.
 The full names of the systems for `[order]` are `sdl3:video:window` and `sdl3:video:present`.
 
@@ -49,12 +49,12 @@ The full names of the systems for `[order]` are `sdl3:video:window` and `sdl3:vi
 
 | Field | C type | Value |
 | --- | --- | --- |
-| `title` | `char[64]` | The title of the window. The default is `Bridge`. |
+| `title` | `char[64]` | The title of the window, at most 63 bytes. The default is `Bridge`. |
 | `width`, `height` | `uint32_t` | The size of the window, in the units of the screen. The defaults are 1280 and 720. |
 | `hidden` | `bool` | `true`: the window does not show. The default is `false`. |
 | `vsync` | `int32_t` | The swap interval: 0 does not wait, 1 waits for the screen, and -1 waits unless the frame is late. If the driver refuses the interval, the swaps keep the interval of the driver. The default is 1. |
 | `resizable` | `bool` | `true`: the user can change the size of the window. The default is `false`. |
-| `fullscreen` | `bool` | `true`: the window covers the screen that it opens on. The default is `false`. |
+| `fullscreen` | `bool` | `true`: the window covers the screen that it opens on. A hidden window covers it only when it shows. The default is `false`. |
 | `place` | `sdl3_place_t` | Where the window opens. The default is `SDL3_PLACE_SYSTEM`. |
 | `x`, `y` | `int32_t` | The place of the window for `SDL3_PLACE_AT`, in the units of the screen. The defaults are 0 and 0. |
 | `gl_major`, `gl_minor` | `uint32_t` | The version of GL of the context. The defaults are 4 and 1. |
@@ -69,7 +69,7 @@ The full names of the systems for `[order]` are `sdl3:video:window` and `sdl3:vi
 
 | Constant | Value | Where the window opens |
 | --- | --- | --- |
-| `SDL3_PLACE_SYSTEM` | 1 | Where the system puts it. |
+| `SDL3_PLACE_SYSTEM` | 1 | Where the system puts it. With no place from the system, SDL3 puts it at the center. |
 | `SDL3_PLACE_CENTER` | 2 | At the center of the screen. |
 | `SDL3_PLACE_AT` | 3 | At `x` and `y`. |
 
@@ -79,7 +79,7 @@ The full names of the systems for `[order]` are `sdl3:video:window` and `sdl3:vi
 
 | Field | C type | Value |
 | --- | --- | --- |
-| `gl_proc` | `uint64_t` | The address of `SDL_GL_GetProcAddress`, which gives each GL function of the context. It is 0 before the window opens, and from the round of the close. |
+| `gl_proc` | `uint64_t` | The address of a function that gives each GL function of the context, as `SDL_GL_GetProcAddress` does. Call it, and do not compare it: on Windows, each module sees another address. It is 0 before the window opens, and from the round of the close. |
 | `width`, `height` | `uint32_t` | The size of the frame, in pixels. |
 | `samples` | `uint32_t` | The samples of each pixel that the context got. |
 | `closed` | `bool` | `true` from the round in which the window is asked to close. |

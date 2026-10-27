@@ -13,7 +13,7 @@ The file puts that macro into the section of the target, with the line that the 
 
 1. It starts the video subsystem of SDL3.
 2. If SDL3 refuses, it writes `no video` with the reason of SDL3, and gives 1.
-3. It declares `sdl3:Place`, then the singletons `sdl3:WindowSettings` and `sdl3:Window`.
+3. It declares `sdl3:sdl3_place_t`, then the singletons `sdl3:WindowSettings` and `sdl3:Window`.
 4. It attaches a `sdl3:Window` with each field at zero to the entity 0.
 5. It adds the systems `window` in the phase `input`, and `present` in the phase `present`.
 
