@@ -1,0 +1,6 @@
+presets = ["test.toml", "window.toml"]
+phases = ["drive", "input", "check", "present"]
+rounds = 8
+
+[module."test:probe@1.0.0"]
+read = ["sdl3:Window"]

@@ -1,0 +1,216 @@
+[[case]]
+name = "init gives 1 and writes no video when SDL3 cannot start its video"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "nothing" }
+
+[case.claims]
+status = 1
+has = ["record[3] sdl3:video@1.0.0/-: no video: nothing not available"]
+line = [
+    "record[3] -/-: module 'sdl3:video@1.0.0' did not load: its init answered 1 0 0",
+    "not loaded: m/sdl3_video{library}: sdl3:video@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false]
+env = {}
+
+[[case]]
+name = "window gives 1 and writes no window when the window does not open"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 1
+has = ["record[3] sdl3:video@1.0.0/window: no window: OpenGL support is either not configured in SDL or not available in current SDL video driver (dummy) or platform"]
+line = [
+    "record[3] sdl3:video@1.0.0/window: system 'window' failed: it answered 1 0 0",
+    "record[6] test:probe@1.0.0/check: r1 window 0 0",
+    "record[6] test:probe@1.0.0/check: r1 windows 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false]
+env = {}
+
+[[case]]
+name = "window tries again at its next run when the window does not open"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 1
+matches = ["no window: .*no window: "]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a context that does not open writes no window, and its window goes"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+has = ["record[3] sdl3:video@1.0.0/window: no window: "]
+line = [
+    "record[6] test:probe@1.0.0/check: r1 window 0 0",
+    "record[6] test:probe@1.0.0/check: r1 windows 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."sdl3:video@1.0.0".config]
+gl_major = 9
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."sdl3:video@1.0.0".config]
+gl_major = 4
+'''
+
+[[case]]
+name = "a title of 64 bytes does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'sdl3:video@1.0.0' did not load: its setting 'title' is 64 bytes of text, and the field it names holds 64 with the zero that ends it 0 0",
+    "not loaded: m/sdl3_video{library}: sdl3:video@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:video@1.0.0".config]
+title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:video@1.0.0".config]
+title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+'''
+
+[[case]]
+name = "a place that names no constant does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'sdl3:video@1.0.0' did not load: its setting 'place' is 'SDL3_PLACE_EDGE', which the enum of the field it names has no constant for 0 0",
+    "not loaded: m/sdl3_video{library}: sdl3:video@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_EDGE"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_CENTER"
+'''
