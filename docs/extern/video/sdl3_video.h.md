@@ -20,7 +20,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 | Key | Default | Reason |
 | --- | --- | --- |
 | `scratch` | `4096` | The declarations of the four types of `init`, and the value of `sdl3:Window` that it attaches. |
-| `log_ring` | `256` | Room for 8 records of 32 bytes. The module writes at most one line in a call. |
+| `log_ring` | `256` | Room for 8 records of 32 bytes. A run of `window` writes at most 7 lines, one for each setting that it cannot change. |
 | `spans` | `1024` | A cell for each of the four types in each table, and the spans of the system. |
 | `spawns` | `"none"` | The module makes no entity. |
 | `changes` | `96` | The attach of `sdl3:Window` in `init`: 24 bytes, and its value of 72 bytes. |
@@ -35,10 +35,18 @@ The file of the module is `sdl3_video`, with the suffix of a library. It runs on
 
 | System | Phase | What it does |
 | --- | --- | --- |
-| `window` | `input` | At its first run, it opens the window with the settings, and on macOS its Metal view. At each run, it takes the window events, and writes `sdl3:Window`. |
+| `window` | `input` | At its first run, it opens the window with the settings, and on macOS its Metal view. At each later run, it asks SDL3 for each setting that changed. At each run, it takes the window events, and writes `sdl3:Window`. |
 
 The settings come after `init`, so the window opens at the first run of `window`.
 If the window does not open, `window` tries again at its next run, until `max_system_failures` stops the module.
+
+`sdl3:WindowSettings` is the wanted state of the window, and `sdl3:Window` is its real state.
+At each run after the open, `window` compares each setting with its value at the last run. It asks SDL3 for each one that changed: the title, the size, `hidden`, `resizable`, `fullscreen` and the place.
+SDL3 can apply a request later, and the windowing system can refuse it. Thus a change shows in `sdl3:Window` only when the window really has it.
+
+A change that the user makes, for example a new size with the mouse, changes `sdl3:Window` and not the settings.
+`high_dpi` acts only when the window opens. A later change of it does nothing, and `window` writes a line.
+
 When the window is asked to close, `window` sets `closed`, and sets `surface` to `SDL3_SURFACE_NONE` and each handle to 0, in that round.
 At its next run, it destroys the Metal view on macOS, and then the window.
 The full name of the system for `[order]` is `sdl3:video:window`.
@@ -46,6 +54,7 @@ The full name of the system for `[order]` is `sdl3:video:window`.
 ## sdl3:WindowSettings
 
 `sdl3:WindowSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
+After the load, a system with a grant to write it can change it at each round: *The system* tells what follows.
 
 | Field | C type | Value |
 | --- | --- | --- |
@@ -77,6 +86,8 @@ The full name of the system for `[order]` is `sdl3:video:window`.
 | `surface` | `sdl3_surface_t` | The kind of the window: *sdl3:sdl3_surface_t*. |
 | `width`, `height` | `uint32_t` | The size of the frame, in pixels. |
 | `closed` | `bool` | `true` from the round in which the window is asked to close. |
+| `fullscreen` | `bool` | `true` while the window covers the screen. |
+| `hidden` | `bool` | `true` while the window does not show. |
 | `hinstance`, `hwnd` | `uint64_t` | On Windows: the instance of the program, and the window. |
 | `layer` | `uint64_t` | On macOS: the `CAMetalLayer` of the Metal view of the window. |
 | `x11_display`, `x11_window` | `uint64_t` | On X11: the display, and the number of the window. |
@@ -116,6 +127,7 @@ The app copies `sdl3:Window` into the window of a renderer, for example `webgpu:
 - `[module."sdl3:video@1.0.0".phases]` can map these phases to other names.
 - `live = true`, because a round with no change and no record ends a run that is not live.
 - A module that reads the window needs `read = ["sdl3:Window"]` in its table.
+- A module that changes the window, for example the app, needs `write = ["sdl3:WindowSettings"]` in its table. Two such modules need an `order`.
 - A deployment gives the settings in `[module."sdl3:video@1.0.0".config]`.
 - A deployment holds one SDL3 library, beside the SDL3 modules, so that each module loads that one library.
 - The SDL3 library is no module, so `content.ignore` names it.
@@ -127,3 +139,5 @@ The readme of Bridge-Host tells each key of a deployment.
 
 - `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
 - `no window: <reason>`: the window, or its Metal view on macOS, does not open. `<reason>` is the text of `SDL_GetError`. The system then gives 1. The module writes it at the level 3.
+- `no change of <setting>: <reason>`: SDL3 refuses to change the window for a setting. `<setting>` is the name of the setting, and `<reason>` is the text of `SDL_GetError`. The window keeps its state, and the system gives 0. The module writes it at the level 4.
+- `no change of high_dpi: it acts only when the window opens`: a system changed `high_dpi` after the open. The module writes it at the level 4.
