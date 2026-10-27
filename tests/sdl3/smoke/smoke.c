@@ -4,6 +4,7 @@
 ** Under the GNU Affero General Public License, version 3 only: see license.
 */
 #include <stdio.h>
+#include <string.h>
 
 #include <SDL3/SDL.h>
 
@@ -58,11 +59,23 @@ static int read_back(float red)
     return (0);
 }
 
-int main(int argc, [[maybe_unused]] char **argv)
+static int print_version(void)
 {
-    SDL_Window *window = open_window();
+    int version = SDL_GetVersion();
+
+    printf("sdl %d.%d.%d\n", SDL_VERSIONNUM_MAJOR(version),
+        SDL_VERSIONNUM_MINOR(version), SDL_VERSIONNUM_MICRO(version));
+    return (0);
+}
+
+int main(int argc, char **argv)
+{
+    SDL_Window *window;
     int status;
 
+    if (argc > 1 && strcmp(argv[1], "version") == 0)
+        return (print_version());
+    window = open_window();
     if (!window) {
         printf("no window: %s\n", SDL_GetError());
         return (1);
