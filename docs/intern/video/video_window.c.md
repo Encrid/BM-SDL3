@@ -9,6 +9,7 @@ This file holds the systems `window` and `present`: the window, its context, its
 ```pseudo
 FUNCTION bridge_window(s : WindowSettings, w : Window) RETURNS I32
    IF w.closed THEN
+      CALL close_window()
       RETURN 0
    ENDIF
    IF w.gl_proc = 0 THEN
@@ -29,6 +30,7 @@ ENDPROCEDURE
 ```
 
 A window that closed never opens again, because `closed` comes first.
+`close_window` destroys the context and the window at the first run after the close. The next runs find nothing to destroy.
 `take_events` takes the whole range of the window, so no event of the window stays in the queue.
 
 ## The opening
@@ -39,7 +41,7 @@ A window that closed never opens again, because `closed` comes first.
 2. It makes the window with `title`, `width`, `height` and the flags.
 3. It moves the window when `place` is `center` or `at`.
 4. It makes the context of GL, which becomes the current context of the thread.
-5. It sets the swap interval of `vsync`, and writes `no swap interval` when the driver refuses it.
+5. It sets the swap interval of `vsync`, and goes on when the driver refuses it.
 6. It writes `gl_proc`, the size of the frame in pixels, and `samples`.
 
 If step 2 or step 4 fails, `open_window` destroys what it made, writes `no window` and the error of SDL3, and gives 1.
@@ -67,6 +69,7 @@ In the round of the close, it does not swap, because the renderer stopped its GL
 | Function | Result |
 | --- | --- |
 | `bridge_window` | Opens the window at its first run, then writes `sdl3:Window` at each round. Gives 0, or 1 when the window does not open. |
+| `close_window` | Destroys what is left of the window and of its context. |
 | `take_events` | Reads the close and the size of the window, and takes the events of the window. |
 | `open_window` | Makes the window and its context. Gives 0, or 1 when one of them fails. |
 | `set_attributes` | Gives the attributes of GL to SDL3, and gives the flags of the window. |

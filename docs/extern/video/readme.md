@@ -1,6 +1,6 @@
 # BM-SDL3-Video
 
-The video of SDL3 as a Bridge module: the window and its GL 4.1 core context.
+The video of SDL3 as a Bridge module: one window, and its native handles for a WebGPU surface.
 
 ## Install
 
@@ -21,7 +21,7 @@ Python 3.11 or a later version.
 | `python project.py clean` | Removes what the build made. Keeps what `fetch` downloaded. |
 | `python project.py distclean` | Removes the folder `build`, also what `fetch` downloaded. |
 
-The module `sdl3:video@1.0.0` runs on Bridge-Host with BB-Native. `docs/extern/sdl3_video.h.md` tells its components, its systems and its deployment.
+The module `sdl3:video@1.0.0` runs on Bridge-Host with BB-Native. `docs/extern/sdl3_video.h.md` tells its components, its system and its deployment.
 
 ## Contributing
 
