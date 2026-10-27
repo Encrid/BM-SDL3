@@ -8,6 +8,7 @@ A release ships the file as `leaks.toml`, and each SDL3 module names it in `[lea
 | Takes | Gives back |
 | --- | --- |
 | `SDL_CreateWindow` | `SDL_DestroyWindow` |
+| `SDL_Metal_CreateView` | `SDL_Metal_DestroyView` |
 | `SDL_GL_CreateContext` | `SDL_GL_DestroyContext` |
 | `SDL_CreateSystemCursor` | `SDL_DestroyCursor` |
 | `SDL_GetWindows` | `SDL_free` |
