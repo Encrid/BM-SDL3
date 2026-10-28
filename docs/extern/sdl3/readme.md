@@ -37,7 +37,7 @@ These rules let several modules share the one SDL3 of a process:
 
 - Each SDL3 module loads this SDL3 library, so all of them use one queue of events and one state.
 - Only the module `sdl3:events` calls `SDL_PumpEvents`, on the main thread, at the start of each round.
-- Each other module takes only the types of event that it covers, with `SDL_PeepEvents`.
+- Each other module takes only the types of event that it covers: with `SDL_PeepEvents`, or with `SDL_FlushEvents` when it reads no field of them.
 - No module calls `SDL_PollEvent` or `SDL_WaitEvent`, because they take the events of each module.
 
 ## Contributing
