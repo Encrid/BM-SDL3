@@ -6,6 +6,9 @@ timeout = 120
 copies = 1
 writers = ["bridge_native_say"]
 
+[ci]
+needs = ["display"]
+
 [[style.exception]]
 rule = "G4"
 path = "src/video_window.c"
