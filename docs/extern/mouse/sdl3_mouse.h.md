@@ -9,7 +9,7 @@ It does not cover more than one mouse, or a cursor that an image makes.
 | Word of the manifest | Value |
 | --- | --- |
 | The identity | `sdl3:mouse@1.0.0` |
-| `abi` | `1` |
+| `abi` | `2` |
 | `config` | `sdl3:MouseSettings` |
 | `settings` | `natural` |
 | `pinned` | `true`, because SDL3 gives the mouse events on the main thread. |
@@ -44,7 +44,7 @@ After the load, a system with a grant to write it can change it at each round. `
 
 | Field | C type | Value |
 | --- | --- | --- |
-| `natural` | `bool` | `true`: `wheel_y` keeps the direction that the system gives. The default is `false`. |
+| `natural` | `bool` | `true`: the wheel keeps the sign that the system gives: *sdl3:Mouse*. The default is `false`. |
 
 ## sdl3:Mouse
 
@@ -84,7 +84,7 @@ When `relative` changes on the window with the keyboard focus, SDL3 drops the mo
 
 ## The deployment
 
-- The module needs `sdl3:events`, and `sdl3:video` for a window that takes the mouse.
+- The module opens no window, and it does not pump the queue. So it needs `sdl3:events`, and a module that opens a window that takes the mouse, for example `sdl3:video`.
 - A module that reads the mouse needs `read = ["sdl3:Mouse"]`, and the module that sets the cursor needs `write = ["sdl3:Cursor"]`.
 - A module that changes the setting, for example the app, needs `write = ["sdl3:MouseSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:mouse@1.0.0".config]`.

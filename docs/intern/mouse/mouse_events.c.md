@@ -25,7 +25,10 @@ PROCEDURE apply_event(m : Mouse, e : Event, natural : BOOLEAN)
 ENDPROCEDURE
 
 PROCEDURE apply_motion(m : Mouse, e : MotionEvent)
-   d <- get_density(e.windowID)
+   d <- SDL_GetWindowPixelDensity(SDL_GetWindowFromID(e.windowID))
+   IF d = 0 THEN
+      d <- 1
+   ENDIF
    m.x <- e.x * d
    m.y <- e.y * d
    m.dx <- m.dx + e.xrel * d
@@ -42,8 +45,8 @@ PROCEDURE apply_wheel(m : Mouse, e : WheelEvent, natural : BOOLEAN)
 ENDPROCEDURE
 ```
 
-SDL3 gives the position and the motion in the units of the window. `get_density` gives the pixels in one unit, so each value comes in pixels of the frame.
-`get_density` gives 1 when SDL3 gives 0, for example for a window that is gone.
+SDL3 gives the position and the motion in the units of the window. `SDL_GetWindowPixelDensity` gives the pixels in one unit, so each value comes in pixels of the frame.
+`apply_motion` uses 1 when SDL3 gives 0, for example for a window that is gone.
 `apply_button` keeps a button from 1 to 32 as its bit of `SDL_BUTTON_MASK`, and leaves out each other button.
 A button that goes down sets its bit in `held` and in `pressed`. A button that goes up clears its bit in `held`, and sets it in `released`.
 
@@ -56,4 +59,3 @@ A button that goes down sets its bit in `held` and in `pressed`. A button that g
 | `apply_motion` | Writes the position, and adds the motion, in pixels of the frame. |
 | `apply_button` | Writes the bit of a button in `held`, `pressed` or `released`. |
 | `apply_wheel` | Adds the turn of the wheel, in the direction that `natural` tells. |
-| `get_density` | Gives the pixel density of the window of an event, or 1. |
