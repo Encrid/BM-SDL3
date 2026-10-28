@@ -32,7 +32,17 @@ typedef struct {
     const char *text;
 } step_t;
 
+typedef struct {
+    const char *scene;
+    uint32_t round;
+    bool text;
+    bool repeat;
+} write_t;
+
 constexpr SDL_EventType OPEN = SDL_EVENT_FIRST;
+constexpr SDL_EventType START = (SDL_EventType)1;
+constexpr SDL_EventType QUEUE = (SDL_EventType)2;
+constexpr SDL_EventType PUMP = (SDL_EventType)3;
 constexpr uint32_t WINDOWS = 2;
 
 [[gnu::section(MANIFEST_SECTION), gnu::used, gnu::retain]]
@@ -48,7 +58,9 @@ static const scene_t SCENES[] = {
     { "quiet", 1, 4 }, { "keys", 4, 4 }, { "mods", 1, 4 },
     { "edge", 1, 511 }, { "over", 1, 511 }, { "range", 1, 4 },
     { "windows", 1, 4 }, { "later", 2, 4 }, { "typed", 2, 4 },
-    { "cut", 4, 4 }
+    { "cut", 4, 4 }, { "started", 1, 4 }, { "stop", 2, 4 },
+    { "stay", 2, 4 }, { "repeat", 2, 4 }, { "held", 2, 4 },
+    { "waiting", 2, 4 }, { "pumped", 1, 4 }
 };
 
 static const step_t STEPS[] = {
@@ -76,7 +88,22 @@ static const step_t STEPS[] = {
     { "cut", 3, SDL_EVENT_TEXT_INPUT, 0, 0, false, "c" },
     { "cut", 4, SDL_EVENT_TEXT_INPUT, 0, 0, false, B40 },
     { "cut", 4, SDL_EVENT_TEXT_INPUT, 0, 0, false, B23 },
-    { "cut", 4, SDL_EVENT_TEXT_INPUT, 0, 0, false, "c" }
+    { "cut", 4, SDL_EVENT_TEXT_INPUT, 0, 0, false, "c" },
+    { "started", 1, OPEN, 0, 0, false, nullptr },
+    { "started", 1, OPEN, 0, 0, false, nullptr },
+    { "started", 1, START, 0, 0, false, nullptr },
+    { "stop", 1, OPEN, 0, 0, false, nullptr },
+    { "stop", 1, OPEN, 0, 0, false, nullptr },
+    { "stay", 1, OPEN, 0, 0, false, nullptr },
+    { "stay", 1, OPEN, 0, 0, false, nullptr },
+    { "repeat", 1, SDL_EVENT_KEY_DOWN, 4, 0, false, nullptr },
+    { "repeat", 2, SDL_EVENT_KEY_DOWN, 4, 0, true, nullptr },
+    { "held", 1, SDL_EVENT_KEY_DOWN, 4, 0, false, nullptr },
+    { "held", 2, SDL_EVENT_KEY_DOWN, 4, 0, true, nullptr },
+    { "waiting", 1, QUEUE, 4, 0, false, nullptr },
+    { "waiting", 2, PUMP, 0, 0, false, nullptr },
+    { "pumped", 1, QUEUE, 4, 0, false, nullptr },
+    { "pumped", 1, PUMP, 0, 0, false, nullptr }
 };
 
 static uint32_t scene_slot;
@@ -84,6 +111,29 @@ static uint32_t keyboard_slot;
 static uint32_t round_now;
 static SDL_Window *windows[WINDOWS];
 static uint32_t window_count;
+
+#ifdef WRITE
+constexpr uint32_t DRIVE_TERMS = 2;
+
+static const write_t WRITES[] = {
+    { "stop", 2, false, false }, { "repeat", 2, true, true }
+};
+
+static uint32_t settings_slot;
+
+static void write_settings(const bridge_api_t *api, const test_scene_t *on)
+{
+    sdl3_keyboard_settings_t *settings = bridge_native_get_single(api,
+        settings_slot);
+
+    for (size_t i = 0; settings && i < sizeof(WRITES) / sizeof(WRITES[0]); i++)
+        if (WRITES[i].round == round_now && !strcmp(WRITES[i].scene, on->scene))
+            *settings = (sdl3_keyboard_settings_t){ .text = WRITES[i].text,
+                .repeat = WRITES[i].repeat };
+}
+#else
+constexpr uint32_t DRIVE_TERMS = 1;
+#endif
 
 static void say(const bridge_api_t *api, const char *label, uint32_t a0,
     uint32_t a1)
@@ -115,14 +165,16 @@ static void close_windows(void)
     window_count = 0;
 }
 
-static void do_step(const step_t *s)
+static void start_windows(void)
+{
+    for (uint32_t i = 0; i < window_count; i++)
+        SDL_StartTextInput(windows[i]);
+}
+
+static void push_step(const step_t *s)
 {
     SDL_Event ev = { .type = s->type };
 
-    if (s->type == OPEN) {
-        open_window();
-        return;
-    }
     if (s->type == SDL_EVENT_KEY_DOWN || s->type == SDL_EVENT_KEY_UP)
         ev.key = (SDL_KeyboardEvent){ .type = s->type, .scancode = s->code,
             .mod = s->mod, .down = s->type == SDL_EVENT_KEY_DOWN,
@@ -132,6 +184,36 @@ static void do_step(const step_t *s)
     if (s->type == SDL_EVENT_TEXT_EDITING)
         ev.edit.text = s->text;
     SDL_PushEvent(&ev);
+}
+
+static void SDLCALL push_queued(void *data)
+{
+    const step_t *s = data;
+    SDL_Event ev = { .key = { .type = SDL_EVENT_KEY_DOWN,
+        .scancode = s->code, .down = true } };
+
+    SDL_PushEvent(&ev);
+}
+
+static int SDLCALL queue_from_helper(void *data)
+{
+    SDL_RunOnMainThread(push_queued, data, false);
+    return (0);
+}
+
+static void do_step(const step_t *s)
+{
+    if (s->type == OPEN)
+        open_window();
+    if (s->type == START)
+        start_windows();
+    if (s->type == QUEUE)
+        SDL_WaitThread(SDL_CreateThread(queue_from_helper, "probe",
+            (void *)s), nullptr);
+    if (s->type == PUMP)
+        SDL_PumpEvents();
+    if (s->type > PUMP)
+        push_step(s);
 }
 
 static uint32_t count_set(const void *at, size_t len)
@@ -204,6 +286,10 @@ BRIDGE_NATIVE(drive)
     const test_scene_t *on = bridge_native_get_single(api, scene_slot);
 
     round_now++;
+#ifdef WRITE
+    if (on)
+        write_settings(api, on);
+#endif
     for (size_t i = 0; on && i < sizeof(STEPS) / sizeof(STEPS[0]); i++)
         if (STEPS[i].round == round_now && !strcmp(STEPS[i].scene, on->scene))
             do_step(&STEPS[i]);
@@ -237,7 +323,8 @@ BRIDGE_NATIVE(check)
 
 BRIDGE_NATIVE(init)
 {
-    bridge_term_t drive[1] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 } };
+    bridge_term_t drive[2] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
+        { 0, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     bridge_term_t check[2] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
         { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 } };
 
@@ -250,10 +337,16 @@ BRIDGE_NATIVE(init)
         BRIDGE_STRIP, BRIDGE_SINGLETON);
     keyboard_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Keyboard",
         sdl3_keyboard_t, BRIDGE_STRIP, BRIDGE_SINGLETON);
+#ifdef WRITE
+    settings_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:KeyboardSettings",
+        sdl3_keyboard_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON);
+    drive[1].slot = settings_slot;
+#endif
     drive[0].slot = scene_slot;
     check[0].slot = scene_slot;
     check[1].slot = keyboard_slot;
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, 1, nullptr, 0);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, DRIVE_TERMS,
+        nullptr, 0);
     BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2, nullptr, 0);
     return (0);
 }

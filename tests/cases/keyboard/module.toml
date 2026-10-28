@@ -99,6 +99,42 @@ native = "{bb_native}/bridge_native"
 "{case}/m" = ["sdl3_keyboard", "probe"]
 
 [[case]]
+name = "the module opens no window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 input 0 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "windows"
+'''
+
+[[case]]
 name = "init attaches a sdl3:Keyboard of zeros"
 run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 env = { SDL_VIDEO_DRIVER = "dummy" }

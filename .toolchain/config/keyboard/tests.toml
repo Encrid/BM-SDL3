@@ -1,6 +1,6 @@
 [variables]
 probe_words = [
-    "abi=1", "config=test:Scene", "settings=scene module", "pinned=true", "reloadable=false",
+    "abi=2", "config=test:Scene", "settings=scene module", "pinned=true", "reloadable=false",
     "scratch=8192", "log_ring=512", "spans=4096", "spawns=none", "changes=none", "persistent=none",
     "hot_reload=false", "config.scene=none", "config.module=none",
 ]
@@ -19,3 +19,8 @@ manifest = ["test:probe@1.0.0", "{probe_words}"]
 name = "holder"
 defines = ["HOLD"]
 manifest = ["test:holder@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "writer"
+defines = ["WRITE"]
+manifest = ["test:writer@1.0.0", "{probe_words}"]

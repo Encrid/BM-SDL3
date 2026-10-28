@@ -37,7 +37,7 @@ text = false
 '''
 
 [[case]]
-name = "text false starts no text input"
+name = "text false stops the text input on each window"
 run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 env = { SDL_VIDEO_DRIVER = "dummy" }
 
@@ -57,7 +57,7 @@ ignore = ["m/SDL3{library}"]
 [backend]
 native = "{bb_native}/bridge_native"
 [module."test:probe@1.0.0".config]
-scene = "windows"
+scene = "started"
 [module."sdl3:keyboard@1.0.0".config]
 text = false
 '''
@@ -71,9 +71,58 @@ ignore = ["m/SDL3{library}"]
 [backend]
 native = "{bb_native}/bridge_native"
 [module."test:probe@1.0.0".config]
-scene = "windows"
+scene = "started"
 [module."sdl3:keyboard@1.0.0".config]
 text = true
+'''
+
+[[case]]
+name = "a writer that sets text false at a later round stops the text input on each window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:writer@1.0.0/check: r1 input 2 2",
+    "record[6] test:writer@1.0.0/check: r2 input 0 2",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_keyboard", "writer", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["drive", "input", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Keyboard"]
+write = ["sdl3:KeyboardSettings"]
+[module."test:writer@1.0.0".config]
+scene = "stop"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["drive", "input", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Keyboard"]
+write = ["sdl3:KeyboardSettings"]
+[module."test:writer@1.0.0".config]
+scene = "stay"
 '''
 
 [[case]]

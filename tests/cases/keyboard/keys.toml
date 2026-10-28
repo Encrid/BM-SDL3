@@ -332,3 +332,88 @@ native = "{bb_native}/bridge_native"
 [module."test:probe@1.0.0".config]
 scene = "range"
 '''
+
+[[case]]
+name = "a writer that sets repeat true makes a later repeat a hit"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:writer@1.0.0/check: r2 key4 1 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_keyboard", "writer", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["drive", "input", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Keyboard"]
+write = ["sdl3:KeyboardSettings"]
+[module."test:writer@1.0.0".config]
+scene = "repeat"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["drive", "input", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Keyboard"]
+write = ["sdl3:KeyboardSettings"]
+[module."test:writer@1.0.0".config]
+scene = "held"
+'''
+
+[[case]]
+name = "keys takes a key only after a pump that it does not make"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r1 key4 0 0",
+    "record[6] test:probe@1.0.0/check: r2 key4 1 1",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "waiting"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "pumped"
+'''
