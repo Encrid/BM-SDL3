@@ -23,9 +23,11 @@ Python 3.11 or a later version.
 
 Each release holds, for each target, the SDL3 library, the headers of SDL3 in `include/SDL3` and the notices of its sources.
 It also holds `leaks.toml`, which names the resources of SDL3 for `[leaks] with` of a module.
+
 The build keeps each part of SDL3, also GL, Vulkan and the GPU API, so that a module can use any of them.
-SDL3 loads the GL or Vulkan library of the system only when a module asks for it.
-The Metal view of SDL3 gives the CAMetalLayer of a window on macOS.
+SDL3 loads the GL or Vulkan library of the system only for a window or a call that asks for it.
+On macOS, a window that names no graphics API and no external graphics context asks for GL.
+The Metal view of SDL3 gives the CAMetalLayer of a window on macOS. On the other systems, `SDL_Metal_CreateView` gives no view.
 
 The library is `SDL3.dll`, `SDL3.so` or `SDL3.dylib`. Its soname on Linux is `SDL3.so`, and its install name on macOS is `@rpath/SDL3.dylib`.
 A module links the library itself, so the release holds no import library for Windows.
