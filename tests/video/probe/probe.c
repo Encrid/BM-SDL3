@@ -16,51 +16,95 @@
 BRIDGE_SCHEMA_STRUCT_TYPE(test_scene_t, SCENE_FIELDS);
 BRIDGE_SCHEMA_STRUCT_DESC(test_scene_t, SCENE_FIELDS);
 
-typedef struct {
-    const char *name;
-    uint32_t rounds;
-    uint32_t steal;
-    uint32_t depth;
-    uint32_t stencil;
-} scene_t;
+enum act : uint32_t {
+    TITLE = 1,
+    SIZE,
+    HIDDEN,
+    RESIZABLE,
+    FULLSCREEN,
+    PLACE,
+    HIGH_DPI,
+    PUSH,
+    USER_SIZE,
+    MAX_SIZE,
+    OTHER,
+    DETACH,
+    ATTACH
+};
 
 typedef struct {
     const char *scene;
     uint32_t round;
-    SDL_EventType type;
+    enum act act;
+    int64_t a;
+    int64_t b;
+    int64_t c;
+    const char *text;
 } step_t;
 
-typedef SDL_FunctionPointer (*get_proc_t)(const char *name);
-typedef const uint8_t *(*get_string_t)(uint32_t name);
-typedef void (*get_integer_t)(uint32_t name, int32_t *value);
-typedef uint32_t (*get_error_t)(void);
-
-constexpr uint32_t VERSION = 0x1F02;
-constexpr uint32_t PROFILE_MASK = 0x9126;
-constexpr int32_t CORE_BIT = 0x1;
-constexpr uint32_t PROFILE_FROM = 32;
+constexpr uint32_t ROUNDS = 4;
+#ifdef DETACHER
+constexpr uint32_t DETACHES = 2;
+#else
+constexpr uint32_t DETACHES = 0;
+#endif
 
 [[gnu::section(MANIFEST_SECTION), gnu::used, gnu::retain]]
 static const char WHO[] = MANIFEST;
 
-static const scene_t SCENES[] = {
-    { "open", 4, 0, 24, 8 }, { "events", 2, 0, 24, 8 },
-    { "close", 4, 0, 24, 8 }, { "shut", 3, 2, 24, 8 },
-    { "steal", 3, 2, 24, 8 }, { "deeper", 1, 0, 32, 16 }
-};
+static const char A64[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+static const char A62[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
 static const step_t STEPS[] = {
-    { "events", 2, SDL_EVENT_WINDOW_EXPOSED },
-    { "events", 2, SDL_EVENT_WINDOW_MOVED },
-    { "close", 2, SDL_EVENT_WINDOW_CLOSE_REQUESTED },
-    { "shut", 2, SDL_EVENT_WINDOW_CLOSE_REQUESTED }
+    { "events", 2, PUSH, SDL_EVENT_WINDOW_EXPOSED, 0, 0, nullptr },
+    { "events", 2, PUSH, SDL_EVENT_WINDOW_MOVED, 0, 0, nullptr },
+    { "close", 2, PUSH, SDL_EVENT_WINDOW_CLOSE_REQUESTED, 0, 0, nullptr },
+    { "close", 3, TITLE, 0, 0, 0, "again" },
+    { "show", 2, HIDDEN, 0, 0, 0, nullptr },
+    { "hide", 2, HIDDEN, 1, 0, 0, nullptr },
+    { "title", 2, TITLE, 0, 0, 0, "new title" },
+    { "title64", 2, TITLE, 0, 0, 0, A64 },
+    { "title62", 2, TITLE, 0, 0, 0, A62 },
+    { "size", 2, SIZE, 80, 60, 0, nullptr },
+    { "clamp", 2, MAX_SIZE, 70, 50, 0, nullptr },
+    { "clamp", 2, SIZE, 80, 60, 0, nullptr },
+    { "user", 2, USER_SIZE, 80, 60, 0, nullptr },
+    { "resize_on", 2, RESIZABLE, 1, 0, 0, nullptr },
+    { "full", 2, FULLSCREEN, 1, 0, 0, nullptr },
+    { "move_y", 2, PLACE, SDL3_PLACE_AT, 120, 100, nullptr },
+    { "system", 2, PLACE, SDL3_PLACE_SYSTEM, 120, 90, nullptr },
+    { "place7", 2, PLACE, 7, 120, 90, nullptr },
+    { "center", 2, PLACE, SDL3_PLACE_CENTER, 120, 90, nullptr },
+    { "move_xy", 2, PLACE, SDL3_PLACE_CENTER, 130, 100, nullptr },
+    { "move_at", 2, PLACE, SDL3_PLACE_AT, 130, 100, nullptr },
+    { "dpi", 2, HIGH_DPI, 0, 0, 0, nullptr },
+    { "flat", 2, SIZE, 64, 0, 0, nullptr },
+    { "tall", 2, SIZE, 64, 40, 0, nullptr },
+    { "flat_twice", 2, SIZE, 64, 0, 0, nullptr },
+    { "flat_twice", 3, SIZE, 64, 48, 0, nullptr },
+    { "flat_twice", 4, SIZE, 64, 0, 0, nullptr },
+    { "wide", 2, SIZE, 2147483648, 48, 0, nullptr },
+    { "grow_center", 2, SIZE, 80, 60, 0, nullptr },
+    { "grow_center", 2, PLACE, SDL3_PLACE_CENTER, 120, 90, nullptr },
+    { "center_grow", 2, PLACE, SDL3_PLACE_CENTER, 120, 90, nullptr },
+    { "center_grow", 3, SIZE, 80, 60, 0, nullptr },
+    { "detach_window", 2, DETACH, 0, 0, 0, nullptr },
+    { "detach_window", 2, PUSH, SDL_EVENT_WINDOW_EXPOSED, 0, 0, nullptr },
+    { "reattach", 2, DETACH, 0, 0, 0, nullptr },
+    { "reattach", 3, ATTACH, 0, 0, 0, nullptr },
+    { "detach_settings", 2, DETACH, 1, 0, 0, nullptr },
+    { "detach_settings", 2, PUSH, SDL_EVENT_WINDOW_EXPOSED, 0, 0, nullptr },
+    { "other", 2, OTHER, 1, 0, 0, nullptr },
+    { "other_quiet", 2, OTHER, 0, 0, 0, nullptr }
 };
 
 static uint32_t scene_slot;
+static uint32_t settings_slot;
 static uint32_t window_slot;
 static uint32_t round_now;
-static SDL_Window *taken_window;
-static SDL_GLContext taken_context;
+static SDL_Window *own_window;
 
 static void say(const bridge_api_t *api, const char *label, uint32_t a0,
     uint32_t a1)
@@ -73,61 +117,157 @@ static void say(const bridge_api_t *api, const char *label, uint32_t a0,
     bridge_native_log(api, BRIDGE_LOG_INFO, &line);
 }
 
-static uint32_t count_set(const void *at, size_t len)
+static uint32_t count_fields(const sdl3_window_t *w)
 {
-    const uint8_t *bytes = at;
+    const uint64_t fields[] = { w->surface, w->width, w->height, w->closed,
+        w->fullscreen, w->hidden, w->hinstance, w->hwnd, w->layer,
+        w->x11_display, w->x11_window, w->wl_display, w->wl_surface };
     uint32_t set = 0;
 
-    for (size_t i = 0; i < len; i++)
-        set += bytes[i] != 0;
+    for (size_t i = 0; i < sizeof(fields) / sizeof(fields[0]); i++)
+        set += fields[i] != 0;
     return (set);
 }
 
-static void push_event(SDL_EventType type)
+static SDL_Window *find_window(uint32_t *count)
+{
+    int all = 0;
+    SDL_Window **list = SDL_GetWindows(&all);
+    SDL_Window *found = nullptr;
+    uint32_t theirs = 0;
+
+    for (int i = 0; list && i < all; i++) {
+        if (list[i] == own_window)
+            continue;
+        found = list[i];
+        theirs++;
+    }
+    SDL_free(list);
+    if (count)
+        *count = theirs;
+    return (found);
+}
+
+static bool is_scene(const char *name)
+{
+    if (!strcmp(name, "open"))
+        return (true);
+    for (size_t i = 0; i < sizeof(STEPS) / sizeof(STEPS[0]); i++)
+        if (!strcmp(STEPS[i].scene, name))
+            return (true);
+    return (false);
+}
+
+static void push_event(Uint32 type, SDL_Window *window)
 {
     SDL_Event ev = { .type = type };
 
-    ev.window.windowID = SDL_GetWindowID(SDL_GL_GetCurrentWindow());
+    ev.window.windowID = window ? SDL_GetWindowID(window) : 0;
     SDL_PushEvent(&ev);
 }
 
-static void take_context(void)
+static void open_other(bool close)
 {
-    taken_window = SDL_GL_GetCurrentWindow();
-    taken_context = SDL_GL_GetCurrentContext();
-    if (taken_context)
-        SDL_GL_MakeCurrent(nullptr, nullptr);
+    own_window = SDL_CreateWindow("other", 32, 32, SDL_WINDOW_HIDDEN);
+    if (own_window && close)
+        push_event(SDL_EVENT_WINDOW_CLOSE_REQUESTED, own_window);
 }
 
-static void give_context(const bridge_api_t *api)
+static void write_title(sdl3_window_settings_t *s, const char *text)
 {
-    say(api, "swap", SDL_GetError()[0] != 0, 0);
-    SDL_GL_MakeCurrent(taken_window, taken_context);
-    taken_context = nullptr;
+    size_t len = strlen(text);
+
+    if (len > sizeof(s->title))
+        len = sizeof(s->title);
+    memcpy(s->title, text, len);
+    if (len < sizeof(s->title))
+        s->title[len] = 0;
 }
 
-static uint32_t get_proc_kind(const sdl3_window_t *w)
+static void write_setting(sdl3_window_settings_t *s, const step_t *step)
 {
-    get_proc_t proc = (get_proc_t)(uintptr_t)w->gl_proc;
-    SDL_FunctionPointer want = nullptr;
-
-    if (!proc)
-        return (0);
-    want = SDL_GL_GetProcAddress("glGetString");
-    return (want && proc("glGetString") == want ? 1 : 2);
+    if (step->act == TITLE)
+        write_title(s, step->text);
+    if (step->act == SIZE) {
+        s->width = (uint32_t)step->a;
+        s->height = (uint32_t)step->b;
+    }
+    if (step->act == HIDDEN)
+        s->hidden = step->a != 0;
+    if (step->act == RESIZABLE)
+        s->resizable = step->a != 0;
+    if (step->act == FULLSCREEN)
+        s->fullscreen = step->a != 0;
+    if (step->act == PLACE) {
+        s->place = (sdl3_place_t)step->a;
+        s->x = (int32_t)step->b;
+        s->y = (int32_t)step->c;
+    }
+    if (step->act == HIGH_DPI)
+        s->high_dpi = !s->high_dpi;
 }
 
-static void say_state(const bridge_api_t *api, const sdl3_window_t *w)
+static void attach_zeros(const bridge_api_t *api)
 {
-    int count = 0;
-    SDL_Window **list = SDL_GetWindows(&count);
+    sdl3_window_t zeros = {};
 
-    SDL_free(list);
-    say(api, "window", get_proc_kind(w), w->closed);
+    BRIDGE_NATIVE_ATTACH(api, 0, window_slot, zeros);
+}
+
+static void do_step(const bridge_api_t *api, const step_t *step,
+    sdl3_window_settings_t *s, SDL_Window *window)
+{
+    if (step->act == PUSH)
+        push_event((Uint32)step->a, window);
+    if (step->act == USER_SIZE && window)
+        SDL_SetWindowSize(window, (int)step->a, (int)step->b);
+    if (step->act == MAX_SIZE && window)
+        SDL_SetWindowMaximumSize(window, (int)step->a, (int)step->b);
+    if (step->act == OTHER)
+        open_other(step->a != 0);
+    if (step->act == DETACH)
+        api->detach(api, 0, step->a ? settings_slot : window_slot);
+    if (step->act == ATTACH)
+        attach_zeros(api);
+    if (step->act <= HIGH_DPI && s)
+        write_setting(s, step);
+}
+
+static bool has_handles(const sdl3_window_t *w, SDL_Window *window)
+{
+    SDL_PropertiesID p = SDL_GetWindowProperties(window);
+    const uint64_t want[] = {
+        (uintptr_t)SDL_GetPointerProperty(p,
+            SDL_PROP_WINDOW_WIN32_INSTANCE_POINTER, nullptr),
+        (uintptr_t)SDL_GetPointerProperty(p,
+            SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr),
+        (uintptr_t)SDL_GetPointerProperty(p,
+            SDL_PROP_WINDOW_X11_DISPLAY_POINTER, nullptr),
+        (uint64_t)SDL_GetNumberProperty(p,
+            SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0),
+        (uintptr_t)SDL_GetPointerProperty(p,
+            SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, nullptr),
+        (uintptr_t)SDL_GetPointerProperty(p,
+            SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, nullptr) };
+    const uint64_t got[] = { w->hinstance, w->hwnd, w->x11_display,
+        w->x11_window, w->wl_display, w->wl_surface };
+    uint64_t any = w->layer;
+
+    for (size_t i = 0; i < sizeof(got) / sizeof(got[0]); i++)
+        any |= got[i];
+    return (!memcmp(want, got, sizeof(want)) && any != 0
+        && (w->layer != 0) == (w->surface == SDL3_SURFACE_METAL));
+}
+
+static void say_value(const bridge_api_t *api, const sdl3_window_t *w,
+    SDL_Window *window)
+{
+    say(api, "state", w->surface, w->closed);
+    say(api, "fields", count_fields(w), 0);
     say(api, "frame", w->width, w->height);
-    say(api, "windows", (uint32_t)count, SDL_GL_GetCurrentContext() != nullptr);
-    say(api, "queue", SDL_HasEvents(SDL_EVENT_WINDOW_FIRST,
-        SDL_EVENT_WINDOW_LAST), 0);
+    say(api, "flags", w->fullscreen, w->hidden);
+    if (window)
+        say(api, "surface", w->surface, has_handles(w, window));
 }
 
 static void say_flags(const bridge_api_t *api, SDL_Window *window)
@@ -140,6 +280,8 @@ static void say_flags(const bridge_api_t *api, SDL_Window *window)
     say(api, "resizable", (flags & SDL_WINDOW_RESIZABLE) != 0, 0);
     say(api, "fullscreen", (flags & SDL_WINDOW_FULLSCREEN) != 0, 0);
     say(api, "high_dpi", (flags & SDL_WINDOW_HIGH_PIXEL_DENSITY) != 0, 0);
+    say(api, "graphics", (flags & SDL_WINDOW_OPENGL) != 0,
+        (flags & SDL_WINDOW_METAL) != 0);
     snprintf(label, sizeof(label), "title \"%.63s\"", title);
     say(api, label, (uint32_t)strlen(title), 0);
 }
@@ -163,80 +305,23 @@ static void say_place(const bridge_api_t *api, SDL_Window *window)
         y == area.y + (area.h - h) / 2);
 }
 
-static void say_profile(const bridge_api_t *api)
+static void say_window(const bridge_api_t *api,
+    const sdl3_window_settings_t *s, const sdl3_window_t *w)
 {
-    int profile = 0;
-    int flags = 0;
+    uint32_t count = 0;
+    SDL_Window *window = find_window(&count);
 
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &profile);
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_FLAGS, &flags);
-    say(api, "profile", (uint32_t)profile, (uint32_t)flags);
-}
-
-static void say_version(const bridge_api_t *api)
-{
-    get_string_t get_string = (get_string_t)SDL_GL_GetProcAddress(
-        "glGetString");
-    get_integer_t get_integer = (get_integer_t)SDL_GL_GetProcAddress(
-        "glGetIntegerv");
-    get_error_t get_error = (get_error_t)SDL_GL_GetProcAddress("glGetError");
-    int asked[2] = {};
-    uint32_t got[2] = {};
-    int32_t mask = 0;
-
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &asked[0]);
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &asked[1]);
-    sscanf((const char *)get_string(VERSION), "%u.%u", &got[0], &got[1]);
-    if (got[0] * 10 + got[1] >= PROFILE_FROM)
-        get_integer(PROFILE_MASK, &mask);
-    get_error();
-    say(api, "asked", (uint32_t)asked[0], (uint32_t)asked[1]);
-    say(api, "got", got[0] * 10 + got[1]
-        >= (uint32_t)(asked[0] * 10 + asked[1]), (mask & CORE_BIT) != 0);
-}
-
-static void say_buffers(const bridge_api_t *api, const sdl3_window_t *w,
-    const scene_t *scene)
-{
-    int depth = 0;
-    int stencil = 0;
-    int samples = 0;
-    int twice = 0;
-    int interval = 0;
-    bool known = SDL_GL_GetSwapInterval(&interval);
-
-    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &depth);
-    SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &stencil);
-    SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &samples);
-    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &twice);
-    say(api, "depth", (uint32_t)depth >= scene->depth,
-        (uint32_t)stencil >= scene->stencil);
-    say(api, "samples", w->samples, w->samples == (uint32_t)samples);
-    say(api, "double", (uint32_t)twice, 0);
-    say(api, "interval", (uint32_t)interval, known);
-}
-
-static void say_window(const bridge_api_t *api, const sdl3_window_t *w,
-    const scene_t *scene)
-{
-    SDL_Window *window = SDL_GL_GetCurrentWindow();
-
-    say_state(api, w);
-    if (!window || !SDL_GL_GetCurrentContext())
+    if (w)
+        say_value(api, w, window);
+    say(api, "windows", count, 0);
+    say(api, "queue", SDL_HasEvents(SDL_EVENT_WINDOW_FIRST,
+        SDL_EVENT_WINDOW_LAST), 0);
+    if (s)
+        say(api, "wanted", s->width, s->height);
+    if (!window)
         return;
     say_flags(api, window);
     say_place(api, window);
-    say_profile(api);
-    say_version(api);
-    say_buffers(api, w, scene);
-}
-
-static const scene_t *find_scene(const char *name)
-{
-    for (size_t i = 0; i < sizeof(SCENES) / sizeof(SCENES[0]); i++)
-        if (!strcmp(SCENES[i].name, name))
-            return (&SCENES[i]);
-    return (nullptr);
 }
 
 static int call_reload(const char *path)
@@ -263,62 +348,95 @@ static void say_reload_or_video(const bridge_api_t *api,
         say(api, "video", SDL_WasInit(SDL_INIT_VIDEO) != 0, 0);
 }
 
+static void close_other(void)
+{
+    if (own_window)
+        SDL_DestroyWindow(own_window);
+    own_window = nullptr;
+}
+
 BRIDGE_NATIVE(drive)
 {
     const test_scene_t *on = bridge_native_get_single(api, scene_slot);
+    sdl3_window_settings_t *s = bridge_native_get_single(api, settings_slot);
     const sdl3_window_t *w = bridge_native_get_single(api, window_slot);
+    SDL_Window *window = find_window(nullptr);
 
     round_now++;
-    if (taken_context)
-        give_context(api);
-    say(api, "before", w != nullptr, w ? count_set(w, sizeof(*w)) : 0);
+    if (window)
+        SDL_SyncWindow(window);
+    SDL_PumpEvents();
+    say(api, "before", w ? w->surface : 0, w ? count_fields(w) : 0);
     for (size_t i = 0; on && i < sizeof(STEPS) / sizeof(STEPS[0]); i++)
         if (STEPS[i].round == round_now && !strcmp(STEPS[i].scene, on->scene))
-            push_event(STEPS[i].type);
+            do_step(api, &STEPS[i], s, window);
     return (0);
 }
 
 BRIDGE_NATIVE(check)
 {
     const test_scene_t *on = bridge_native_get_single(api, scene_slot);
-    const scene_t *scene = on ? find_scene(on->scene) : nullptr;
-    const sdl3_window_t *w = bridge_native_get_single(api, window_slot);
+    bool known = on && is_scene(on->scene);
 
     if (on)
         say_reload_or_video(api, on);
-    if (scene && w)
-        say_window(api, w, scene);
-    if (scene && scene->steal == round_now)
-        take_context();
-    SDL_ClearError();
-    if (scene && round_now < scene->rounds)
+    if (known)
+        say_window(api, bridge_native_get_single(api, settings_slot),
+            bridge_native_get_single(api, window_slot));
+    if (known && round_now < ROUNDS)
         return (0);
+    close_other();
     return (BRIDGE_END);
+}
+
+static void declare_types(const bridge_api_t *api)
+{
+    scene_slot = BRIDGE_NATIVE_COMPONENT(api, "test:Scene", test_scene_t,
+        BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE);
+    BRIDGE_NATIVE_DECLARE(api, BRIDGE_ENUM, "sdl3:sdl3_place_t",
+        sdl3_place_t, BRIDGE_STRIP, BRIDGE_TABLE, BRIDGE_ON_DESTROY_REMOVE);
+    settings_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:WindowSettings",
+        sdl3_window_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON,
+        BRIDGE_ON_DESTROY_REMOVE);
+    BRIDGE_NATIVE_DECLARE(api, BRIDGE_ENUM, "sdl3:sdl3_surface_t",
+        sdl3_surface_t, BRIDGE_STRIP, BRIDGE_TABLE, BRIDGE_ON_DESTROY_REMOVE);
+    window_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Window", sdl3_window_t,
+        BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE);
 }
 
 BRIDGE_NATIVE(init)
 {
-    bridge_term_t terms[2] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
+    bridge_term_t drive[3] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
+        { 0, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 },
         { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 } };
+    bridge_term_t check[3] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
+        { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
+        { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 } };
+    uint32_t changes[2] = {};
 
 #ifdef HOLD
     SDL_InitSubSystem(SDL_INIT_EVENTS);
 #else
     SDL_SetHint("BM_PROBE_HINT", "1");
 #endif
-    scene_slot = BRIDGE_NATIVE_COMPONENT(api, "test:Scene", test_scene_t,
-        BRIDGE_STRIP, BRIDGE_SINGLETON);
-    window_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Window", sdl3_window_t,
-        BRIDGE_STRIP, BRIDGE_SINGLETON);
-    terms[0].slot = scene_slot;
-    terms[1].slot = window_slot;
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", terms, 2, nullptr, 0);
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", terms, 2, nullptr, 0);
+    declare_types(api);
+    drive[0].slot = scene_slot;
+    drive[1].slot = settings_slot;
+    drive[2].slot = window_slot;
+    check[0].slot = scene_slot;
+    check[1].slot = settings_slot;
+    check[2].slot = window_slot;
+    changes[0] = settings_slot;
+    changes[1] = window_slot;
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, 3, changes,
+        DETACHES);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 3, nullptr, 0);
     return (0);
 }
 
 BRIDGE_NATIVE(shutdown)
 {
+    close_other();
 #ifdef HOLD
     printf("events still started %d\n", SDL_WasInit(SDL_INIT_EVENTS) != 0);
     fflush(stdout);
