@@ -24,8 +24,11 @@ typedef struct {
 enum step_kind : uint8_t {
     STEP_PUSH,
     STEP_OPEN,
+    STEP_SHOW,
     STEP_OWN,
-    STEP_CURSOR
+    STEP_CURSOR,
+    STEP_QUEUE,
+    STEP_PUMP
 };
 
 typedef struct {
@@ -43,6 +46,12 @@ typedef struct {
     sdl3_cursor_t cursor;
 } step_t;
 
+typedef struct {
+    const char *scene;
+    uint32_t round;
+    bool natural;
+} write_t;
+
 constexpr SDL_WindowID MINE = 0;
 constexpr SDL_WindowID GONE = 999;
 constexpr uint32_t WINDOWS = 2;
@@ -55,7 +64,9 @@ static const scene_t SCENES[] = {
     { "edge", 1 }, { "over", 1 }, { "wheel", 2 }, { "flip", 1 },
     { "range", 1 }, { "own", 1 }, { "zero", 1 }, { "hide", 2 },
     { "relative", 2 }, { "later", 2 }, { "free", 2 }, { "shape", 1 },
-    { "same", 2 }, { "new", 2 }, { "count", 2 }
+    { "same", 2 }, { "new", 2 }, { "count", 2 }, { "natural", 2 },
+    { "unnatural", 2 }, { "drop", 2 }, { "keep", 2 }, { "waiting", 2 },
+    { "pumped", 1 }
 };
 
 static const step_t STEPS[] = {
@@ -130,7 +141,39 @@ static const step_t STEPS[] = {
     { .scene = "count", .round = 1, .kind = STEP_CURSOR,
         .cursor = { .shape = SDL_SYSTEM_CURSOR_POINTER } },
     { .scene = "count", .round = 2, .kind = STEP_CURSOR,
-        .cursor = { .shape = SDL_SYSTEM_CURSOR_COUNT } }
+        .cursor = { .shape = SDL_SYSTEM_CURSOR_COUNT } },
+    { .scene = "natural", .round = 1, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_WHEEL, .x = 1, .y = 2,
+        .direction = SDL_MOUSEWHEEL_FLIPPED },
+    { .scene = "natural", .round = 2, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_WHEEL, .x = 1, .y = 2,
+        .direction = SDL_MOUSEWHEEL_FLIPPED },
+    { .scene = "unnatural", .round = 1, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_WHEEL, .x = 1, .y = 2,
+        .direction = SDL_MOUSEWHEEL_FLIPPED },
+    { .scene = "unnatural", .round = 2, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_WHEEL, .x = 1, .y = 2,
+        .direction = SDL_MOUSEWHEEL_FLIPPED },
+    { .scene = "drop", .round = 1, .kind = STEP_SHOW },
+    { .scene = "drop", .round = 2, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_MOTION, .window = MINE, .x = 10, .y = 20,
+        .xrel = 3, .yrel = 4 },
+    { .scene = "drop", .round = 2, .kind = STEP_CURSOR,
+        .cursor = { .relative = true } },
+    { .scene = "keep", .round = 1, .kind = STEP_SHOW },
+    { .scene = "keep", .round = 2, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_MOTION, .window = MINE, .x = 10, .y = 20,
+        .xrel = 3, .yrel = 4 },
+    { .scene = "keep", .round = 2, .kind = STEP_CURSOR,
+        .cursor = { .relative = false } },
+    { .scene = "waiting", .round = 1, .kind = STEP_QUEUE,
+        .type = SDL_EVENT_MOUSE_MOTION, .window = GONE, .x = 7, .y = 9,
+        .xrel = 3, .yrel = 4 },
+    { .scene = "waiting", .round = 2, .kind = STEP_PUMP },
+    { .scene = "pumped", .round = 1, .kind = STEP_QUEUE,
+        .type = SDL_EVENT_MOUSE_MOTION, .window = GONE, .x = 7, .y = 9,
+        .xrel = 3, .yrel = 4 },
+    { .scene = "pumped", .round = 1, .kind = STEP_PUMP }
 };
 
 static uint32_t scene_slot;
@@ -140,6 +183,26 @@ static uint32_t round_now;
 static SDL_Window *windows[WINDOWS];
 static uint32_t window_count;
 static SDL_Cursor *seen;
+
+#ifdef WRITE
+constexpr uint32_t DRIVE_TERMS = 3;
+
+static const write_t WRITES[] = { { "natural", 2, true } };
+
+static uint32_t settings_slot;
+
+static void write_settings(const bridge_api_t *api, const test_scene_t *on)
+{
+    sdl3_mouse_settings_t *settings = bridge_native_get_single(api,
+        settings_slot);
+
+    for (size_t i = 0; settings && i < sizeof(WRITES) / sizeof(WRITES[0]); i++)
+        if (WRITES[i].round == round_now && !strcmp(WRITES[i].scene, on->scene))
+            settings->natural = WRITES[i].natural;
+}
+#else
+constexpr uint32_t DRIVE_TERMS = 2;
+#endif
 
 static void say(const bridge_api_t *api, const char *label, uint32_t a0,
     uint32_t a1)
@@ -161,12 +224,12 @@ static void say_pair(const bridge_api_t *api, const char *name, float a,
     say(api, label, 0, 0);
 }
 
-static void open_window(void)
+static void open_window(SDL_WindowFlags flags)
 {
     SDL_Window *window = nullptr;
 
     if (window_count < WINDOWS)
-        window = SDL_CreateWindow("probe", 64, 64, SDL_WINDOW_HIDDEN);
+        window = SDL_CreateWindow("probe", 64, 64, flags);
     if (!window)
         return;
     windows[window_count] = window;
@@ -222,6 +285,17 @@ static void push_event(const step_t *s)
     SDL_PushEvent(&ev);
 }
 
+static void SDLCALL push_queued(void *data)
+{
+    push_event(data);
+}
+
+static int SDLCALL queue_from_helper(void *data)
+{
+    SDL_RunOnMainThread(push_queued, data, false);
+    return (0);
+}
+
 static void do_step(const bridge_api_t *api, const step_t *s)
 {
     switch (s->kind) {
@@ -229,13 +303,23 @@ static void do_step(const bridge_api_t *api, const step_t *s)
             push_event(s);
             break;
         case STEP_OPEN:
-            open_window();
+            open_window(SDL_WINDOW_HIDDEN);
+            break;
+        case STEP_SHOW:
+            open_window(0);
             break;
         case STEP_OWN:
             own_cursor();
             break;
         case STEP_CURSOR:
             set_cursor(api, &s->cursor);
+            break;
+        case STEP_QUEUE:
+            SDL_WaitThread(SDL_CreateThread(queue_from_helper, "probe",
+                (void *)s), nullptr);
+            break;
+        case STEP_PUMP:
+            SDL_PumpEvents();
             break;
     }
 }
@@ -317,6 +401,10 @@ BRIDGE_NATIVE(drive)
     const test_scene_t *on = bridge_native_get_single(api, scene_slot);
 
     round_now++;
+#ifdef WRITE
+    if (on)
+        write_settings(api, on);
+#endif
     for (size_t i = 0; on && i < sizeof(STEPS) / sizeof(STEPS[0]); i++)
         if (STEPS[i].round == round_now && !strcmp(STEPS[i].scene, on->scene))
             do_step(api, &STEPS[i]);
@@ -355,11 +443,15 @@ static void declare_types(const bridge_api_t *api)
         BRIDGE_STRIP, BRIDGE_SINGLETON);
     mouse_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Mouse", sdl3_mouse_t,
         BRIDGE_STRIP, BRIDGE_SINGLETON);
+#ifdef WRITE
+    settings_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:MouseSettings",
+        sdl3_mouse_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON);
+#endif
 }
 
 BRIDGE_NATIVE(init)
 {
-    bridge_term_t drive[2] = {};
+    bridge_term_t drive[3] = {};
     bridge_term_t check[2] = {};
 
 #ifdef HOLD
@@ -371,11 +463,15 @@ BRIDGE_NATIVE(init)
     drive[0] = (bridge_term_t){ scene_slot, BRIDGE_READ, BRIDGE_OPTIONAL, 0 };
     drive[1] = (bridge_term_t){ cursor_slot, BRIDGE_WRITE, BRIDGE_OPTIONAL,
         0 };
+#ifdef WRITE
+    drive[2] = (bridge_term_t){ settings_slot, BRIDGE_WRITE, BRIDGE_OPTIONAL,
+        0 };
+#endif
     check[0] = (bridge_term_t){ scene_slot, BRIDGE_READ, BRIDGE_OPTIONAL, 0 };
     check[1] = (bridge_term_t){ mouse_slot, BRIDGE_READ, BRIDGE_OPTIONAL, 0 };
     seen = SDL_GetCursor();
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, 2, &cursor_slot,
-        1);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, DRIVE_TERMS,
+        &cursor_slot, 1);
     BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2, nullptr, 0);
     return (0);
 }
