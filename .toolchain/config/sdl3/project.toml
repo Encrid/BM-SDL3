@@ -7,3 +7,6 @@ copies = 1
 
 [check]
 unicode = ["third_party/sdl3_linux/license"]
+
+[ci]
+needs = ["display", "gl"]
