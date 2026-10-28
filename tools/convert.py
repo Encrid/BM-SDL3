@@ -22,7 +22,7 @@ FEATURE = re.compile(r'std\.Target\.\w+\.featureSetHas\(cpu\.features, \.(\w+)\)
 TOKEN = re.compile(r'\w+|[=!>]=|\S')
 SONAME = re.compile(r'if \(linux_deps_values\) \|x\| b\.fmt\("\\"\{s\}\\"", \.\{x\.(\w+_soname)\}\) else ""')
 NUMBER = re.compile(r'if \(linux_deps_values != null\) @as\(i64, (\d+)\) else null')
-VERSION = re.compile(r'if \(linux_deps_values\) \|x\| @as\(i64, @intCast\(x\.(\w+_version)\.(major|minor|patch)\)\)'
+VERSION = re.compile(r'if \(linux_deps_values\) \|x\| @as\(i64, @intCast\(x\.(\w+_version\.(?:major|minor|patch))\)\)'
                      r' else null')
 SONAMES = re.compile(r'pub const (\w+_soname) = "([^"]*)";')
 VERSIONS = re.compile(r'pub const (\w+_version): std\.SemanticVersion = '
@@ -38,25 +38,30 @@ def config_block(lines):
 
 def evaluate(name, expr, target, deps):
     system, cpu = TARGETS[target]
+
+    def stop(head):
+        sys.exit('%s%s = %s' % (head, name, expr))
+
+    def given(key):
+        if key not in deps:
+            stop('SDL_linux_deps has no %s: ' % key)
+        return deps[key]
     soname, number, version = (form.fullmatch(expr) for form in (SONAME, NUMBER, VERSION))
     if soname:
-        return '"%s"' % deps[soname.group(1)] if deps is not None else ''
+        return given(soname.group(1)) if deps is not None else ''
     if number:
         return int(number.group(1)) if deps is not None else None
     if version:
-        return deps[version.group(1)][version.group(2)] if deps is not None else None
+        return given(version.group(1)) if deps is not None else None
     names = {'true': True, 'false': False, 'null': None, 'windows': system == 'windows', 'linux': system == 'linux',
              'macos': system == 'macos', 'emscripten': False, 'x86': target.startswith('x86_64'), 'arm': False,
              'aarch64': target.startswith('aarch64'), 'loongarch': False, 'glibc_2_x': 31,
              'emscripten_pthreads': False, 'msvc': False, 'musl': False}
     tokens = TOKEN.findall(FEATURE.sub(lambda m: str(m.group(1) in FEATURES[cpu]).lower(), expr)) + ['']
 
-    def stop(why):
-        sys.exit(why % (name, expr))
-
     def boolean(value):
         if not isinstance(value, bool):
-            stop('not a boolean: %s = %s')
+            stop('not a boolean: ')
         return value
 
     def atom():
@@ -65,10 +70,10 @@ def evaluate(name, expr, target, deps):
             return not boolean(atom())
         if token == '(':
             value = joined(0)
-            return value if tokens.pop(0) == ')' else stop('cannot evaluate %s = %s')
+            return value if tokens.pop(0) == ')' else stop('cannot evaluate ')
         if token in names:
             return names[token]
-        return int(token) if token.isdigit() else stop('cannot evaluate %s = %s')
+        return int(token) if token.isdigit() else stop('cannot evaluate ')
 
     def compared():
         value = atom()
@@ -84,7 +89,7 @@ def evaluate(name, expr, target, deps):
             value = apply(boolean(value), boolean(joined(depth + 1)))
         return value
     value = joined(0)
-    return value if tokens == [''] else stop('cannot evaluate %s = %s')
+    return value if tokens == [''] else stop('cannot evaluate ')
 
 
 def sources_between(lines, first, last, skip):
@@ -123,16 +128,18 @@ def main():
     build, linux_deps, folder, out = sys.argv[1:]
     lines = Path(build).read_text(encoding='utf-8').splitlines()
     text = Path(linux_deps).read_text(encoding='utf-8')
-    deps = dict(SONAMES.findall(text))
-    deps.update((key, dict(zip(('major', 'minor', 'patch'), map(int, parts))))
-                for key, *parts in VERSIONS.findall(text))
+    deps = {key: '"%s"' % soname for key, soname in SONAMES.findall(text)}
+    for key, *numbers in VERSIONS.findall(text):
+        deps.update(zip((key + '.major', key + '.minor', key + '.patch'), map(int, numbers)))
 
-    def marked(rows, markers):
+    def marked(path, rows, markers):
         at = [-1]
         for marker in markers:
-            at.append(next(n for n in range(at[-1] + 1, len(rows)) if marker in rows[n]))
+            at.append(next((n for n in range(at[-1] + 1, len(rows)) if marker in rows[n]), None))
+            if at[-1] is None:
+                sys.exit('%s: no line holds %s' % (path, marker))
         return at[1:]
-    at = marked(lines, MARKERS)
+    at = marked(build, lines, MARKERS)
     entries = config_block(lines[at[0]:at[1]])
     lists = {name: sources_between(lines, first, last, ('if (msvc) {',) if name == 'sdl_windows' else ())
              for name, first, last in zip(LISTS, at[2:], at[3:])}
@@ -141,7 +148,8 @@ def main():
         sys.exit('%s is not in SDL3' % missing[0])
     lists = {name: ['{sdl_root}/' + file for file in files] for name, files in lists.items()}
     rows = text.splitlines()
-    lists['sdl_wayland'] = ['{sdl_deps}/' + file for file in sources_between(rows, *marked(rows, WAYLAND), ())]
+    lists['sdl_wayland'] = ['{sdl_deps}/' + file
+                            for file in sources_between(rows, *marked(linux_deps, rows, WAYLAND), ())]
     per_target = {target: [] for target in TARGETS}
     for target, (system, _) in TARGETS.items():
         for name, expr in entries:
