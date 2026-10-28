@@ -429,8 +429,9 @@ BRIDGE_NATIVE(init)
     changes[0] = settings_slot;
     changes[1] = window_slot;
     BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, 3, changes,
-        DETACHES);
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 3, nullptr, 0);
+        DETACHES, nullptr, 0);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 3, nullptr, 0,
+        nullptr, 0);
     return (0);
 }
 
