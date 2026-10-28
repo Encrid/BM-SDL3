@@ -35,6 +35,49 @@ native = "{bb_native}/bridge_native"
 '''
 
 [[case]]
+name = "a module that writes the settings needs the grant write sdl3:EventsSettings"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:writer@1.0.0' did not load: system 'drive' may not write 'sdl3:EventsSettings': no grant says so 0 0",
+    "not loaded: m/writer{library}: test:writer@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "writer", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Drop", "sdl3:EventsSettings"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Drop"]
+write = ["sdl3:EventsSettings"]
+'''
+
+[[case]]
 name = "content.ignore keeps the SDL3 library out of the modules"
 run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 

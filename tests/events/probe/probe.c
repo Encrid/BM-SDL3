@@ -3,6 +3,7 @@
 **
 ** Under the GNU Affero General Public License, version 3 only: see license.
 */
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -29,6 +30,12 @@ typedef struct {
     uint32_t count;
 } step_t;
 
+typedef struct {
+    const char *scene;
+    uint32_t drops;
+    bool quit;
+} write_t;
+
 [[gnu::section(MANIFEST_SECTION), gnu::used, gnu::retain]]
 static const char WHO[] = MANIFEST;
 
@@ -39,7 +46,8 @@ static const scene_t SCENES[] = {
     { "quiet", 1 }, { "flush", 2 }, { "files", 3 }, { "twice", 3 },
     { "nopath", 2 }, { "empty", 2 }, { "others", 3 }, { "edge", 2 },
     { "over", 2 }, { "many", 2 }, { "three", 2 }, { "twenty", 2 },
-    { "quit", 3 }
+    { "quit", 3 }, { "lower", 2 }, { "keep", 3 }, { "raise", 2 },
+    { "overmany", 2 }, { "signal", 3 }
 };
 
 static const step_t STEPS[] = {
@@ -62,7 +70,11 @@ static const step_t STEPS[] = {
     { "many", 1, SDL_EVENT_DROP_FILE, "dropped/a.txt", 18 },
     { "three", 1, SDL_EVENT_DROP_FILE, "dropped/a.txt", 3 },
     { "twenty", 1, SDL_EVENT_DROP_FILE, "dropped/a.txt", 20 },
-    { "quit", 1, SDL_EVENT_QUIT, nullptr, 1 }
+    { "quit", 1, SDL_EVENT_QUIT, nullptr, 1 },
+    { "lower", 1, SDL_EVENT_DROP_FILE, "dropped/a.txt", 3 },
+    { "keep", 1, SDL_EVENT_QUIT, nullptr, 1 },
+    { "raise", 1, SDL_EVENT_DROP_FILE, "dropped/a.txt", 20 },
+    { "overmany", 1, SDL_EVENT_DROP_FILE, over_path, 20 }
 };
 
 constexpr size_t STEP_COUNT = sizeof(STEPS) / sizeof(STEPS[0]);
@@ -71,6 +83,29 @@ static uint32_t scene_slot;
 static uint32_t drop_slot;
 static uint32_t check_slot;
 static uint32_t round_now;
+
+#ifdef WRITE
+constexpr uint32_t DRIVE_TERMS = 2;
+
+static const write_t WRITES[] = {
+    { "lower", 2, true }, { "keep", 16, false }, { "raise", 20, true }
+};
+
+static uint32_t settings_slot;
+
+static void write_settings(const bridge_api_t *api, const test_scene_t *on)
+{
+    sdl3_events_settings_t *settings = bridge_native_get_single(api,
+        settings_slot);
+
+    for (size_t i = 0; settings && i < sizeof(WRITES) / sizeof(WRITES[0]); i++)
+        if (round_now == 1 && !strcmp(WRITES[i].scene, on->scene))
+            *settings = (sdl3_events_settings_t){ .drops = WRITES[i].drops,
+                .quit = WRITES[i].quit };
+}
+#else
+constexpr uint32_t DRIVE_TERMS = 1;
+#endif
 
 #ifdef STARVE
 static SDL_malloc_func real_malloc;
@@ -225,6 +260,12 @@ BRIDGE_NATIVE(drive)
     feed_sdl();
 #endif
     round_now++;
+#ifdef WRITE
+    if (on)
+        write_settings(api, on);
+#endif
+    if (on && round_now == 1 && !strcmp(on->scene, "signal"))
+        raise(SIGTERM);
     for (size_t i = 0; on && i < STEP_COUNT; i++)
         if (is_now(&STEPS[i], on) && STEPS[i].type == SDL_EVENT_USER)
             push_step((void *)&STEPS[i]);
@@ -250,7 +291,8 @@ BRIDGE_NATIVE(check)
 
 BRIDGE_NATIVE(init)
 {
-    bridge_term_t drive[1] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 } };
+    bridge_term_t drive[2] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
+        { 0, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     bridge_term_t check[2] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
         { 0, BRIDGE_READ, BRIDGE_AND, 0 } };
 
@@ -268,10 +310,16 @@ BRIDGE_NATIVE(init)
         BRIDGE_STRIP, BRIDGE_SINGLETON);
     drop_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Drop", sdl3_drop_t,
         BRIDGE_STRIP, BRIDGE_TABLE);
+#ifdef WRITE
+    settings_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:EventsSettings",
+        sdl3_events_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON);
+    drive[1].slot = settings_slot;
+#endif
     drive[0].slot = scene_slot;
     check[0].slot = scene_slot;
     check[1].slot = drop_slot;
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, 1, nullptr, 0);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, DRIVE_TERMS,
+        nullptr, 0);
     check_slot = BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2,
         nullptr, 0);
     return (0);
