@@ -75,3 +75,15 @@ name = "convert gives a soname of SDL_linux_deps in quotes on Linux"
 run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"]
 claims = { status = 0, has = ["'SDL_CASE_SONAME=\"libcase.so.1\"'"] }
 false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/deps.zig", "{sdl3}", "-"] }
+
+[[case]]
+name = "convert stops on a line of its input that is not there"
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/no_end.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+claims = { status = 1, line = ["{root}/tests/convert/no_end.zig: no line holds if (emscripten) {"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+
+[[case]]
+name = "convert stops on a value that SDL_linux_deps does not give"
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/deps.zig", "{sdl3}", "-"]
+claims = { status = 1, has = ["SDL_linux_deps has no case_soname: SDL_CASE_SONAME = if (linux_deps_values) |x|"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"] }
