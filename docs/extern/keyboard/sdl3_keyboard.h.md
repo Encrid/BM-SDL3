@@ -9,7 +9,7 @@ It does not cover the screen keyboard, or the text that an input method composes
 | Word of the manifest | Value |
 | --- | --- |
 | The identity | `sdl3:keyboard@1.0.0` |
-| `abi` | `1` |
+| `abi` | `2` |
 | `config` | `sdl3:KeyboardSettings` |
 | `settings` | `text repeat` |
 | `pinned` | `true`, because SDL3 gives the keyboard events on the main thread. |
@@ -78,7 +78,7 @@ A text of more than 63 bytes in a round is cut after its last whole character th
 
 ## The deployment
 
-- The module needs `sdl3:events`, and `sdl3:video` for a window that takes the keyboard focus.
+- The module opens no window, and it does not pump the queue. So it needs `sdl3:events`, and a module that opens a window that takes the keyboard focus, for example `sdl3:video`.
 - A module that reads the keyboard needs `read = ["sdl3:Keyboard"]` in its table.
 - A module that changes the settings, for example the app, needs `write = ["sdl3:KeyboardSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:keyboard@1.0.0".config]`.
