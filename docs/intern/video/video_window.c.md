@@ -66,6 +66,7 @@ For a view that fails, the reason is the error of `SDL_Metal_GetLayer`, which ge
 
 `create_window` gives the settings to `SDL_CreateWindowWithProperties` as properties, so the window opens at its place with one request.
 The properties are those of https://wiki.libsdl.org/SDL3/SDL_CreateWindowWithProperties.
+`create_window` makes their set with `SDL_CreateProperties`, and destroys the set with `SDL_DestroyProperties` after the call.
 
 | Property | Value |
 | --- | --- |
@@ -94,6 +95,6 @@ If the module made no window, it does nothing. `SDL_Metal_DestroyView` does noth
 | --- | --- |
 | `bridge_window` | Opens the window at the first run. Then asks SDL3 for the changed settings, and writes `sdl3:Window`. Gives 0, or 1 when the window does not open. |
 | `open_window` | Makes the window, its Metal view and its handles, or writes `no window`. Gives 0, or 1. |
-| `create_window` | Makes the window of SDL3 from the settings. Gives the window, or null. |
+| `create_window` | Makes the window of SDL3 from the settings, then destroys the set of properties. Gives the window, or null. |
 | `set_flags` | Writes the five properties of the type `bool` of the window. |
 | `video_close_window` | Destroys the Metal view and the window that the module made, and forgets them. |

@@ -17,6 +17,9 @@ The file puts that macro into the section of the target, with the line of `.tool
 4. It attaches a `sdl3:Window` to the entity 0, with `surface` at `SDL3_SURFACE_NONE` and each other field at zero.
 5. It adds the system `window` in the phase `input`.
 
+Each type states `BRIDGE_STRIP`, so an unload of the module destroys no entity. Each type also states `BRIDGE_ON_DESTROY_REMOVE`.
+Each enum states `BRIDGE_TABLE`, and the two singletons state `BRIDGE_SINGLETON`: `docs/extern/sdl3_video.h.md`, *The declarations*.
+
 `window` has two optional terms: it reads the settings, and it writes the window.
 It states no change, because it attaches and detaches nothing.
 Step 4 does not leave `surface` at zero, because zero is no constant of `sdl3:sdl3_surface_t`: `docs/extern/sdl3_video.h.md`, *sdl3:sdl3_surface_t*.
