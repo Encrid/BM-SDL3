@@ -319,9 +319,9 @@ BRIDGE_NATIVE(init)
     check[0].slot = scene_slot;
     check[1].slot = drop_slot;
     BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, DRIVE_TERMS,
-        nullptr, 0);
+        nullptr, 0, nullptr, 0);
     check_slot = BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2,
-        nullptr, 0);
+        nullptr, 0, nullptr, 0);
     return (0);
 }
 
