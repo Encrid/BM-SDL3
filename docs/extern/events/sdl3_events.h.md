@@ -9,7 +9,7 @@ Each other SDL3 module needs it, because only this module pumps the queue.
 | Word of the manifest | Value |
 | --- | --- |
 | The identity | `sdl3:events@1.0.0` |
-| `abi` | `1` |
+| `abi` | `2` |
 | `config` | `sdl3:EventsSettings` |
 | `settings` | `drops quit` |
 | `pinned` | `true`, because SDL3 pumps its queue only on the main thread. |
@@ -29,7 +29,11 @@ The manifest also gives a default for each of these keys of the module. A deploy
 
 A deployment that raises `drops` also raises `spawns` to `drops`, and `changes` to 1072 bytes for each drop.
 It also raises `log_ring` to 32 bytes for each drop, plus 32.
+Because a writer can change `drops` at each round, the deployment raises these keys for the largest `drops` that it or a writer sets.
 The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
+
+Past `spawns`, `pump` fails at the spawn of a drop. Past `changes`, it fails at the attach of a drop.
+Past `log_ring`, the ring drops the line, and a record counts it. `bridge.h.md` of Bridge tells these results in its section Running out.
 
 The file of the module is `sdl3_events`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BL-SDL3, which sits beside it.
 
@@ -43,7 +47,7 @@ The file of the module is `sdl3_events`, with the suffix of a library. It runs o
 4. It spawns one `sdl3:Drop` for each file that was dropped, at most `drops` in a round.
 5. If `quit` is `true` and the queue holds `SDL_EVENT_QUIT`, it gives `BRIDGE_END`.
 
-SDL3 sends `SDL_EVENT_QUIT` when the last window asks to close, and when the system asks the program to quit.
+SDL3 sends `SDL_EVENT_QUIT` when the system asks the program to quit, for example with the signal `SIGTERM`.
 The module takes only the drops of files. It leaves out a dropped text, and a drop with no path or with an empty path.
 The other events of the drops stay in the queue in that round, and the next pump clears them.
 The full name of the system for `[order]` is `sdl3:events:pump`.
