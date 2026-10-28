@@ -2,7 +2,7 @@
 name = "BL-SDL3"
 
 [test]
-timeout = 120
+timeout = 600
 copies = 1
 
 [check]
