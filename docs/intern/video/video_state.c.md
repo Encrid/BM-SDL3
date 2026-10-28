@@ -46,7 +46,7 @@ As for the property of Metal, a comparison is no condition: `docs/intern/video_w
 `video_take_events` does these steps at each run of an open window:
 
 1. If SDL3 has a request to close a window, it writes a new value into `sdl3:Window`.
-2. It takes each event from `SDL_EVENT_WINDOW_FIRST` to `SDL_EVENT_WINDOW_LAST`.
+2. It takes each event from `SDL_EVENT_WINDOW_FIRST` to `SDL_EVENT_WINDOW_LAST` with `SDL_FlushEvents`, and reads no field of these events.
 3. If the window did not close, it writes the size of `SDL_GetWindowSizeInPixels`, and `fullscreen` and `hidden` of `SDL_GetWindowFlags`.
 
 Step 1 writes the value of a close: `docs/extern/sdl3_video.h.md`, *The system*.
