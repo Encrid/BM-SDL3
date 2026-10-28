@@ -471,8 +471,9 @@ BRIDGE_NATIVE(init)
     check[1] = (bridge_term_t){ mouse_slot, BRIDGE_READ, BRIDGE_OPTIONAL, 0 };
     seen = SDL_GetCursor();
     BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, DRIVE_TERMS,
-        &cursor_slot, 1);
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2, nullptr, 0);
+        &cursor_slot, 1, nullptr, 0);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2, nullptr, 0,
+        nullptr, 0);
     return (0);
 }
 
