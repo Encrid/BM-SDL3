@@ -51,3 +51,27 @@ name = "convert stops if the defines of a CPU differ between systems"
 run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/cpu_differs.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
 claims = { status = 1, has = ["cpu aarch64 differs between systems: aarch64-linux-gnu"] }
 false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+
+[[case]]
+name = "convert finds each marker only after the marker before it"
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/early.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+claims = { status = 0, has = ['/src/video/windows/SDL_windowsevents.c"'], lacks = ['/src/video/windows/SDL_windowsvideo.c"'] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+
+[[case]]
+name = "convert leaves out the block if (msvc) of the sources of Windows"
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/msvc.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+claims = { status = 0, has = ['/src/video/windows/SDL_windowsvideo.c"'], lacks = ['/src/video/windows/SDL_windowsevents.c"'] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/early.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+
+[[case]]
+name = "convert gives no define for a false value, for null and for an empty text"
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"]
+claims = { status = 0, has = ['"SDL_CASE_TRUE=1"'], lacks = ["SDL_CASE_FALSE", "SDL_CASE_NULL"], matches_not = ['sdl_config_windows = \[[^\]]*SDL_CASE_SONAME', 'sdl_config_macos = \[[^\]]*SDL_CASE_SONAME'] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"] }
+
+[[case]]
+name = "convert gives a soname of SDL_linux_deps in quotes on Linux"
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"]
+claims = { status = 0, has = ["'SDL_CASE_SONAME=\"libcase.so.1\"'"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/deps.zig", "{sdl3}", "-"] }

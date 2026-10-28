@@ -1,0 +1,24 @@
+[[case]]
+name = "the build keeps GL, Vulkan and the GPU API"
+run = ["{out}/parts{exe}", "drivers"]
+claims = { status = 0, line = ["render opengl", "render vulkan", "render gpu", "gpu vulkan"] }
+false = { run = ["{out}/parts{exe}", "plain"] }
+
+[[case]]
+name = "SDL3 loads no GL and no Vulkan library for a window with an external graphics context"
+run = ["{out}/parts{exe}", "external"]
+env = { SDL_OPENGL_LIBRARY = "{case}/none{library}", SDL_VULKAN_LIBRARY = "{case}/none{library}" }
+claims = { status = 0, line = ["window gl 0 vulkan 0"] }
+false = { run = ["{out}/parts{exe}", "gl"] }
+
+[[case]]
+name = "a window that names no graphics API asks for GL only on macOS"
+run = ["{out}/parts{exe}", "plain"]
+claims = { status = 0, line = ["window gl {default_gl} vulkan 0"] }
+false = { run = ["{out}/parts{exe}", "vulkan"], env = { SDL_VULKAN_LIBRARY = "{case}/none{library}" } }
+
+[[case]]
+name = "the Metal view gives a layer on macOS, and no view on the other systems"
+run = ["{out}/parts{exe}", "metal"]
+claims = { status = 0, line = ["metal layer {metal_layer}"] }
+false = { env = { SDL_VIDEO_DRIVER = "none" } }
