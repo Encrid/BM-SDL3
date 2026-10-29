@@ -73,11 +73,14 @@ After the load, a system with a grant to write it can change it at each round. `
 ## The C types
 
 `include/sdl3_events.h` gives the C type of each type of the module, and its descriptor for Bridge.
+The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
 
-| Type of Bridge | C type | Descriptor |
-| --- | --- | --- |
-| `sdl3:EventsSettings` | `sdl3_events_settings_t` | `sdl3_events_settings_t_desc` |
-| `sdl3:Drop` | `sdl3_drop_t` | `sdl3_drop_t_desc` |
+| Type of Bridge | C type | Descriptor | Macro of the text |
+| --- | --- | --- | --- |
+| `sdl3:EventsSettings` | `sdl3_events_settings_t` | `sdl3_events_settings_t_desc` | `SDL3_EVENTS_SETTINGS_FIELDS` |
+| `sdl3:Drop` | `sdl3_drop_t` | `sdl3_drop_t_desc` | `SDL3_DROP_FIELDS` |
+
+Each macro of the text gives the braces of its type and the text between them.
 
 ## The declarations
 
