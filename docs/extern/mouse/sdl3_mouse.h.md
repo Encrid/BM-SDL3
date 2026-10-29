@@ -75,12 +75,15 @@ When `relative` changes on the window with the keyboard focus, SDL3 drops the mo
 ## The C types
 
 `include/sdl3_mouse.h` gives the C type of each type of the module, and its descriptor for Bridge.
+The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
 
-| Type of Bridge | C type | Descriptor |
-| --- | --- | --- |
-| `sdl3:MouseSettings` | `sdl3_mouse_settings_t` | `sdl3_mouse_settings_t_desc` |
-| `sdl3:Cursor` | `sdl3_cursor_t` | `sdl3_cursor_t_desc` |
-| `sdl3:Mouse` | `sdl3_mouse_t` | `sdl3_mouse_t_desc` |
+| Type of Bridge | C type | Descriptor | Macro of the text |
+| --- | --- | --- | --- |
+| `sdl3:MouseSettings` | `sdl3_mouse_settings_t` | `sdl3_mouse_settings_t_desc` | `SDL3_MOUSE_SETTINGS_FIELDS` |
+| `sdl3:Cursor` | `sdl3_cursor_t` | `sdl3_cursor_t_desc` | `SDL3_CURSOR_FIELDS` |
+| `sdl3:Mouse` | `sdl3_mouse_t` | `sdl3_mouse_t_desc` | `SDL3_MOUSE_FIELDS` |
+
+Each macro of the text gives the braces of its type and the text between them.
 
 ## The declarations
 
