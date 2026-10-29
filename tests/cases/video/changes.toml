@@ -423,6 +423,7 @@ scene = "grow_center"
 place = "SDL3_PLACE_AT"
 x = 120
 y = 90
+hidden = false
 '''
 
 [case.false.files]
@@ -439,6 +440,7 @@ scene = "center_grow"
 place = "SDL3_PLACE_AT"
 x = 120
 y = 90
+hidden = false
 '''
 
 [[case]]
