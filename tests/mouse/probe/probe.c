@@ -66,7 +66,8 @@ static const scene_t SCENES[] = {
     { "relative", 2 }, { "later", 2 }, { "free", 2 }, { "shape", 1 },
     { "same", 2 }, { "new", 2 }, { "count", 2 }, { "natural", 2 },
     { "unnatural", 2 }, { "drop", 2 }, { "keep", 2 }, { "waiting", 2 },
-    { "pumped", 1 }
+    { "pumped", 1 }, { "detach_settings", 2 }, { "detach_mouse", 2 },
+    { "detach_cursor", 2 }, { "keep_cursor", 2 }
 };
 
 static const step_t STEPS[] = {
@@ -173,7 +174,24 @@ static const step_t STEPS[] = {
     { .scene = "pumped", .round = 1, .kind = STEP_QUEUE,
         .type = SDL_EVENT_MOUSE_MOTION, .window = GONE, .x = 7, .y = 9,
         .xrel = 3, .yrel = 4 },
-    { .scene = "pumped", .round = 1, .kind = STEP_PUMP }
+    { .scene = "pumped", .round = 1, .kind = STEP_PUMP },
+    { .scene = "detach_settings", .round = 2, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_MOTION, .window = GONE, .x = 7, .y = 9,
+        .xrel = 3, .yrel = 4 },
+    { .scene = "detach_mouse", .round = 2, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_MOTION, .window = GONE, .x = 7, .y = 9,
+        .xrel = 3, .yrel = 4 },
+    { .scene = "detach_cursor", .round = 1, .kind = STEP_CURSOR,
+        .cursor = {} },
+    { .scene = "detach_cursor", .round = 2, .kind = STEP_OWN },
+    { .scene = "detach_cursor", .round = 2, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_MOTION, .window = GONE, .x = 7, .y = 9,
+        .xrel = 3, .yrel = 4 },
+    { .scene = "keep_cursor", .round = 1, .kind = STEP_CURSOR, .cursor = {} },
+    { .scene = "keep_cursor", .round = 2, .kind = STEP_OWN },
+    { .scene = "keep_cursor", .round = 2, .kind = STEP_PUSH,
+        .type = SDL_EVENT_MOUSE_MOTION, .window = GONE, .x = 7, .y = 9,
+        .xrel = 3, .yrel = 4 }
 };
 
 static uint32_t scene_slot;
@@ -202,6 +220,22 @@ static void write_settings(const bridge_api_t *api, const test_scene_t *on)
 }
 #else
 constexpr uint32_t DRIVE_TERMS = 2;
+#endif
+
+#ifdef DETACH
+constexpr uint32_t CHANGES = 3;
+
+static void detach_single(const bridge_api_t *api, const test_scene_t *on)
+{
+    if (round_now == 2 && !strcmp(on->scene, "detach_settings"))
+        api->detach(api, 0, settings_slot);
+    if (round_now == 2 && !strcmp(on->scene, "detach_mouse"))
+        api->detach(api, 0, mouse_slot);
+    if (round_now == 2 && !strcmp(on->scene, "detach_cursor"))
+        api->detach(api, 0, cursor_slot);
+}
+#else
+constexpr uint32_t CHANGES = 1;
 #endif
 
 static void say(const bridge_api_t *api, const char *label, uint32_t a0,
@@ -361,6 +395,8 @@ static void say_mouse(const bridge_api_t *api, const sdl3_mouse_t *m)
     uint32_t set = m ? count_set(m, sizeof(*m)) : 0;
 
     say(api, "mouse", m != nullptr, set);
+    say(api, "queue", SDL_HasEvents(SDL_EVENT_MOUSE_MOTION,
+        SDL_EVENT_MOUSE_REMOVED), 0);
     if (!m)
         return;
     say_pair(api, "position", m->x, m->y);
@@ -369,8 +405,6 @@ static void say_mouse(const bridge_api_t *api, const sdl3_mouse_t *m)
     say(api, "buttons", m->held, m->pressed);
     say(api, "released", m->released, 0);
     say_cursor(api);
-    say(api, "queue", SDL_HasEvents(SDL_EVENT_MOUSE_MOTION,
-        SDL_EVENT_MOUSE_REMOVED), 0);
 }
 
 static const scene_t *find_scene(const char *name)
@@ -404,6 +438,10 @@ BRIDGE_NATIVE(drive)
 #ifdef WRITE
     if (on)
         write_settings(api, on);
+#endif
+#ifdef DETACH
+    if (on)
+        detach_single(api, on);
 #endif
     for (size_t i = 0; on && i < sizeof(STEPS) / sizeof(STEPS[0]); i++)
         if (STEPS[i].round == round_now && !strcmp(STEPS[i].scene, on->scene))
@@ -454,6 +492,7 @@ BRIDGE_NATIVE(init)
 {
     bridge_term_t drive[3] = {};
     bridge_term_t check[2] = {};
+    uint32_t changes[3] = {};
 
 #ifdef HOLD
     SDL_InitSubSystem(SDL_INIT_EVENTS);
@@ -470,9 +509,14 @@ BRIDGE_NATIVE(init)
 #endif
     check[0] = (bridge_term_t){ scene_slot, BRIDGE_READ, BRIDGE_OPTIONAL, 0 };
     check[1] = (bridge_term_t){ mouse_slot, BRIDGE_READ, BRIDGE_OPTIONAL, 0 };
+    changes[0] = cursor_slot;
+#ifdef DETACH
+    changes[1] = settings_slot;
+    changes[2] = mouse_slot;
+#endif
     seen = SDL_GetCursor();
     BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, DRIVE_TERMS,
-        &cursor_slot, 1, nullptr, 0);
+        changes, CHANGES, nullptr, 0);
     BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2, nullptr, 0,
         nullptr, 0);
     return (0);
