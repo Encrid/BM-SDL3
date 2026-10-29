@@ -334,12 +334,14 @@ BRIDGE_NATIVE(init)
     SDL_SetHint("BM_PROBE_HINT", "1");
 #endif
     scene_slot = BRIDGE_NATIVE_COMPONENT(api, "test:Scene", test_scene_t,
-        BRIDGE_STRIP, BRIDGE_SINGLETON);
+        BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE);
     keyboard_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Keyboard",
-        sdl3_keyboard_t, BRIDGE_STRIP, BRIDGE_SINGLETON);
+        sdl3_keyboard_t, BRIDGE_STRIP, BRIDGE_SINGLETON,
+        BRIDGE_ON_DESTROY_REMOVE);
 #ifdef WRITE
     settings_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:KeyboardSettings",
-        sdl3_keyboard_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON);
+        sdl3_keyboard_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON,
+        BRIDGE_ON_DESTROY_REMOVE);
     drive[1].slot = settings_slot;
 #endif
     drive[0].slot = scene_slot;
