@@ -307,12 +307,13 @@ BRIDGE_NATIVE(init)
     memset(edge_path, 'a', sizeof(edge_path) - 1);
     memset(over_path, 'a', sizeof(over_path) - 1);
     scene_slot = BRIDGE_NATIVE_COMPONENT(api, "test:Scene", test_scene_t,
-        BRIDGE_STRIP, BRIDGE_SINGLETON);
+        BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE);
     drop_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Drop", sdl3_drop_t,
-        BRIDGE_STRIP, BRIDGE_TABLE);
+        BRIDGE_STRIP, BRIDGE_TABLE, BRIDGE_ON_DESTROY_REMOVE);
 #ifdef WRITE
     settings_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:EventsSettings",
-        sdl3_events_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON);
+        sdl3_events_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON,
+        BRIDGE_ON_DESTROY_REMOVE);
     drive[1].slot = settings_slot;
 #endif
     drive[0].slot = scene_slot;
