@@ -5,7 +5,7 @@ This file applies `sdl3:Cursor`, and keeps the cursor that the module made.
 ## The state
 
 A native module gets only its API at each call, so the cursor that it made has no other place between two rounds.
-The file keeps it in one static struct: the cursor of SDL3, and the shape that it shows.
+The file keeps it in one static `mouse_kept_t`, `kept`: the cursor of SDL3, and the shape that it shows.
 A `[[style.exception]]` of the project excuses this struct from the rule G4, with that reason.
 
 ## The cursor
