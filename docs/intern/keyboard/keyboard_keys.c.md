@@ -6,12 +6,17 @@ This file holds the system `keys`. It turns the keyboard events of a round into 
 
 `bridge_keys` does these steps:
 
-1. If `text` is `true`, it calls `start_text`.
-2. It clears `hit`, `text` and `text_len`. `key` and `mods` keep their values.
-3. It takes each event from `SDL_EVENT_KEY_DOWN` to `SDL_EVENT_SCREEN_KEYBOARD_HIDDEN`, and gives it to `apply_event`.
+1. If `sdl3:KeyboardSettings` or `sdl3:Keyboard` is gone, it gives 0 and does nothing more.
+2. It calls `set_text` with `text`.
+3. It clears `hit`, `text` and `text_len`. `key` and `mods` keep their values.
+4. It takes each event from `SDL_EVENT_KEY_DOWN` to `SDL_EVENT_SCREEN_KEYBOARD_HIDDEN`, and gives it to `apply_event`.
 
-`start_text` gets the windows from `SDL_GetWindows`, and starts the text input on each window that does not have it.
-Step 3 takes the whole range of the keyboard, so no event of the keyboard stays in the queue.
+`bridge_native_get_single` gives null for a singleton that a module detached, so step 1 finds it: `docs/extern/sdl3_keyboard.h.md`, *The system keys*.
+
+`set_text` gets the windows from `SDL_GetWindows`.
+With `text` at `true`, it calls `SDL_StartTextInput` on each window where `SDL_TextInputActive` gives `false`.
+With `text` at `false`, it calls `SDL_StopTextInput` on each window where it gives `true`.
+Step 4 takes the whole range of the keyboard, so no event of the keyboard stays in the queue.
 The state comes from the events, and not from `SDL_GetKeyboardState`. Thus an event that a case pushes also counts.
 
 ## An event
@@ -23,7 +28,7 @@ PROCEDURE apply_event(k : Keyboard, e : Event, repeats : BOOLEAN)
    CASE OF e.type
       SDL_EVENT_KEY_DOWN : CALL apply_key(k, e.key, 1, repeats)
       SDL_EVENT_KEY_UP : CALL apply_key(k, e.key, 0, repeats)
-      SDL_EVENT_TEXT_INPUT : CALL append_text(k, e.text.text)
+      SDL_EVENT_TEXT_INPUT : CALL keyboard_append_text(k, e.text.text)
    ENDCASE
 ENDPROCEDURE
 
@@ -38,38 +43,13 @@ PROCEDURE apply_key(k : Keyboard, key : KeyEvent, down : U8, repeats : BOOLEAN)
 ENDPROCEDURE
 ```
 
-`repeats` is the setting `repeat`.
-
-## The text
-
-`append_text` adds a typed text after the text of the round, and keeps a zero after it.
-`fitting` gives how many bytes of the typed text fit in the 63 bytes.
-If a cut falls inside a character of UTF-8, it moves back to the start of that character:
-
-```pseudo
-FUNCTION fitting(used : U32, typed : STRING) RETURNS U32
-   n <- LENGTH(typed)
-   IF used + n <= 63 THEN
-      RETURN n
-   ENDIF
-   n <- 63 - used
-   WHILE n > 0 AND ASC(MID(typed, n + 1, 1)) DIV 64 = 2
-      n <- n - 1
-   ENDWHILE
-   RETURN n
-ENDFUNCTION
-```
-
-A byte from 128 to 191 continues a character, so the cut cannot fall before it.
-After a cut, `append_text` leaves out each later text of the round.
+`repeats` is the setting `repeat`. `keyboard_append_text` of `src/keyboard_text.c` adds a typed text: `docs/intern/keyboard_text.c.md`.
 
 ## Functions
 
 | Function | Result |
 | --- | --- |
-| `bridge_keys` | Writes `sdl3:Keyboard` for the round. Gives 0. |
-| `start_text` | Starts the text input on each window that does not have it. |
-| `apply_event` | Gives a key event to `apply_key`, and a text event to `append_text`. |
+| `bridge_keys` | Writes `sdl3:Keyboard` for the round, or does nothing while a singleton is gone. Gives 0. |
+| `set_text` | Starts or stops the text input on each window, as `text` tells. |
+| `apply_event` | Gives a key event to `apply_key`, and a text event to `keyboard_append_text`. |
 | `apply_key` | Writes the state of one key, its hit and the modifiers. |
-| `append_text` | Adds a typed text to `text`, or leaves it out after a cut in the round. |
-| `fitting` | Gives the bytes of a typed text that fit, at the end of a whole character. |

@@ -1,0 +1,7 @@
+presets = ["test.toml"]
+phases = ["drive", "input", "check"]
+rounds = 8
+
+[module."test:detacher@1.0.0"]
+write = ["sdl3:KeyboardSettings", "sdl3:Keyboard"]
+changes = 24

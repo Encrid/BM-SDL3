@@ -1,7 +1,7 @@
 # src/keyboard_inside.h
 
-This private header is shared by the two sources of the module.
-It includes the headers of SDL3 and of BB-Native, and gives the slot of each type of the module.
+This private header is shared by the three sources of the module.
+It includes the headers of SDL3 and of BB-Native, gives the slot of each type of the module, and declares the function of the text.
 
 ## The slots
 
@@ -11,4 +11,6 @@ So the header gives each slot as a `constexpr`: `SETTINGS` is 0 for `sdl3:Keyboa
 
 ## Functions
 
-The header gives no function.
+| Function | Result |
+| --- | --- |
+| `keyboard_append_text` | Declared here, given by `src/keyboard_text.c`. |
