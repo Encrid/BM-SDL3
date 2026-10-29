@@ -60,7 +60,8 @@ static const scene_t SCENES[] = {
     { "windows", 1, 4 }, { "later", 2, 4 }, { "typed", 2, 4 },
     { "cut", 4, 4 }, { "started", 1, 4 }, { "stop", 2, 4 },
     { "stay", 2, 4 }, { "repeat", 2, 4 }, { "held", 2, 4 },
-    { "waiting", 2, 4 }, { "pumped", 1, 4 }
+    { "waiting", 2, 4 }, { "pumped", 1, 4 }, { "detach_settings", 2, 4 },
+    { "detach_keyboard", 2, 4 }
 };
 
 static const step_t STEPS[] = {
@@ -103,7 +104,9 @@ static const step_t STEPS[] = {
     { "waiting", 1, QUEUE, 4, 0, false, nullptr },
     { "waiting", 2, PUMP, 0, 0, false, nullptr },
     { "pumped", 1, QUEUE, 4, 0, false, nullptr },
-    { "pumped", 1, PUMP, 0, 0, false, nullptr }
+    { "pumped", 1, PUMP, 0, 0, false, nullptr },
+    { "detach_settings", 2, SDL_EVENT_KEY_DOWN, 4, 0, false, nullptr },
+    { "detach_keyboard", 2, SDL_EVENT_KEY_DOWN, 4, 0, false, nullptr }
 };
 
 static uint32_t scene_slot;
@@ -133,6 +136,20 @@ static void write_settings(const bridge_api_t *api, const test_scene_t *on)
 }
 #else
 constexpr uint32_t DRIVE_TERMS = 1;
+#endif
+
+#ifdef DETACH
+constexpr uint32_t DETACHES = 2;
+
+static void detach_single(const bridge_api_t *api, const test_scene_t *on)
+{
+    if (round_now == 2 && !strcmp(on->scene, "detach_settings"))
+        api->detach(api, 0, settings_slot);
+    if (round_now == 2 && !strcmp(on->scene, "detach_keyboard"))
+        api->detach(api, 0, keyboard_slot);
+}
+#else
+constexpr uint32_t DETACHES = 0;
 #endif
 
 static void say(const bridge_api_t *api, const char *label, uint32_t a0,
@@ -245,6 +262,8 @@ static void say_keyboard(const bridge_api_t *api, const sdl3_keyboard_t *kb,
     uint32_t set = kb ? count_set(kb, sizeof(*kb)) : 0;
 
     say(api, "keyboard", kb != nullptr, set);
+    say(api, "queue", SDL_HasEvents(SDL_EVENT_KEY_DOWN,
+        SDL_EVENT_SCREEN_KEYBOARD_HIDDEN), 0);
     if (!kb)
         return;
     snprintf(label, sizeof(label), "key%u", code);
@@ -254,8 +273,6 @@ static void say_keyboard(const bridge_api_t *api, const sdl3_keyboard_t *kb,
     say(api, label, kb->text_len,
         (uint32_t)SDL_strnlen(kb->text, sizeof(kb->text)));
     say_input(api);
-    say(api, "queue", SDL_HasEvents(SDL_EVENT_KEY_DOWN,
-        SDL_EVENT_SCREEN_KEYBOARD_HIDDEN), 0);
 }
 
 static const scene_t *find_scene(const char *name)
@@ -289,6 +306,10 @@ BRIDGE_NATIVE(drive)
 #ifdef WRITE
     if (on)
         write_settings(api, on);
+#endif
+#ifdef DETACH
+    if (on)
+        detach_single(api, on);
 #endif
     for (size_t i = 0; on && i < sizeof(STEPS) / sizeof(STEPS[0]); i++)
         if (STEPS[i].round == round_now && !strcmp(STEPS[i].scene, on->scene))
@@ -327,6 +348,7 @@ BRIDGE_NATIVE(init)
         { 0, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     bridge_term_t check[2] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
         { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 } };
+    uint32_t changes[2] = {};
 
 #ifdef HOLD
     SDL_InitSubSystem(SDL_INIT_EVENTS);
@@ -347,8 +369,12 @@ BRIDGE_NATIVE(init)
     drive[0].slot = scene_slot;
     check[0].slot = scene_slot;
     check[1].slot = keyboard_slot;
+#ifdef DETACH
+    changes[0] = settings_slot;
+    changes[1] = keyboard_slot;
+#endif
     BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, DRIVE_TERMS,
-        nullptr, 0, nullptr, 0);
+        changes, DETACHES, nullptr, 0);
     BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2, nullptr, 0,
         nullptr, 0);
     return (0);

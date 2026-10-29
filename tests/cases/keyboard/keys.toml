@@ -417,3 +417,80 @@ native = "{bb_native}/bridge_native"
 [module."test:probe@1.0.0".config]
 scene = "pumped"
 '''
+
+[[case]]
+name = "a module that detaches sdl3:KeyboardSettings makes keys do nothing and give 0"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:detacher@1.0.0/check: r2 queue 1 0"]
+lacks = ["system 'keys' failed"]
+
+[case.folders]
+"{case}/m" = ["sdl3_keyboard", "detacher", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/detacher.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:detacher@1.0.0".config]
+scene = "detach_settings"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/detacher.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:detacher@1.0.0".config]
+scene = "held"
+'''
+
+[[case]]
+name = "a module that detaches sdl3:Keyboard makes keys do nothing and give 0"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:detacher@1.0.0/check: r2 keyboard 0 0",
+    "record[6] test:detacher@1.0.0/check: r2 queue 1 0",
+]
+lacks = ["system 'keys' failed"]
+
+[case.folders]
+"{case}/m" = ["sdl3_keyboard", "detacher", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/detacher.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:detacher@1.0.0".config]
+scene = "detach_keyboard"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/detacher.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:detacher@1.0.0".config]
+scene = "held"
+'''

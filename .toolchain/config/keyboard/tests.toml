@@ -24,3 +24,8 @@ manifest = ["test:holder@1.0.0", "{probe_words}"]
 name = "writer"
 defines = ["WRITE"]
 manifest = ["test:writer@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "detacher"
+defines = ["WRITE", "DETACH"]
+manifest = ["test:detacher@1.0.0", "{probe_words}"]
