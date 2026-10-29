@@ -70,6 +70,8 @@ BRIDGE_NATIVE(pump)
     SDL_FlushEvents(SDL_EVENT_FIRST, SDL_EVENT_LAST);
     destroy_drops(api);
     SDL_PumpEvents();
+    if (!settings)
+        return (0);
     take_drops(api, settings->drops);
     if (settings->quit && SDL_HasEvent(SDL_EVENT_QUIT))
         return (BRIDGE_END);
