@@ -5,3 +5,8 @@ name = "BM-SDL3-Mouse"
 timeout = 120
 copies = 1
 writers = ["bridge_native_say"]
+
+[[style.exception]]
+rule = "G4"
+path = "src/mouse_cursor.c"
+why = "A native module gets only its API at each call, so the cursor that it made has no other place between two rounds."
