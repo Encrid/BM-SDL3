@@ -47,7 +47,7 @@ static const scene_t SCENES[] = {
     { "nopath", 2 }, { "empty", 2 }, { "others", 3 }, { "edge", 2 },
     { "over", 2 }, { "many", 2 }, { "three", 2 }, { "twenty", 2 },
     { "quit", 3 }, { "lower", 2 }, { "keep", 3 }, { "raise", 2 },
-    { "overmany", 2 }, { "signal", 3 }
+    { "overmany", 2 }, { "signal", 3 }, { "detach", 5 }
 };
 
 static const step_t STEPS[] = {
@@ -74,7 +74,13 @@ static const step_t STEPS[] = {
     { "lower", 1, SDL_EVENT_DROP_FILE, "dropped/a.txt", 3 },
     { "keep", 1, SDL_EVENT_QUIT, nullptr, 1 },
     { "raise", 1, SDL_EVENT_DROP_FILE, "dropped/a.txt", 20 },
-    { "overmany", 1, SDL_EVENT_DROP_FILE, over_path, 20 }
+    { "overmany", 1, SDL_EVENT_DROP_FILE, over_path, 20 },
+    { "detach", 1, SDL_EVENT_DROP_FILE, "dropped/a.txt", 1 },
+    { "detach", 2, SDL_EVENT_USER, nullptr, 1 },
+    { "detach", 2, SDL_EVENT_QUIT, nullptr, 1 },
+    { "detach", 2, SDL_EVENT_DROP_FILE, "dropped/a.txt", 1 },
+    { "detach", 3, SDL_EVENT_QUIT, nullptr, 1 },
+    { "detach", 3, SDL_EVENT_DROP_FILE, "dropped/a.txt", 1 }
 };
 
 constexpr size_t STEP_COUNT = sizeof(STEPS) / sizeof(STEPS[0]);
@@ -105,6 +111,24 @@ static void write_settings(const bridge_api_t *api, const test_scene_t *on)
 }
 #else
 constexpr uint32_t DRIVE_TERMS = 1;
+#endif
+
+#ifdef DETACH
+constexpr uint32_t DRIVE_CHANGES = 1;
+
+static void detach_settings(const bridge_api_t *api, const test_scene_t *on)
+{
+    sdl3_events_settings_t back = { .drops = 16, .quit = true };
+
+    if (strcmp(on->scene, "detach"))
+        return;
+    if (round_now == 2)
+        api->detach(api, 0, settings_slot);
+    if (round_now == 3)
+        BRIDGE_NATIVE_ATTACH(api, 0, settings_slot, back);
+}
+#else
+constexpr uint32_t DRIVE_CHANGES = 0;
 #endif
 
 #ifdef STARVE
@@ -264,6 +288,10 @@ BRIDGE_NATIVE(drive)
     if (on)
         write_settings(api, on);
 #endif
+#ifdef DETACH
+    if (on)
+        detach_settings(api, on);
+#endif
     if (on && round_now == 1 && !strcmp(on->scene, "signal"))
         raise(SIGTERM);
     for (size_t i = 0; on && i < STEP_COUNT; i++)
@@ -295,6 +323,7 @@ BRIDGE_NATIVE(init)
         { 0, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     bridge_term_t check[2] = { { 0, BRIDGE_READ, BRIDGE_OPTIONAL, 0 },
         { 0, BRIDGE_READ, BRIDGE_AND, 0 } };
+    uint32_t changes[1] = { 0 };
 
 #ifdef HOLD
     SDL_InitSubSystem(SDL_INIT_EVENTS);
@@ -315,12 +344,13 @@ BRIDGE_NATIVE(init)
         sdl3_events_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON,
         BRIDGE_ON_DESTROY_REMOVE);
     drive[1].slot = settings_slot;
+    changes[0] = settings_slot;
 #endif
     drive[0].slot = scene_slot;
     check[0].slot = scene_slot;
     check[1].slot = drop_slot;
     BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, DRIVE_TERMS,
-        nullptr, 0, nullptr, 0);
+        changes, DRIVE_CHANGES, nullptr, 0);
     check_slot = BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 2,
         nullptr, 0, nullptr, 0);
     return (0);

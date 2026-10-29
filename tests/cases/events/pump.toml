@@ -225,3 +225,57 @@ native = "{bb_native}/bridge_native"
 [module."test:probe@1.0.0".config]
 scene = "files"
 '''
+
+[[case]]
+name = "while a module has detached the settings, pump does only steps 1 to 3, and after an attach all 5"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:detacher@1.0.0/check: r2 drops 1 0",
+    "record[6] test:detacher@1.0.0/check: r2 user 1 0",
+    "record[6] test:detacher@1.0.0/check: r3 drops 0 0",
+    "record[6] test:detacher@1.0.0/check: r3 user 0 0",
+    "record[6] test:detacher@1.0.0/check: r3 quit 1 0",
+    "record[6] test:detacher@1.0.0/check: r4 drops 1 0",
+    "ended at round 4: a module asked for the end",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "detacher", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:detacher@1.0.0"]
+read = ["sdl3:Drop"]
+write = ["sdl3:EventsSettings"]
+changes = 64
+[module."test:detacher@1.0.0".config]
+scene = "detach"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:detacher@1.0.0"]
+read = ["sdl3:Drop"]
+write = ["sdl3:EventsSettings"]
+[module."test:detacher@1.0.0".config]
+scene = "detach"
+'''
