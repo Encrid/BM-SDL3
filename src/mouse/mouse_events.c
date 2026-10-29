@@ -69,6 +69,8 @@ BRIDGE_NATIVE(mouse)
     sdl3_mouse_t *m = bridge_native_get_single(api, MOUSE);
     SDL_Event e = {};
 
+    if (!s || !m)
+        return (0);
     if (c)
         mouse_apply_cursor(c);
     *m = (sdl3_mouse_t){ .x = m->x, .y = m->y, .held = m->held };
