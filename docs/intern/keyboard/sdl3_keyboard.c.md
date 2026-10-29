@@ -17,6 +17,9 @@ The file puts that macro into the section of the target, with the line that the 
 4. It attaches a `sdl3:Keyboard` with each field at zero to the entity 0.
 5. It adds the system `keys` in the phase `input`.
 
+Each type states `BRIDGE_STRIP`, so an unload of the module destroys no entity.
+Each type also states `BRIDGE_ON_DESTROY_REMOVE`: `docs/extern/sdl3_keyboard.h.md`, *The declarations*.
+
 `keys` has two optional terms: it reads `sdl3:KeyboardSettings`, and it writes `sdl3:Keyboard`.
 Bridge writes the settings after `init`, so the first run of `keys` has them.
 
