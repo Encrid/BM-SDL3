@@ -1,0 +1,19 @@
+[project]
+name = "leaks"
+
+[variables]
+counted = "none"
+sdl_include = "none"
+
+[leaks]
+with = ["{counted}"]
+
+[[artifact]]
+name = "uses"
+kind = "program"
+sources = ["src/uses.c", "tests/stubs.c"]
+flags = ["-isystem", "{sdl_include}"]
+
+[test]
+timeout = 60
+copies = 1

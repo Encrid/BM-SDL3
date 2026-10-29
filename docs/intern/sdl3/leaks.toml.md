@@ -18,6 +18,12 @@ The kind `sdl3_window` counts the windows. `SDL_CreateWindow` and `SDL_CreateWin
 `SDL_DestroyWindow` gives one back at its first argument.
 A window is a kind, because one call gives back the window of either call that makes one.
 
+## The properties
+
+The kind `sdl3_properties` counts the sets of properties. `SDL_CreateProperties` takes one at its result, an id that is not 0 when the set is made.
+`SDL_DestroyProperties` gives one back at its first argument.
+A set is a kind and not a pair, because its id is a number, and a pair needs a pointer.
+
 ## The subsystems
 
 The kind `sdl3_subsystem` counts the subsystems of SDL3. `SDL_InitSubSystem` takes one at its result, which is true when the subsystem starts.

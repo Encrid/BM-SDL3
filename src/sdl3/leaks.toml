@@ -1,0 +1,17 @@
+[leaks.pairs]
+SDL_Metal_CreateView = "SDL_Metal_DestroyView"
+SDL_GL_CreateContext = "SDL_GL_DestroyContext"
+SDL_CreateSystemCursor = "SDL_DestroyCursor"
+SDL_GetWindows = "SDL_free"
+
+[leaks.kinds.sdl3_window]
+takes = { SDL_CreateWindow = "result", SDL_CreateWindowWithProperties = "result" }
+gives = { SDL_DestroyWindow = "1" }
+
+[leaks.kinds.sdl3_properties]
+takes = { SDL_CreateProperties = "result" }
+gives = { SDL_DestroyProperties = "1" }
+
+[leaks.kinds.sdl3_subsystem]
+takes = { SDL_InitSubSystem = "result" }
+gives = { SDL_QuitSubSystem = "1" }

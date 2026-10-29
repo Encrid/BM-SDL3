@@ -2,8 +2,8 @@
 macsdk = "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
 sdl_defines = ["{sdl_config}", "DLL_EXPORT=1", "SDL_BUILD_MAJOR_VERSION=3", "SDL_BUILD_MINOR_VERSION=4", "SDL_BUILD_MICRO_VERSION=18"]
 sdl_flags = ["-isystem", "{sdl_root}/src/video/khronos", "-fvisibility=hidden", "-fno-strict-aliasing", "-w"]
+sdl_link = "{out}/SDL3{library}"
 sdl_windows_system = [
-    "-Wl,--out-implib,{out}/SDL3.dll.a",
     "-lkernel32", "-luser32", "-lgdi32", "-lwinmm", "-limm32", "-lole32", "-loleaut32",
     "-lversion", "-luuid", "-ladvapi32", "-lsetupapi", "-lshell32", "-ldinput8",
 ]

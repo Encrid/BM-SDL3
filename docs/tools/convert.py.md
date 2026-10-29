@@ -24,6 +24,10 @@ The tool finds each line after the line before it, in the order of the list. So 
 In the sources of Windows, it leaves out the block `if (msvc) {`.
 
 From the build of SDL_linux_deps, it reads each line `pub const <name>_soname = "<soname>";`, each line `pub const <name>_version: std.SemanticVersion = .{ .major = <n>, .minor = <n>, .patch = <n> };`, and the list `wayland_c_files`.
+That list starts at the line `pub const wayland_c_files = .{`, and ends at the next line `};`.
+
+If the tool does not find a line of this section, it stops: `<file>: no line holds <text>`.
+`<file>` is the path of the build that the tool reads, and `<text>` is the text of the line.
 
 ## The defines
 
@@ -44,6 +48,8 @@ The evaluator runs no code of its input. It reads only these forms:
 
 An expression that it cannot read stops the tool: `cannot evaluate <name> = <expression>`.
 `and`, `or` and `!` take only booleans. An operand that is no boolean, for example `null`, stops the tool: `not a boolean: <name> = <expression>`.
+On Linux, an expression can name a value that SDL_linux_deps does not give. Then the tool stops: `SDL_linux_deps has no <value>: <name> = <expression>`.
+`<value>` is the name after `x.` in the expression, for example `fribidi_soname` or `libdecor_version.major`.
 
 | Target | CPU | Features |
 | --- | --- | --- |
@@ -63,11 +69,13 @@ The output holds these variables:
 
 - `sdl_root`: the folder of SDL3, the third argument; `sdl_deps`: the folder of the build of SDL_linux_deps. Each one is a path from the folder in which the tool runs;
 - `sdl_common`, `sdl_libm`, `sdl_windows`, `sdl_linux`, `sdl_macos` and `sdl_wayland`: the lists of the sources;
-- `sdl_config_<system>`: the defines that each target of a system shares;
-- `sdl_simd_<cpu>`: the other defines of each CPU, which turn the paths of SIMD on and off.
+- `sdl_config_<system>`: the defines of each system;
+- `sdl_simd_<cpu>`: the defines of each CPU, which turn the paths of SIMD on and off.
 
 An empty list is `[]`.
 
+A define goes into `sdl_simd_<cpu>` when its expression names `x86`, `arm`, `aarch64` or `loongarch`.
+Each other define goes into `sdl_config_<system>`. Its expression names no CPU, so each target of the system gets it.
 The defines of a CPU must be the same on each system. If they are not, the tool stops: `cpu <cpu> differs between systems: <target>`.
 
 ## Functions
@@ -75,7 +83,7 @@ The defines of a CPU must be the same on each system. If they are not, the tool 
 | Function | Result |
 | --- | --- |
 | `config_block(lines)` | Gives the name and the expression of each entry of the build config. |
-| `evaluate(name, expr, target, deps)` | Gives the value of one expression for a target, with the sonames and the versions of SDL_linux_deps in `deps`, or nothing. Stops on an expression that it cannot read, and on an operand that is no boolean. |
+| `evaluate(name, expr, target, deps)` | Gives the value of one expression for a target, with the sonames and the versions of SDL_linux_deps in `deps`, or nothing. Stops on an expression that it cannot read, on an operand that is no boolean, and on a value that SDL_linux_deps does not give. |
 | `sources_between(lines, first, last, skip)` | Gives the files of the lists between two lines, and leaves out the blocks that start with a line of `skip`. |
 | `toml_list(name, items)` | Gives the text of one list of TOML. |
 | `emit(per_target, lists, folders)` | Writes the output: the two folders, the lists of the sources with the files of wayland, and the defines. |

@@ -23,9 +23,11 @@ Python 3.11 or a later version.
 
 Each release holds, for each target, the SDL3 library, the headers of SDL3 in `include/SDL3` and the notices of its sources.
 It also holds `leaks.toml`, which names the resources of SDL3 for `[leaks] with` of a module.
+
 The build keeps each part of SDL3, also GL, Vulkan and the GPU API, so that a module can use any of them.
-SDL3 loads the GL or Vulkan library of the system only when a module asks for it.
-The Metal view of SDL3 gives the CAMetalLayer of a window on macOS.
+SDL3 loads the GL or Vulkan library of the system only for a window or a call that asks for it.
+On macOS, a window that names no graphics API and no external graphics context asks for GL.
+The Metal view of SDL3 gives the CAMetalLayer of a window on macOS. On the other systems, `SDL_Metal_CreateView` gives no view.
 
 The library is `SDL3.dll`, `SDL3.so` or `SDL3.dylib`. Its soname on Linux is `SDL3.so`, and its install name on macOS is `@rpath/SDL3.dylib`.
 A module links the library itself, so the release holds no import library for Windows.
@@ -35,7 +37,7 @@ These rules let several modules share the one SDL3 of a process:
 
 - Each SDL3 module loads this SDL3 library, so all of them use one queue of events and one state.
 - Only the module `sdl3:events` calls `SDL_PumpEvents`, on the main thread, at the start of each round.
-- Each other module takes only the types of event that it covers, with `SDL_PeepEvents`.
+- Each other module takes only the types of event that it covers: with `SDL_PeepEvents`, or with `SDL_FlushEvents` when it reads no field of them.
 - No module calls `SDL_PollEvent` or `SDL_WaitEvent`, because they take the events of each module.
 
 ## Contributing

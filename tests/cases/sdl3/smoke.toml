@@ -3,3 +3,16 @@ name = "SDL3 opens a hidden window with a GL 4.1 core context, clears it and rea
 run = ["{out}/smoke{exe}"]
 claims = { status = 0, line = ["pixel 51 102 153"] }
 false = { run = ["{out}/smoke{exe}", "red"] }
+
+[[case]]
+name = "the library is SDL3 3.4.18"
+run = ["{out}/smoke{exe}", "version"]
+claims = { status = 0, line = ["sdl 3.4.18"] }
+false = { run = ["{out}/smoke{exe}"] }
+
+[[case]]
+name = "a program finds SDL3 beside it by its name"
+folders = { "{case}/bin" = ["smoke", "SDL3"] }
+run = ["{case}/bin/smoke{exe}"]
+claims = { status = 0, line = ["pixel 51 102 153"] }
+false = { run = ["{case}/bin/smoke{exe}", "red"] }

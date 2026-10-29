@@ -7,8 +7,20 @@ defines = ["{sdl_defines}"]
 flags = ["{sdl_flags}", "{sdl_system}"]
 
 [[artifact]]
+name = "leaks.toml"
+kind = "file"
+sources = ["src/leaks.toml"]
+
+[[artifact]]
 name = "smoke"
 kind = "program"
 sources = ["tests/smoke/smoke.c"]
+flags = ["-isystem", "{sdl_root}/include", "{sdl_link}"]
+test = true
+
+[[artifact]]
+name = "parts"
+kind = "program"
+sources = ["tests/smoke/parts.c"]
 flags = ["-isystem", "{sdl_root}/include", "{sdl_link}"]
 test = true

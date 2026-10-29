@@ -1,0 +1,35 @@
+[[case]]
+name = "balanced"
+run = ["{out}/uses{exe}", "balanced"]
+claims = { status = 0, line = ["balanced"] }
+false = { run = ["{out}/uses{exe}", "pairs"] }
+
+[[case]]
+name = "pairs"
+run = ["{out}/uses{exe}", "pairs"]
+claims = { status = 0, line = ["pairs"] }
+false = { run = ["{out}/uses{exe}", "balanced"] }
+
+[[case]]
+name = "window"
+run = ["{out}/uses{exe}", "window"]
+claims = { status = 0, line = ["window"] }
+false = { run = ["{out}/uses{exe}", "balanced"] }
+
+[[case]]
+name = "subsystem"
+run = ["{out}/uses{exe}", "subsystem"]
+claims = { status = 0, line = ["subsystem"] }
+false = { run = ["{out}/uses{exe}", "balanced"] }
+
+[[case]]
+name = "refused"
+run = ["{out}/uses{exe}", "refused"]
+claims = { status = 0, line = ["refused"] }
+false = { run = ["{out}/uses{exe}", "balanced"] }
+
+[[case]]
+name = "properties"
+run = ["{out}/uses{exe}", "properties"]
+claims = { status = 0, line = ["properties"] }
+false = { run = ["{out}/uses{exe}", "balanced"] }

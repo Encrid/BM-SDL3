@@ -1,0 +1,3 @@
+[compose.sdl3]
+from = "{sdl_root}"
+headers = ["include/SDL3/*.h"]
