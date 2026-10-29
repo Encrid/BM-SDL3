@@ -438,14 +438,15 @@ BRIDGE_NATIVE(check)
 static void declare_types(const bridge_api_t *api)
 {
     scene_slot = BRIDGE_NATIVE_COMPONENT(api, "test:Scene", test_scene_t,
-        BRIDGE_STRIP, BRIDGE_SINGLETON);
+        BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE);
     cursor_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Cursor", sdl3_cursor_t,
-        BRIDGE_STRIP, BRIDGE_SINGLETON);
+        BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE);
     mouse_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:Mouse", sdl3_mouse_t,
-        BRIDGE_STRIP, BRIDGE_SINGLETON);
+        BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE);
 #ifdef WRITE
     settings_slot = BRIDGE_NATIVE_COMPONENT(api, "sdl3:MouseSettings",
-        sdl3_mouse_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON);
+        sdl3_mouse_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON,
+        BRIDGE_ON_DESTROY_REMOVE);
 #endif
 }
 
