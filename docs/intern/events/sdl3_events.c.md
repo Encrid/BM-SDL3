@@ -16,6 +16,9 @@ The file puts that macro into the section of the target, with the line that the 
 3. It declares `sdl3:Drop` as a table, then `sdl3:EventsSettings` as a singleton.
 4. It adds the system `pump` in the phase `events`.
 
+Each type states `BRIDGE_STRIP`, so an unload of the module destroys no entity.
+Each type also states `BRIDGE_ON_DESTROY_REMOVE`: `docs/extern/sdl3_events.h.md`, *The declarations*.
+
 `pump` has two terms. It reads each `sdl3:Drop`, so it finds the drops of the round before. It reads `sdl3:EventsSettings` as an optional term.
 `pump` also states that it changes `sdl3:Drop`, because it attaches and destroys the drops.
 Bridge writes the settings after `init`, so the first run of `pump` has them.

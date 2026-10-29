@@ -1,0 +1,589 @@
+[[case]]
+name = "pump makes one sdl3:Drop with the path of each dropped file"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r2 drops 2 0",
+    'record[6] test:probe@1.0.0/check: r2 drop "dropped/a.txt" 13 0',
+    "record[6] test:probe@1.0.0/check: r2 drop \"dropped/caf\u00e9.txt\" 17 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "files"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "quiet"
+'''
+
+[[case]]
+name = "pump destroys each sdl3:Drop of the round before"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r2 drops 2 0",
+    "record[6] test:probe@1.0.0/check: r3 drops 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "files"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "twice"
+'''
+
+[[case]]
+name = "a drop with no path is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 drops 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "nopath"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "files"
+'''
+
+[[case]]
+name = "a drop with an empty path is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 drops 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "empty"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "files"
+'''
+
+[[case]]
+name = "a dropped text and the other drop events that are no file are left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 drops 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "others"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "files"
+'''
+
+[[case]]
+name = "the other drop events stay in the queue of their round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r2 others 4 0",
+    "record[6] test:probe@1.0.0/check: r3 others 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "others"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "files"
+'''
+
+[[case]]
+name = "a dropped path of 1023 bytes fits"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] test:probe@1.0.0/check: r2 drop "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 1023 0']
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "edge"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "over"
+'''
+
+[[case]]
+name = "a dropped path of 1024 bytes is left out with its message"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+has = ["record[4] sdl3:events@1.0.0/pump: a dropped path of 1024 bytes is left out, and 1023 is the most"]
+line = ["record[6] test:probe@1.0.0/check: r2 drops 0 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "over"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "edge"
+'''
+
+[[case]]
+name = "pump takes at most 16 drops in a round and counts the rest"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+has = ["record[4] sdl3:events@1.0.0/pump: the dropped files past 16 in a round are left out: 2 "]
+line = ["record[6] test:probe@1.0.0/check: r2 drops 16 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "many"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "files"
+'''
+
+[[case]]
+name = "drops sets the most files that pump takes in a round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+has = ["record[4] sdl3:events@1.0.0/pump: the dropped files past 2 in a round are left out: 1 "]
+line = ["record[6] test:probe@1.0.0/check: r2 drops 2 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "three"
+[module."sdl3:events@1.0.0".config]
+drops = 2
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "three"
+'''
+
+[[case]]
+name = "drops above 16 needs spawns, changes and log_ring raised with it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 drops 20 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "twenty"
+[module."sdl3:events@1.0.0"]
+spawns = 20
+changes = 21440
+log_ring = 672
+[module."sdl3:events@1.0.0".config]
+drops = 20
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "twenty"
+[module."sdl3:events@1.0.0"]
+changes = 21440
+log_ring = 672
+[module."sdl3:events@1.0.0".config]
+drops = 20
+'''
+
+[[case]]
+name = "a writer that lowers drops changes what pump takes at its next run"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+has = ["record[4] sdl3:events@1.0.0/pump: the dropped files past 2 in a round are left out: 1 "]
+line = ["record[6] test:writer@1.0.0/check: r2 drops 2 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "writer", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Drop"]
+write = ["sdl3:EventsSettings"]
+[module."test:writer@1.0.0".config]
+scene = "lower"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Drop"]
+write = ["sdl3:EventsSettings"]
+[module."test:writer@1.0.0".config]
+scene = "three"
+'''
+
+[[case]]
+name = "a writer that raises drops past the reservations makes pump fail at the spawn"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ["sdl3:events@1.0.0/pump: system 'pump' failed: spawn: its spawns of 16 between two barriers are used up"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "writer", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Drop"]
+write = ["sdl3:EventsSettings"]
+[module."test:writer@1.0.0".config]
+scene = "raise"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Drop"]
+write = ["sdl3:EventsSettings"]
+[module."test:writer@1.0.0".config]
+scene = "raise"
+[module."sdl3:events@1.0.0"]
+spawns = 20
+changes = 21440
+log_ring = 672
+'''
+
+[[case]]
+name = "past changes, pump fails at the attach of a drop"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ["sdl3:events@1.0.0/pump: system 'pump' failed: its changes of 17152 bytes are used up"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "twenty"
+[module."sdl3:events@1.0.0"]
+spawns = 20
+log_ring = 672
+[module."sdl3:events@1.0.0".config]
+drops = 20
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "twenty"
+[module."sdl3:events@1.0.0"]
+spawns = 20
+changes = 21440
+log_ring = 672
+[module."sdl3:events@1.0.0".config]
+drops = 20
+'''
+
+[[case]]
+name = "past log_ring, the ring drops the lines of pump, and a record counts them"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ["sdl3:events@1.0.0/-: 3 log lines were dropped: its ring holds 17"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "overmany"
+[module."sdl3:events@1.0.0".config]
+drops = 20
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "overmany"
+[module."sdl3:events@1.0.0"]
+log_ring = 672
+[module."sdl3:events@1.0.0".config]
+drops = 20
+'''

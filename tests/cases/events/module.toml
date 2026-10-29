@@ -1,0 +1,267 @@
+[[case]]
+name = "--show-config shows the words of the manifest and each default of the module"
+run = ["{bridge_host}/bridge-host{exe}", "--show-config", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+order = [
+    "module sdl3:events@1.0.0, native, m/sdl3_events{library}",
+    'config = "sdl3:EventsSettings"  its file',
+    'settings = "drops quit"  its file',
+    "pinned = true  its file",
+    "reloadable = false  its file",
+    "hot_reload = false  its file",
+    "scratch = 4096  its file",
+    "log_ring = 544  its file",
+    "spans = 1024  its file",
+    "spawns = 16  its file",
+    'persistent = "none"  its file',
+    "changes = 17152  its file",
+    "config.drops = 16  its file",
+    "config.quit = true  its file",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+
+[[case]]
+name = "a key of the deployment replaces a default of the manifest"
+run = ["{bridge_host}/bridge-host{exe}", "--show-config", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["  spans = 2048  d.toml:8"]
+lacks = ["spans = 1024  its file"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:events@1.0.0"]
+spans = 2048
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the module loads the SDL3 library beside it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["loaded: sdl3:events@1.0.0, native, m/sdl3_events{library}"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["sdl3_events", "probe"]
+
+[[case]]
+name = "init gives 1 and writes no events when SDL3 cannot start its events"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+has = ["record[3] sdl3:events@1.0.0/-: no events: Out of memory"]
+line = [
+    "record[3] -/-: module 'sdl3:events@1.0.0' did not load: its init answered 1 0 0",
+    "not loaded: m/sdl3_events{library}: sdl3:events@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "starve", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."probe:starve@1.0.0"]
+read = ["test:Scene", "sdl3:Drop"]
+'''
+
+[case.false.folders]
+"{case}/m" = ["sdl3_events", "{sdl3}/SDL3{library}"]
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "reload gives 1"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 reload 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "reload"
+module = { path = "m/sdl3_events{library}" }
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+module = { path = "m/sdl3_events{library}" }
+'''
+
+[[case]]
+name = "shutdown keeps SDL3 while another subsystem holds it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["events still started 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "holder", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:holder@1.0.0"]
+read = ["sdl3:Drop"]
+'''
+
+[case.false.folders]
+"{case}/m" = ["sdl3_events", "{sdl3}/SDL3{library}"]
+
+[[case]]
+name = "shutdown quits SDL3 after the last subsystem stops"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["sdl quit 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+
+[[case]]
+name = "an order pair names the system pump by its full name sdl3:events:pump"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: the [order] pair of 'sdl3:events:pump' and 'test:probe:check' orders nothing: they run in different phases 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["sdl3:events:pump", "test:probe:check"]]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["sdl3:events:other", "test:probe:check"]]
+'''
