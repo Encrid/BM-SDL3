@@ -54,6 +54,8 @@ BRIDGE_NATIVE(keys)
     sdl3_keyboard_t *k = bridge_native_get_single(api, KEYBOARD);
     SDL_Event e = {};
 
+    if (!s || !k)
+        return (0);
     set_text(s->text);
     memset(k->hit, 0, sizeof(k->hit));
     memset(k->text, 0, sizeof(k->text));
