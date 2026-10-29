@@ -40,6 +40,7 @@ The file of the module is `sdl3_keyboard`, with the suffix of a library. It runs
 3. It takes the key events and the text events of the round, and writes `sdl3:Keyboard`.
 
 It starts the text input on each window, not only on the window with the focus, because a window can open with no focus.
+If a module detaches `sdl3:KeyboardSettings` or `sdl3:Keyboard`, `keys` does nothing and gives 0 while either is gone.
 The full name of the system for `[order]` is `sdl3:keyboard:keys`.
 
 ## sdl3:KeyboardSettings

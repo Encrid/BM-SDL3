@@ -6,14 +6,17 @@ This file holds the system `keys`. It turns the keyboard events of a round into 
 
 `bridge_keys` does these steps:
 
-1. It calls `set_text` with `text`.
-2. It clears `hit`, `text` and `text_len`. `key` and `mods` keep their values.
-3. It takes each event from `SDL_EVENT_KEY_DOWN` to `SDL_EVENT_SCREEN_KEYBOARD_HIDDEN`, and gives it to `apply_event`.
+1. If `sdl3:KeyboardSettings` or `sdl3:Keyboard` is gone, it gives 0 and does nothing more.
+2. It calls `set_text` with `text`.
+3. It clears `hit`, `text` and `text_len`. `key` and `mods` keep their values.
+4. It takes each event from `SDL_EVENT_KEY_DOWN` to `SDL_EVENT_SCREEN_KEYBOARD_HIDDEN`, and gives it to `apply_event`.
+
+`bridge_native_get_single` gives null for a singleton that a module detached, so step 1 finds it: `docs/extern/sdl3_keyboard.h.md`, *The system keys*.
 
 `set_text` gets the windows from `SDL_GetWindows`.
 With `text` at `true`, it calls `SDL_StartTextInput` on each window where `SDL_TextInputActive` gives `false`.
 With `text` at `false`, it calls `SDL_StopTextInput` on each window where it gives `true`.
-Step 3 takes the whole range of the keyboard, so no event of the keyboard stays in the queue.
+Step 4 takes the whole range of the keyboard, so no event of the keyboard stays in the queue.
 The state comes from the events, and not from `SDL_GetKeyboardState`. Thus an event that a case pushes also counts.
 
 ## An event
@@ -46,7 +49,7 @@ ENDPROCEDURE
 
 | Function | Result |
 | --- | --- |
-| `bridge_keys` | Writes `sdl3:Keyboard` for the round. Gives 0. |
+| `bridge_keys` | Writes `sdl3:Keyboard` for the round, or does nothing while a singleton is gone. Gives 0. |
 | `set_text` | Starts or stops the text input on each window, as `text` tells. |
 | `apply_event` | Gives a key event to `apply_key`, and a text event to `keyboard_append_text`. |
 | `apply_key` | Writes the state of one key, its hit and the modifiers. |
