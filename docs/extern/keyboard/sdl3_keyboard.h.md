@@ -70,11 +70,14 @@ A text of more than 63 bytes in a round is cut after its last whole character th
 ## The C types
 
 `include/sdl3_keyboard.h` gives the C type of each type of the module, and its descriptor for Bridge.
+The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
 
-| Type of Bridge | C type | Descriptor |
-| --- | --- | --- |
-| `sdl3:KeyboardSettings` | `sdl3_keyboard_settings_t` | `sdl3_keyboard_settings_t_desc` |
-| `sdl3:Keyboard` | `sdl3_keyboard_t` | `sdl3_keyboard_t_desc` |
+| Type of Bridge | C type | Descriptor | Macro of the text |
+| --- | --- | --- | --- |
+| `sdl3:KeyboardSettings` | `sdl3_keyboard_settings_t` | `sdl3_keyboard_settings_t_desc` | `SDL3_KEYBOARD_SETTINGS_FIELDS` |
+| `sdl3:Keyboard` | `sdl3_keyboard_t` | `sdl3_keyboard_t_desc` | `SDL3_KEYBOARD_FIELDS` |
+
+Each macro of the text gives the braces of its type and the text between them.
 
 ## The declarations
 
