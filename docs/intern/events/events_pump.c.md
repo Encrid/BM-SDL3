@@ -9,6 +9,25 @@ Step 1 is `SDL_FlushEvents` from `SDL_EVENT_FIRST` to `SDL_EVENT_LAST`, so the q
 Step 2 is `destroy_drops`, which reads the entity of each row in the spans of `sdl3:Drop`, and destroys it.
 Step 5 uses `SDL_HasEvent`, so the event of the quit stays in the queue for the other modules of the round.
 
+`bridge_native_get_single` gives null for a singleton that a module detached. Then `bridge_pump` stops after step 3, and gives 0:
+
+```pseudo
+FUNCTION bridge_pump() RETURNS I32
+   settings <- bridge_native_get_single(SETTINGS)
+   CALL SDL_FlushEvents(SDL_EVENT_FIRST, SDL_EVENT_LAST)
+   CALL destroy_drops()
+   CALL SDL_PumpEvents()
+   IF settings = nullptr THEN
+      RETURN 0
+   ENDIF
+   CALL take_drops(settings.drops)
+   IF settings.quit AND SDL_HasEvent(SDL_EVENT_QUIT) THEN
+      RETURN BRIDGE_END
+   ENDIF
+   RETURN 0
+ENDFUNCTION
+```
+
 ## The drops
 
 `take_drops` takes at most `drops` drops of files, one at a time, and counts the drops that stay:
@@ -38,7 +57,7 @@ SDL3 keeps the text of an event until the next pump, so the copy happens in the 
 
 | Function | Result |
 | --- | --- |
-| `bridge_pump` | Pumps the queue, makes the drops of the round, and gives `BRIDGE_END` on a quit. Else gives 0. |
+| `bridge_pump` | Pumps the queue. With the settings, it also makes the drops of the round, and gives `BRIDGE_END` on a quit. Else it gives 0. |
 | `destroy_drops` | Destroys each `sdl3:Drop` of the round before. |
 | `take_drops` | Takes at most `most` drops of files, and counts the rest. |
 | `keep_drop` | Spawns and attaches a `sdl3:Drop` for a path that fits. Leaves out the other drops. |

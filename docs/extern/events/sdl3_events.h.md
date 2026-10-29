@@ -47,6 +47,9 @@ The file of the module is `sdl3_events`, with the suffix of a library. It runs o
 4. It spawns one `sdl3:Drop` for each file that was dropped, at most `drops` in a round.
 5. If `quit` is `true` and the queue holds `SDL_EVENT_QUIT`, it gives `BRIDGE_END`.
 
+If a module detaches `sdl3:EventsSettings`, `pump` does only steps 1 to 3 while the settings are gone.
+It takes no drop, and a quit does not end the run.
+
 SDL3 sends `SDL_EVENT_QUIT` when the system asks the program to quit, for example with the signal `SIGTERM`.
 The module takes only the drops of files. It leaves out a dropped text, and a drop with no path or with an empty path.
 The other events of the drops stay in the queue in that round, and the next pump clears them.
