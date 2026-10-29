@@ -6,11 +6,14 @@ This file holds the system `mouse`. It applies `sdl3:Cursor`, and turns the mous
 
 `bridge_mouse` does these steps:
 
-1. If the app attached `sdl3:Cursor`, it gives it to `mouse_apply_cursor`.
-2. It clears the motion, the wheel, `pressed` and `released`. The position and `held` keep their values.
-3. It takes each event from `SDL_EVENT_MOUSE_MOTION` to `SDL_EVENT_MOUSE_REMOVED`, and gives it to `apply_event`.
+1. If `sdl3:MouseSettings` or `sdl3:Mouse` is gone, it gives 0 and does nothing more.
+2. If `sdl3:Cursor` is there, it gives it to `mouse_apply_cursor`.
+3. It clears the motion, the wheel, `pressed` and `released`. The position and `held` keep their values.
+4. It takes each event from `SDL_EVENT_MOUSE_MOTION` to `SDL_EVENT_MOUSE_REMOVED`, and gives it to `apply_event`.
 
-Step 3 takes the whole range of the mouse, so no event of the mouse stays in the queue.
+`bridge_native_get_single` gives null for a singleton that a module detached, so step 1 finds it: `docs/extern/sdl3_mouse.h.md`, *The system mouse*.
+It also gives null for `sdl3:Cursor` before the app attaches it. So step 2 changes no cursor while `sdl3:Cursor` is gone.
+Step 4 takes the whole range of the mouse, so no event of the mouse stays in the queue.
 
 ## An event
 
@@ -54,7 +57,7 @@ A button that goes down sets its bit in `held` and in `pressed`. A button that g
 
 | Function | Result |
 | --- | --- |
-| `bridge_mouse` | Applies the cursor, then writes `sdl3:Mouse` for the round. Gives 0. |
+| `bridge_mouse` | Applies the cursor, then writes `sdl3:Mouse` for the round. Does nothing while `sdl3:MouseSettings` or `sdl3:Mouse` is gone. Gives 0. |
 | `apply_event` | Gives each event of the mouse to the function of its type. |
 | `apply_motion` | Writes the position, and adds the motion, in pixels of the frame. |
 | `apply_button` | Writes the bit of a button in `held`, `pressed` or `released`. |

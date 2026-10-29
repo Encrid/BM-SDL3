@@ -35,6 +35,8 @@ The file of the module is `sdl3_mouse`, with the suffix of a library. It runs on
 
 `mouse` runs in the phase `input`. It applies the `sdl3:Cursor` that the app wrote: the shape when it changes, and `hidden` and `relative` at each round.
 Then it takes the mouse events of the round, and writes `sdl3:Mouse`.
+If a module detaches `sdl3:MouseSettings` or `sdl3:Mouse`, `mouse` does nothing and gives 0 while either is gone.
+While `sdl3:Cursor` is gone, before the app attaches it or after a module detaches it, `mouse` changes no cursor, but it writes `sdl3:Mouse`.
 The full name of the system for `[order]` is `sdl3:mouse:mouse`.
 
 ## sdl3:MouseSettings
