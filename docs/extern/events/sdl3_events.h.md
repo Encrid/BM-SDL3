@@ -79,6 +79,18 @@ After the load, a system with a grant to write it can change it at each round. `
 | `sdl3:EventsSettings` | `sdl3_events_settings_t` | `sdl3_events_settings_t_desc` |
 | `sdl3:Drop` | `sdl3_drop_t` | `sdl3_drop_t_desc` |
 
+## The declarations
+
+Each module that reads or writes a type of the module declares it in its `init`. A module in C gives the C type and the descriptor of the header.
+Bridge compares the descriptors byte for byte. It also refuses a second module that states another kind, storage layout or `on_destroy`.
+
+| Type of Bridge | Kind | Storage layout | `on_destroy` |
+| --- | --- | --- | --- |
+| `sdl3:EventsSettings` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `sdl3:Drop` | `BRIDGE_STRUCT` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+
+Bridge does not compare `on_unload`, so each module states its own.
+
 ## The deployment
 
 - `phases` lists `events` first, before the phases of the other SDL3 modules.
