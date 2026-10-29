@@ -1,0 +1,263 @@
+[[case]]
+name = "--show-config shows the words of the manifest and each default of the module"
+run = ["{bridge_host}/bridge-host{exe}", "--show-config", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+order = [
+    "module sdl3:video@1.0.0, native, m/sdl3_video{library}",
+    'config = "sdl3:WindowSettings"  its file',
+    'settings = "title width height hidden resizable fullscreen place x y high_dpi"  its file',
+    "pinned = true  its file",
+    "reloadable = false  its file",
+    "hot_reload = false  its file",
+    "scratch = 4096  its file",
+    "log_ring = 256  its file",
+    "spans = 1024  its file",
+    'spawns = "none"  its file',
+    'persistent = "none"  its file',
+    "changes = 96  its file",
+    'config.title = "Bridge"  its file',
+    "config.width = 1280  its file",
+    "config.height = 720  its file",
+    "config.hidden = false  its file",
+    "config.resizable = false  its file",
+    "config.fullscreen = false  its file",
+    'config.place = "SDL3_PLACE_SYSTEM"  its file',
+    "config.x = 0  its file",
+    "config.y = 0  its file",
+    "config.high_dpi = false  its file",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["drive", "input", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+
+[[case]]
+name = "a key of the deployment replaces a default of the manifest"
+run = ["{bridge_host}/bridge-host{exe}", "--show-config", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["  spans = 2048  d.toml:8"]
+lacks = ["spans = 1024  its file"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:video@1.0.0"]
+spans = 2048
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the module loads the SDL3 library beside it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["loaded: sdl3:video@1.0.0, native, m/sdl3_video{library}"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["sdl3_video", "probe"]
+
+[[case]]
+name = "init attaches a sdl3:Window with surface SDL3_SURFACE_NONE and each other field 0"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/drive: r1 before 1 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.folders]
+"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+
+[[case]]
+name = "reload gives 1"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r1 reload 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "reload"
+module = { path = "m/sdl3_video{library}" }
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+module = { path = "m/sdl3_video{library}" }
+'''
+
+[[case]]
+name = "shutdown keeps SDL3 while another subsystem holds it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["events still started 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "holder", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml", "{root}/tests/presets/window.toml"]
+phases = ["drive", "input", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:holder@1.0.0"]
+read = ["sdl3:sdl3_place_t", "sdl3:sdl3_surface_t", "sdl3:Window"]
+write = ["sdl3:WindowSettings"]
+'''
+
+[case.false.folders]
+"{case}/m" = ["sdl3_video", "{sdl3}/SDL3{library}"]
+
+[[case]]
+name = "shutdown quits SDL3 after the last subsystem stops"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["sdl quit 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+
+[[case]]
+name = "an order pair names the system by its full name sdl3:video:window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+has = ["the [order] pair of 'sdl3:video:window' and 'test:probe:check' orders nothing: they run in different phases"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["sdl3:video:window", "test:probe:check"]]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["sdl3:video:other", "test:probe:check"]]
+'''
