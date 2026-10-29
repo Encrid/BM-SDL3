@@ -1,0 +1,7 @@
+presets = ["test.toml"]
+phases = ["drive", "input", "check"]
+rounds = 8
+
+[module."test:probe@1.0.0"]
+read = ["sdl3:Mouse"]
+write = ["sdl3:Cursor"]
