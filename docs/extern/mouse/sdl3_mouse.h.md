@@ -82,6 +82,19 @@ When `relative` changes on the window with the keyboard focus, SDL3 drops the mo
 | `sdl3:Cursor` | `sdl3_cursor_t` | `sdl3_cursor_t_desc` |
 | `sdl3:Mouse` | `sdl3_mouse_t` | `sdl3_mouse_t_desc` |
 
+## The declarations
+
+Each module that reads or writes a type of the module declares it in its `init`. A module in C gives the C type and the descriptor of the header.
+Bridge compares the descriptors byte for byte. It also refuses a second module that states another kind, storage layout or `on_destroy`.
+
+| Type of Bridge | Kind | Storage layout | `on_destroy` |
+| --- | --- | --- | --- |
+| `sdl3:MouseSettings` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `sdl3:Cursor` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `sdl3:Mouse` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
+
+Bridge does not compare `on_unload`, so each module states its own.
+
 ## The deployment
 
 - The module opens no window, and it does not pump the queue. So it needs `sdl3:events`, and a module that opens a window that takes the mouse, for example `sdl3:video`.

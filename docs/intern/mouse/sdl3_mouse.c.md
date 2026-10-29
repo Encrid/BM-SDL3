@@ -17,6 +17,9 @@ The file puts that macro into the section of the target, with the line that the 
 4. It attaches a `sdl3:Mouse` with each field at zero to the entity 0.
 5. It adds the system `mouse` in the phase `input`.
 
+Each type states `BRIDGE_STRIP`, so an unload of the module destroys no entity.
+Each type also states `BRIDGE_ON_DESTROY_REMOVE`: `docs/extern/sdl3_mouse.h.md`, *The declarations*.
+
 `mouse` has three optional terms: it reads the settings and the cursor, and it writes the mouse.
 The app attaches `sdl3:Cursor` itself. Until it does, `mouse` changes no cursor.
 
