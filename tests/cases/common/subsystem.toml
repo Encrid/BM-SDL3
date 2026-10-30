@@ -1,0 +1,133 @@
+[[case]]
+name = "the stop of the last subsystem quits SDL3"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["sdl quit 1"]
+
+[case.folders]
+"{case}/m" = ["common_probe", "SDL3"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["input"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["common_holder", "SDL3"]
+
+[[case]]
+name = "the stop keeps SDL3 while another subsystem holds it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[case.claims]
+status = 0
+line = ["sdl quit 0"]
+
+[case.folders]
+"{case}/m" = ["common_holder", "SDL3"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["input"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["common_probe", "SDL3"]
+
+[[case]]
+name = "the start of the video writes no video when SDL3 cannot start its video"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "nothing" }
+
+[case.claims]
+status = 1
+has = ["record[3] test:common@1.0.0/-: no video: nothing not available"]
+
+[case.folders]
+"{case}/m" = ["common_probe", "SDL3"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["input"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "dummy" }
+
+[[case]]
+name = "the start of the events starts them, and their stop quits SDL3"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["sdl quit 1"]
+
+[case.folders]
+"{case}/m" = ["common_events", "SDL3"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["input"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false]
+fail = { SDL_InitSubSystem = 1 }
+
+[[case]]
+name = "the start of the events writes no events when SDL3 cannot start them"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+fail = { SDL_InitSubSystem = 1 }
+
+[case.claims]
+status = 1
+has = ["record[3] test:common@1.0.0/-: no events:"]
+
+[case.folders]
+"{case}/m" = ["common_events", "SDL3"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["input"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false]
+fail = {}

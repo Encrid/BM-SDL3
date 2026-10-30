@@ -11,11 +11,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -27,7 +27,7 @@ scene = "own"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -50,11 +50,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -66,7 +66,7 @@ scene = "hide"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -86,11 +86,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 relative 2 2"]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -102,7 +102,7 @@ scene = "relative"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -125,11 +125,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -141,7 +141,7 @@ scene = "later"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 phases = ["drive", "check", "input"]
 [content]
 paths = ["m"]
@@ -162,11 +162,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 relative 0 2"]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -178,7 +178,7 @@ scene = "free"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -198,11 +198,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 cursor 0 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -225,11 +225,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 cursor 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -252,11 +252,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 cursor 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -268,7 +268,7 @@ scene = "same"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -288,11 +288,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 cursor 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -304,7 +304,7 @@ scene = "new"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -324,11 +324,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 cursor 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -340,7 +340,7 @@ scene = "count"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -360,11 +360,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 motion 0 0 0 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -376,7 +376,7 @@ scene = "drop"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mouse/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -400,11 +400,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_mouse", "detacher", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_mouse", "mouse_detacher", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/detacher.toml"]
+presets = ["{root}/tests/mouse/presets/detacher.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -416,7 +416,7 @@ scene = "detach_cursor"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/detacher.toml"]
+presets = ["{root}/tests/mouse/presets/detacher.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]

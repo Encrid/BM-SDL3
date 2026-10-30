@@ -1,35 +1,35 @@
 [[case]]
-name = "the leak count names the four pairs of src/leaks.toml"
-run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "pairs"]
+name = "the leak count names the four pairs of src/sdl3/leaks.toml"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "pairs"]
 claims = { status = 1, line = ["leaks: pairs keeps 1 SDL_Metal_CreateView", "leaks: pairs keeps 1 SDL_GL_CreateContext", "leaks: pairs keeps 1 SDL_CreateSystemCursor", "leaks: pairs keeps 1 SDL_GetWindows"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"] }
 
 [[case]]
-name = "each give of a pair of src/leaks.toml gives back its take"
-run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"]
+name = "each give of a pair of src/sdl3/leaks.toml gives back its take"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"]
 claims = { status = 0, line = ["leaks: 1 cases, 1 give back what they take"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "pairs"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "pairs"] }
 
 [[case]]
 name = "a window of either call is one sdl3_window, and SDL_DestroyWindow gives it back"
-run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "window"]
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "window"]
 claims = { status = 1, line = ["leaks: window keeps 1 sdl3_window"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"] }
 
 [[case]]
 name = "a subsystem that starts and does not stop is kept"
-run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "subsystem"]
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "subsystem"]
 claims = { status = 1, line = ["leaks: subsystem keeps 1 sdl3_subsystem"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"] }
 
 [[case]]
 name = "a subsystem that SDL3 does not start counts nothing"
-run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "refused"]
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "refused"]
 claims = { status = 0, line = ["leaks: 1 cases, 1 give back what they take"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "subsystem"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "subsystem"] }
 
 [[case]]
 name = "a set of properties that is not destroyed is kept"
-run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "properties"]
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "properties"]
 claims = { status = 1, line = ["leaks: properties keeps 1 sdl3_properties"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/sdl3/leaks", "--out", "{case}/out", "--leaks", "--set", "counted={root}/src/sdl3/leaks.toml", "--set", "sdl_include={root}/{sdl_root}/include", "-k", "balanced"] }

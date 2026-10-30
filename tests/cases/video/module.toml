@@ -30,7 +30,7 @@ order = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -45,7 +45,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["video_probe", "SDL3"]
 
 [[case]]
 name = "a key of the deployment replaces a default of the manifest"
@@ -57,11 +57,11 @@ line = ["  spans = 2048  d.toml:8"]
 lacks = ["spans = 1024  its file"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -73,7 +73,7 @@ spans = 2048
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -91,11 +91,11 @@ status = 0
 line = ["loaded: sdl3:video@1.0.0, native, m/sdl3_video{library}"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -104,7 +104,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["sdl3_video", "probe"]
+"{case}/m" = ["sdl3_video", "video_probe"]
 
 [[case]]
 name = "init attaches a sdl3:Window with surface SDL3_SURFACE_NONE and each other field 0"
@@ -116,11 +116,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/drive: r1 before 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -131,7 +131,7 @@ scene = "open"
 '''
 
 [case.false.folders]
-"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["video_probe", "SDL3"]
 
 [[case]]
 name = "reload gives 1"
@@ -143,11 +143,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 reload 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -160,7 +160,7 @@ module = { path = "m/sdl3_video{library}" }
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -181,11 +181,11 @@ status = 0
 line = ["events still started 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "holder", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_holder", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/test.toml", "{root}/tests/presets/window.toml"]
+presets = ["{root}/tests/presets/test.toml", "{root}/tests/video/presets/window.toml"]
 phases = ["drive", "input", "check"]
 rounds = 8
 [content]
@@ -199,7 +199,7 @@ write = ["sdl3:WindowSettings"]
 '''
 
 [case.false.folders]
-"{case}/m" = ["sdl3_video", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "SDL3"]
 
 [[case]]
 name = "shutdown quits SDL3 after the last subsystem stops"
@@ -211,11 +211,11 @@ status = 0
 line = ["sdl quit 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -224,7 +224,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["video_probe", "SDL3"]
 
 [[case]]
 name = "an order pair names the system by its full name sdl3:video:window"
@@ -236,11 +236,11 @@ status = 1
 has = ["the [order] pair of 'sdl3:video:window' and 'test:probe:check' orders nothing: they run in different phases"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -252,7 +252,7 @@ before = [["sdl3:video:window", "test:probe:check"]]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]

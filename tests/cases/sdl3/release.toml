@@ -1,5 +1,5 @@
 [[case]]
 name = "a release holds the library, the headers of SDL3, leaks.toml and the notices, and no import library"
-run = ["{python}", "{root}/tests/release/compose.py", "{root}", "{case}/dist", "{out}"]
+run = ["{python}", "{root}/tests/sdl3/release/compose.py", "{root}", "{case}/dist", "{out}"]
 claims = { status = 0, line = ["SDL3{library}", "leaks.toml", "include/SDL3/SDL.h", "license", "third_party/sdl3/license", "third_party/sdl3_linux/license"], matches_not = ["(?m)\\.(a|lib)$"] }
-false = { run = ["{python}", "{root}/tests/release/compose.py", "{root}", "{case}/dist", "{case}"] }
+false = { run = ["{python}", "{root}/tests/sdl3/release/compose.py", "{root}", "{case}/dist", "{case}"] }
