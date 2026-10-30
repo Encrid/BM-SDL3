@@ -1,0 +1,96 @@
+[parts.video]
+name = "BM-SDL3-Video"
+uses = ["sdl3", "common"]
+third_party = []
+
+[parts.video.package]
+proof = "tests/video/package/proof.c"
+include = ["{bridge}/include"]
+
+[compose.video]
+part = "video"
+from = "include/video"
+headers = ["*.h"]
+into = "include"
+
+[variables]
+video_probe_words = [
+    "abi=2", "config=test:Scene", "settings=scene module", "pinned=true", "reloadable=false",
+    "scratch=8192", "log_ring=1024", "spans=4096", "spawns=none", "changes=120", "persistent=none",
+    "hot_reload=false", "config.scene=none", "config.module=none",
+]
+
+[[artifact]]
+name = "sdl3_video"
+kind = "native_module"
+part = "video"
+sources = ["src/video/*.c"]
+include = ["include/video", "src/common", "{sdl_root}/include"]
+link = ["{out}/common.a", "{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = [
+    "sdl3:video@1.0.0", "abi=2", "config=sdl3:WindowSettings",
+    "settings=title width height hidden resizable fullscreen place x y high_dpi",
+    "pinned=true", "reloadable=false", "hot_reload=false", "scratch=4096", "log_ring=256",
+    "spans=1024", "spawns=none", "persistent=none", "changes=96",
+    "config.title=Bridge", "config.width=1280", "config.height=720", "config.hidden=false",
+    "config.resizable=false", "config.fullscreen=false", "config.place=SDL3_PLACE_SYSTEM",
+    "config.x=0", "config.y=0", "config.high_dpi=false",
+]
+
+[[artifact]]
+name = "video_probe"
+kind = "native_module"
+part = "video"
+test = true
+sources = ["tests/video/probe/probe.c"]
+include = ["include/video", "{sdl_root}/include"]
+link = ["{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = ["test:probe@1.0.0", "{video_probe_words}"]
+
+[[artifact.variants]]
+name = "video_holder"
+defines = ["HOLD"]
+manifest = ["test:holder@1.0.0", "{video_probe_words}"]
+
+[[artifact.variants]]
+name = "video_detacher"
+defines = ["DETACHER"]
+manifest = ["test:detacher@1.0.0", "{video_probe_words}"]
+
+[targets.x86_64-windows-gnu]
+video_driver = "windows"
+video_surface = "2"
+video_metal = "0"
+wayland_says = "record[3] sdl3:video@1.0.0/-: no video: wayland not available"
+
+[targets.aarch64-windows-gnu]
+video_driver = "windows"
+video_surface = "2"
+video_metal = "0"
+wayland_says = "record[3] sdl3:video@1.0.0/-: no video: wayland not available"
+
+[targets.x86_64-linux-gnu]
+video_driver = "x11"
+video_surface = "4"
+video_metal = "0"
+wayland_says = "record[6] test:probe@1.0.0/check: r1 surface 5 1"
+
+[targets.aarch64-linux-gnu]
+video_driver = "x11"
+video_surface = "4"
+video_metal = "0"
+wayland_says = "record[6] test:probe@1.0.0/check: r1 surface 5 1"
+
+[targets.x86_64-macos]
+video_driver = "cocoa"
+video_surface = "3"
+video_metal = "1"
+wayland_says = "record[3] sdl3:video@1.0.0/-: no video: wayland not available"
+
+[targets.aarch64-macos]
+video_driver = "cocoa"
+video_surface = "3"
+video_metal = "1"
+wayland_says = "record[3] sdl3:video@1.0.0/-: no video: wayland not available"

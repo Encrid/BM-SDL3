@@ -1,0 +1,62 @@
+[parts.keyboard]
+name = "BM-SDL3-Keyboard"
+uses = ["sdl3", "common"]
+third_party = []
+
+[parts.keyboard.package]
+proof = "tests/keyboard/package/proof.c"
+include = ["{bridge}/include"]
+
+[compose.keyboard]
+part = "keyboard"
+from = "include/keyboard"
+headers = ["*.h"]
+into = "include"
+
+[variables]
+keyboard_probe_words = [
+    "abi=2", "config=test:Scene", "settings=scene module", "pinned=true", "reloadable=false",
+    "scratch=8192", "log_ring=512", "spans=4096", "spawns=none", "changes=none", "persistent=none",
+    "hot_reload=false", "config.scene=none", "config.module=none",
+]
+
+[[artifact]]
+name = "sdl3_keyboard"
+kind = "native_module"
+part = "keyboard"
+sources = ["src/keyboard/*.c"]
+include = ["include/keyboard", "src/common", "{sdl_root}/include"]
+link = ["{out}/common.a", "{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = [
+    "sdl3:keyboard@1.0.0", "abi=2", "config=sdl3:KeyboardSettings", "settings=text repeat",
+    "pinned=true", "reloadable=false", "hot_reload=false", "scratch=4096", "log_ring=256",
+    "spans=1024", "spawns=none", "persistent=none", "changes=1120",
+    "config.text=true", "config.repeat=false",
+]
+
+[[artifact]]
+name = "keyboard_probe"
+kind = "native_module"
+part = "keyboard"
+test = true
+sources = ["tests/keyboard/probe/probe.c"]
+include = ["include/keyboard", "{sdl_root}/include"]
+link = ["{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = ["test:probe@1.0.0", "{keyboard_probe_words}"]
+
+[[artifact.variants]]
+name = "keyboard_holder"
+defines = ["HOLD"]
+manifest = ["test:holder@1.0.0", "{keyboard_probe_words}"]
+
+[[artifact.variants]]
+name = "keyboard_writer"
+defines = ["WRITE"]
+manifest = ["test:writer@1.0.0", "{keyboard_probe_words}"]
+
+[[artifact.variants]]
+name = "keyboard_detacher"
+defines = ["WRITE", "DETACH"]
+manifest = ["test:detacher@1.0.0", "{keyboard_probe_words}"]

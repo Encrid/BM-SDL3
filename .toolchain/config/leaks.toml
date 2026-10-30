@@ -1,0 +1,2 @@
+[leaks]
+with = ["src/sdl3/leaks.toml"]
