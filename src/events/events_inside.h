@@ -9,6 +9,7 @@
     #include <SDL3/SDL.h>
 
     #include "bridge_native.h"
+    #include "common_subsystem.h"
     #include "sdl3_events.h"
 
 constexpr uint32_t DROP = 0;

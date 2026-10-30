@@ -16,10 +16,8 @@ BRIDGE_NATIVE(init)
         { MOUSE, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     sdl3_mouse_t zero = {};
 
-    if (!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
-        bridge_native_say(api, BRIDGE_LOG_ERR, "no video: %s", SDL_GetError());
+    if (!common_start_video(api))
         return (1);
-    }
     BRIDGE_NATIVE_COMPONENT(api, "sdl3:MouseSettings", sdl3_mouse_settings_t,
         BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE);
     BRIDGE_NATIVE_COMPONENT(api, "sdl3:Cursor", sdl3_cursor_t, BRIDGE_STRIP,
@@ -35,9 +33,7 @@ BRIDGE_NATIVE(init)
 BRIDGE_NATIVE(shutdown)
 {
     mouse_free_cursor();
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    if (!SDL_WasInit(0))
-        SDL_Quit();
+    common_stop_subsystem(SDL_INIT_VIDEO);
     return (0);
 }
 
