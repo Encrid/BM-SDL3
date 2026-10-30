@@ -1,6 +1,6 @@
 [parts.events]
 name = "BM-SDL3-Events"
-uses = ["sdl3", "common"]
+uses = ["sdl3", "shared"]
 third_party = []
 
 [parts.events.package]
@@ -25,8 +25,8 @@ name = "sdl3_events"
 kind = "native_module"
 part = "events"
 sources = ["src/events/*.c"]
-include = ["include/events", "src/common", "{sdl_root}/include"]
-link = ["{out}/common.a", "{out}/SDL3{library}"]
+include = ["include/events", "src/shared", "{sdl_root}/include"]
+link = ["{out}/shared.a", "{out}/SDL3{library}"]
 flags = ["{rpath}"]
 manifest = [
     "sdl3:events@1.0.0", "abi=2", "config=sdl3:EventsSettings", "settings=drops quit",
