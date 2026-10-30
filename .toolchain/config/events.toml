@@ -1,0 +1,67 @@
+[parts.events]
+name = "BM-SDL3-Events"
+uses = ["sdl3", "common"]
+third_party = []
+
+[parts.events.package]
+proof = "tests/events/package/proof.c"
+include = ["{bridge}/include"]
+
+[compose.events]
+part = "events"
+from = "include/events"
+headers = ["*.h"]
+into = "include"
+
+[variables]
+events_probe_words = [
+    "abi=2", "config=test:Scene", "settings=scene module", "pinned=true", "reloadable=false",
+    "scratch=8192", "log_ring=1024", "spans=4096", "spawns=none", "changes=none", "persistent=none",
+    "hot_reload=false", "config.scene=none", "config.module=none",
+]
+
+[[artifact]]
+name = "sdl3_events"
+kind = "native_module"
+part = "events"
+sources = ["src/events/*.c"]
+include = ["include/events", "src/common", "{sdl_root}/include"]
+link = ["{out}/common.a", "{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = [
+    "sdl3:events@1.0.0", "abi=2", "config=sdl3:EventsSettings", "settings=drops quit",
+    "pinned=true", "reloadable=false", "hot_reload=false", "scratch=4096", "log_ring=544",
+    "spans=1024", "spawns=16", "persistent=none", "changes=17152",
+    "config.drops=16", "config.quit=true",
+]
+
+[[artifact]]
+name = "events_probe"
+kind = "native_module"
+part = "events"
+test = true
+sources = ["tests/events/probe/probe.c"]
+include = ["include/events", "{sdl_root}/include"]
+link = ["{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = ["test:probe@1.0.0", "{events_probe_words}"]
+
+[[artifact.variants]]
+name = "events_holder"
+defines = ["HOLD"]
+manifest = ["test:holder@1.0.0", "{events_probe_words}"]
+
+[[artifact.variants]]
+name = "events_starve"
+defines = ["STARVE"]
+manifest = ["probe:starve@1.0.0", "{events_probe_words}"]
+
+[[artifact.variants]]
+name = "events_writer"
+defines = ["WRITE"]
+manifest = ["test:writer@1.0.0", "{events_probe_words}"]
+
+[[artifact.variants]]
+name = "events_detacher"
+defines = ["WRITE", "DETACH"]
+manifest = ["test:detacher@1.0.0", "{events_probe_words}"]

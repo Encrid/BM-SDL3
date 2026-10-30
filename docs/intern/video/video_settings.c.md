@@ -1,6 +1,6 @@
-# src/video_settings.c
+# src/video/video_settings.c
 
-This file asks SDL3 for each setting that changed since the last run of `window`: `docs/extern/sdl3_video.h.md`, *The system*.
+This file asks SDL3 for each setting that changed since the last run of `window`: `docs/extern/video/sdl3_video.h.md`, *The system*.
 
 ## A run
 
@@ -36,7 +36,7 @@ ENDPROCEDURE
 `last` takes `now` also after a change that SDL3 refused. Thus the module asks for each change one time, and writes its line one time.
 The size comes before the place, because SDL3 centers the window with the size that the run asks for.
 The module never calls `SDL_SyncWindow`, because a round does not wait for the windowing system.
-The limits of the sides are in `docs/extern/sdl3_video.h.md`, *sdl3:WindowSettings*.
+The limits of the sides are in `docs/extern/video/sdl3_video.h.md`, *sdl3:WindowSettings*.
 
 ## The requests
 
@@ -50,7 +50,7 @@ The limits of the sides are in `docs/extern/sdl3_video.h.md`, *sdl3:WindowSettin
 | `place`, `x`, `y` | `SDL_SetWindowPosition` |
 | `high_dpi` | None |
 
-`report` writes one line for a refused request, with the name of the request: `docs/extern/sdl3_video.h.md`, *Messages*.
+`report` writes one line for a refused request, with the name of the request: `docs/extern/video/sdl3_video.h.md`, *Messages*.
 `apply_flags` asks for `hidden`, `resizable` and `fullscreen`, in that order. `set_hidden` selects the request of `hidden`.
 
 ## The place
@@ -63,9 +63,9 @@ The limits of the sides are in `docs/extern/sdl3_video.h.md`, *sdl3:WindowSettin
 | `SDL3_PLACE_AT` | `x` and `y`. |
 | Each other value | `SDL_WINDOWPOS_UNDEFINED` for x and for y. |
 
-`create_window` of `src/video_window.c` gives the same point to SDL3 when the window opens.
-Only the point of `SDL3_PLACE_AT` holds `x` and `y`, so a change of them with another place gives the same point: `docs/extern/sdl3_video.h.md`, *sdl3:WindowSettings*.
-`SDL3_PLACE_SYSTEM` and each value that is no constant take the last row: `docs/extern/sdl3_video.h.md`, *sdl3:sdl3_place_t*.
+`create_window` of `src/video/video_window.c` gives the same point to SDL3 when the window opens.
+Only the point of `SDL3_PLACE_AT` holds `x` and `y`, so a change of them with another place gives the same point: `docs/extern/video/sdl3_video.h.md`, *sdl3:WindowSettings*.
+`SDL3_PLACE_SYSTEM` and each value that is no constant take the last row: `docs/extern/video/sdl3_video.h.md`, *sdl3:sdl3_place_t*.
 After the open, `SDL_SetWindowPosition` replaces `SDL_WINDOWPOS_UNDEFINED` with the place that the window has.
 The source of SDL3 shows it: https://github.com/libsdl-org/SDL/blob/release-3.4.18/src/video/SDL_video.c.
 

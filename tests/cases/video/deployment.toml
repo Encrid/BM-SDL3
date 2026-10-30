@@ -7,15 +7,15 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'sdl3:Window': that is another namespace's, and no grant names it 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/video_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -28,7 +28,7 @@ write = ["sdl3:WindowSettings"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -45,15 +45,15 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'sdl3:sdl3_surface_t': that is another namespace's, and no grant names it 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/video_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -66,7 +66,7 @@ write = ["sdl3:WindowSettings"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -83,15 +83,15 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: system 'drive' may not write 'sdl3:WindowSettings': no grant says so 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/video_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -104,7 +104,7 @@ write = []
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -121,15 +121,15 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'sdl3:sdl3_place_t': that is another namespace's, and no grant names it 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/video_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -142,7 +142,7 @@ write = ["sdl3:WindowSettings"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -160,11 +160,11 @@ status = 1
 has = ["both touch 'sdl3:WindowSettings' in phase 'drive', one of them writing it, and no pair orders them"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "holder", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "video_holder", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -177,7 +177,7 @@ write = ["sdl3:WindowSettings"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -201,11 +201,11 @@ line = ["loaded: sdl3:video@1.0.0, native, m/sdl3_video{library}"]
 lacks = ["not a module: m/SDL3{library}"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -215,7 +215,7 @@ native = "{bb_native}/bridge_native"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -234,11 +234,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -250,7 +250,7 @@ work_limit = 1000
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -274,11 +274,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -292,7 +292,7 @@ hidden = 1
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]

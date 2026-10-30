@@ -8,11 +8,11 @@ status = 0
 line = ['record[6] test:probe@1.0.0/check: r2 title "new title" 9 0']
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -24,7 +24,7 @@ scene = "title"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -44,11 +44,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r3 frame 80 60"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -60,7 +60,7 @@ scene = "size"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -80,11 +80,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 flags 0 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -96,7 +96,7 @@ scene = "show"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -116,11 +116,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 flags 0 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -134,7 +134,7 @@ hidden = false
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -156,11 +156,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 resizable 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -172,7 +172,7 @@ scene = "resize_on"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -192,11 +192,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 fullscreen 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -208,7 +208,7 @@ scene = "full"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -228,11 +228,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r3 at 120 100"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -248,7 +248,7 @@ y = 90
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -272,11 +272,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r3 at 120 90"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -292,7 +292,7 @@ y = 90
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -316,11 +316,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r3 at 120 90"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -336,7 +336,7 @@ y = 90
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -360,11 +360,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r3 center 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -380,7 +380,7 @@ y = 90
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -407,11 +407,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -428,7 +428,7 @@ hidden = false
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -453,11 +453,11 @@ status = 0
 has = ["record[4] sdl3:video@1.0.0/window: no change of high_dpi: it acts only when the window opens"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -469,7 +469,7 @@ scene = "dpi"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -491,11 +491,11 @@ line = ["record[6] test:probe@1.0.0/check: r3 frame 64 48"]
 lacks = ["system 'window' failed"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -507,7 +507,7 @@ scene = "flat"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -527,11 +527,11 @@ status = 0
 has = ["record[4] sdl3:video@1.0.0/window: no change of size: Parameter 'w' is invalid"]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -543,7 +543,7 @@ scene = "wide"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -564,11 +564,11 @@ has = ["no change of size: Parameter 'h' is invalid"]
 matches_not = ["no change of size: .*no change of size: "]
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -580,7 +580,7 @@ scene = "flat"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -600,11 +600,11 @@ status = 0
 line = ['record[6] test:probe@1.0.0/check: r2 title "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 63 0']
 
 [case.folders]
-"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_video", "video_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -616,7 +616,7 @@ scene = "title64"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/video/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]

@@ -1,8 +1,8 @@
 [[case]]
 name = "the release of a target holds the module, its header and the licence, and a program builds from it"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--pack"]
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--pack", "--part", "keyboard"]
 claims = { status = 0, order = [
     "{case}/out/BM-SDL3-Keyboard-{target}.zip", "sdl3_keyboard{library}", "include/sdl3_keyboard.h", "license",
     "package proof: BM-SDL3-Keyboard ran",
 ] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--part", "keyboard"] }

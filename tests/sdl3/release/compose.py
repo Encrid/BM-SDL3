@@ -12,4 +12,4 @@ import shared
 
 config, values = build.prepared(shared.arguments())
 values.update(dist=dist, out=out)
-build.composed(config, values)
+build.composed(build.viewed(config, 'sdl3'), values)

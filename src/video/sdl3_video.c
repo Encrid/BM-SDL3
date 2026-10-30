@@ -27,10 +27,8 @@ BRIDGE_NATIVE(init)
         { WINDOW, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     sdl3_window_t none = { .surface = SDL3_SURFACE_NONE };
 
-    if (!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
-        bridge_native_say(api, BRIDGE_LOG_ERR, "no video: %s", SDL_GetError());
+    if (!common_start_video(api))
         return (1);
-    }
     declare_types(api);
     BRIDGE_NATIVE_ATTACH(api, 0, WINDOW, none);
     BRIDGE_NATIVE_ADD_SYSTEM(api, "window", "input", terms, 2, nullptr, 0,
@@ -41,9 +39,7 @@ BRIDGE_NATIVE(init)
 BRIDGE_NATIVE(shutdown)
 {
     video_close_window();
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    if (!SDL_WasInit(0))
-        SDL_Quit();
+    common_stop_subsystem(SDL_INIT_VIDEO);
     return (0);
 }
 

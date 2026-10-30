@@ -22,11 +22,11 @@ order = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -35,7 +35,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["events_probe", "SDL3"]
 
 [[case]]
 name = "a key of the deployment replaces a default of the manifest"
@@ -47,11 +47,11 @@ line = ["  spans = 2048  d.toml:8"]
 lacks = ["spans = 1024  its file"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -63,7 +63,7 @@ spans = 2048
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -80,11 +80,11 @@ status = 0
 line = ["loaded: sdl3:events@1.0.0, native, m/sdl3_events{library}"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -93,7 +93,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["sdl3_events", "probe"]
+"{case}/m" = ["sdl3_events", "events_probe"]
 
 [[case]]
 name = "init gives 1 and writes no events when SDL3 cannot start its events"
@@ -108,7 +108,7 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "starve", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_starve", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -125,7 +125,7 @@ read = ["test:Scene", "sdl3:Drop"]
 '''
 
 [case.false.folders]
-"{case}/m" = ["sdl3_events", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "SDL3"]
 
 [case.false.files]
 "{case}/d.toml" = '''
@@ -148,11 +148,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 reload 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -165,7 +165,7 @@ module = { path = "m/sdl3_events{library}" }
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -185,7 +185,7 @@ status = 0
 line = ["events still started 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "holder", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_holder", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -202,7 +202,7 @@ read = ["sdl3:Drop"]
 '''
 
 [case.false.folders]
-"{case}/m" = ["sdl3_events", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "SDL3"]
 
 [[case]]
 name = "shutdown quits SDL3 after the last subsystem stops"
@@ -213,11 +213,11 @@ status = 0
 line = ["sdl quit 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -226,7 +226,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["events_probe", "SDL3"]
 
 [[case]]
 name = "an order pair names the system pump by its full name sdl3:events:pump"
@@ -236,15 +236,15 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: the [order] pair of 'sdl3:events:pump' and 'test:probe:check' orders nothing: they run in different phases 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/events_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -256,7 +256,7 @@ before = [["sdl3:events:pump", "test:probe:check"]]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]

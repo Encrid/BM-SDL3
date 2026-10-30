@@ -8,11 +8,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 input 2 2"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -24,7 +24,7 @@ scene = "windows"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -46,11 +46,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 input 0 2"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -64,7 +64,7 @@ text = false
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -89,7 +89,7 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "writer", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_writer", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -138,11 +138,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -154,7 +154,7 @@ scene = "later"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 phases = ["drive", "check", "input"]
 [content]
 paths = ["m"]
@@ -175,11 +175,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 text \"caf\u00e9\" 5 5"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -191,7 +191,7 @@ scene = "typed"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -211,11 +211,11 @@ status = 0
 line = ['record[6] test:probe@1.0.0/check: r2 text "" 0 0']
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -227,7 +227,7 @@ scene = "typed"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -247,11 +247,11 @@ status = 0
 line = ['record[6] test:probe@1.0.0/check: r1 text "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" 63 63']
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -263,7 +263,7 @@ scene = "cut"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -283,11 +283,11 @@ status = 0
 line = ['record[6] test:probe@1.0.0/check: r2 text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 62 62']
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -299,7 +299,7 @@ scene = "cut"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -319,11 +319,11 @@ status = 0
 line = ['record[6] test:probe@1.0.0/check: r3 text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 62 62']
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -335,7 +335,7 @@ scene = "cut"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -355,11 +355,11 @@ status = 0
 line = ['record[6] test:probe@1.0.0/check: r4 text "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" 63 63']
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -371,7 +371,7 @@ scene = "cut"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
