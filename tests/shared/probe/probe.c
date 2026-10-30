@@ -8,7 +8,7 @@
 #include <SDL3/SDL.h>
 
 #include "bridge_native.h"
-#include "common_subsystem.h"
+#include "shared_subsystem.h"
 
 [[gnu::section(MANIFEST_SECTION), gnu::used, gnu::retain]]
 static const char WHO[] = MANIFEST;
@@ -20,18 +20,18 @@ BRIDGE_NATIVE(init)
     SDL_InitSubSystem(SDL_INIT_EVENTS);
 #endif
 #ifdef EVENTS
-    return (common_start_events(api) ? 0 : 1);
+    return (shared_start_events(api) ? 0 : 1);
 #else
-    return (common_start_video(api) ? 0 : 1);
+    return (shared_start_video(api) ? 0 : 1);
 #endif
 }
 
 BRIDGE_NATIVE(shutdown)
 {
 #ifdef EVENTS
-    common_stop_subsystem(SDL_INIT_EVENTS);
+    shared_stop_subsystem(SDL_INIT_EVENTS);
 #else
-    common_stop_subsystem(SDL_INIT_VIDEO);
+    shared_stop_subsystem(SDL_INIT_VIDEO);
 #endif
     printf("sdl quit %d\n", SDL_GetHint("BM_PROBE_HINT") == nullptr);
     fflush(stdout);
