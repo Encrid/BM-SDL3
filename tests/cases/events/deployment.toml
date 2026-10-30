@@ -1,0 +1,190 @@
+[[case]]
+name = "a module that reads the drops needs the grant read sdl3:Drop"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'sdl3:Drop': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = []
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "a module that writes the settings needs the grant write sdl3:EventsSettings"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:writer@1.0.0' did not load: system 'drive' may not write 'sdl3:EventsSettings': no grant says so 0 0",
+    "not loaded: m/writer{library}: test:writer@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "writer", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Drop", "sdl3:EventsSettings"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["events", "drive", "check"]
+rounds = 8
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:writer@1.0.0"]
+read = ["sdl3:Drop"]
+write = ["sdl3:EventsSettings"]
+'''
+
+[[case]]
+name = "content.ignore keeps the SDL3 library out of the modules"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["loaded: sdl3:events@1.0.0, native, m/sdl3_events{library}"]
+lacks = ["not a module: m/SDL3{library}"]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "BB-Native refuses a limit of the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'sdl3:events@1.0.0' is refused: it states work_limit, which backend 'native' cannot keep 0 0",
+    "not loaded: m/sdl3_events{library}: sdl3:events@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:events@1.0.0"]
+work_limit = 1000
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:events@1.0.0"]
+work_limit = "none"
+'''
+
+[[case]]
+name = "a setting that its field cannot hold does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'sdl3:events@1.0.0' did not load: its setting 'drops' is -1, which the field it names cannot hold 0 0",
+    "not loaded: m/sdl3_events{library}: sdl3:events@1.0.0 was refused",
+    "record[6] test:probe@1.0.0/check: r1 events 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "events"
+[module."sdl3:events@1.0.0".config]
+drops = -1
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "events"
+[module."sdl3:events@1.0.0".config]
+drops = 16
+'''

@@ -1,0 +1,13 @@
+[[artifact]]
+name = "sdl3_events"
+kind = "native_module"
+sources = ["src/*.c"]
+include = ["include", "{sdl3}/include"]
+link = ["{sdl3}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = [
+    "sdl3:events@1.0.0", "abi=2", "config=sdl3:EventsSettings", "settings=drops quit",
+    "pinned=true", "reloadable=false", "hot_reload=false", "scratch=4096", "log_ring=544",
+    "spans=1024", "spawns=16", "persistent=none", "changes=17152",
+    "config.drops=16", "config.quit=true",
+]
