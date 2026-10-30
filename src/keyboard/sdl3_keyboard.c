@@ -15,7 +15,7 @@ BRIDGE_NATIVE(init)
         { KEYBOARD, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     sdl3_keyboard_t zero = {};
 
-    if (!common_start_video(api))
+    if (!shared_start_video(api))
         return (1);
     BRIDGE_NATIVE_COMPONENT(api, "sdl3:KeyboardSettings",
         sdl3_keyboard_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON,
@@ -30,7 +30,7 @@ BRIDGE_NATIVE(init)
 
 BRIDGE_NATIVE(shutdown)
 {
-    common_stop_subsystem(SDL_INIT_VIDEO);
+    shared_stop_subsystem(SDL_INIT_VIDEO);
     return (0);
 }
 

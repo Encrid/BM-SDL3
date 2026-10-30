@@ -1,7 +1,7 @@
 # src/video/video_inside.h
 
-This private header is shared by the four sources of the module.
-It includes SDL3, BB-Native, `include/video/sdl3_video.h` and `src/common/common_subsystem.h`. It gives the slots and the private types, and declares the functions that the sources share.
+The four sources of `sdl3:video` include this header.
+It includes SDL3, BB-Native, `include/video/sdl3_video.h` and `src/shared/shared_subsystem.h`. It gives the slots and the private types, and declares the functions that the sources share.
 
 ## The slots
 

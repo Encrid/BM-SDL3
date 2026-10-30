@@ -9,7 +9,7 @@
     #include <SDL3/SDL.h>
 
     #include "bridge_native.h"
-    #include "common_subsystem.h"
+    #include "shared_subsystem.h"
     #include "sdl3_keyboard.h"
 
 constexpr uint32_t SETTINGS = 0;

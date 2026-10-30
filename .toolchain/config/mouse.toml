@@ -1,6 +1,6 @@
 [parts.mouse]
 name = "BM-SDL3-Mouse"
-uses = ["sdl3", "common"]
+uses = ["sdl3", "shared"]
 third_party = []
 
 [parts.mouse.package]
@@ -25,8 +25,8 @@ name = "sdl3_mouse"
 kind = "native_module"
 part = "mouse"
 sources = ["src/mouse/*.c"]
-include = ["include/mouse", "src/common", "{sdl_root}/include"]
-link = ["{out}/common.a", "{out}/SDL3{library}"]
+include = ["include/mouse", "src/shared", "{sdl_root}/include"]
+link = ["{out}/shared.a", "{out}/SDL3{library}"]
 flags = ["{rpath}"]
 manifest = [
     "sdl3:mouse@1.0.0", "abi=2", "config=sdl3:MouseSettings", "settings=natural",

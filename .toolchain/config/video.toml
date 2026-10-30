@@ -1,6 +1,6 @@
 [parts.video]
 name = "BM-SDL3-Video"
-uses = ["sdl3", "common"]
+uses = ["sdl3", "shared"]
 third_party = []
 
 [parts.video.package]
@@ -25,8 +25,8 @@ name = "sdl3_video"
 kind = "native_module"
 part = "video"
 sources = ["src/video/*.c"]
-include = ["include/video", "src/common", "{sdl_root}/include"]
-link = ["{out}/common.a", "{out}/SDL3{library}"]
+include = ["include/video", "src/shared", "{sdl_root}/include"]
+link = ["{out}/shared.a", "{out}/SDL3{library}"]
 flags = ["{rpath}"]
 manifest = [
     "sdl3:video@1.0.0", "abi=2", "config=sdl3:WindowSettings",

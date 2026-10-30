@@ -7,7 +7,7 @@ Its entries are `init`, `shutdown` and `reload`.
 
 `bridge_init` does these steps:
 
-1. For the keyboard events, `common_start_video` starts the video of SDL3: `docs/intern/common/common_subsystem.c.md`. If SDL3 refuses, `bridge_init` gives 1.
+1. For the keyboard events, `shared_start_video` starts the video of SDL3: `docs/intern/shared/shared_subsystem.c.md`. If SDL3 refuses, `bridge_init` gives 1.
 2. It declares `sdl3:KeyboardSettings`, then `sdl3:Keyboard`. Both are singletons.
 3. It attaches a `sdl3:Keyboard` of zeros to the entity 0.
 4. It adds the system `keys` in the phase `input`.
@@ -19,7 +19,7 @@ The first run of `keys` has the settings: `readme.md`, *The modules*.
 
 ## The stop
 
-`bridge_shutdown` stops the video with `common_stop_subsystem`: `docs/intern/common/common_subsystem.c.md`.
+`bridge_shutdown` stops the video with `shared_stop_subsystem`: `docs/intern/shared/shared_subsystem.c.md`.
 `bridge_reload` gives 1: `readme.md`, *The modules*.
 
 ## Functions

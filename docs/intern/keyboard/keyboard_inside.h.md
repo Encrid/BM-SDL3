@@ -1,7 +1,7 @@
 # src/keyboard/keyboard_inside.h
 
 The three sources of `sdl3:keyboard` include this header.
-It includes SDL3, BB-Native, `include/keyboard/sdl3_keyboard.h` and `src/common/common_subsystem.h`, gives the slots, and declares the function of the text.
+It includes SDL3, BB-Native, `include/keyboard/sdl3_keyboard.h` and `src/shared/shared_subsystem.h`, gives the slots, and declares the function of the text.
 
 ## The slots
 
