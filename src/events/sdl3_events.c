@@ -15,10 +15,8 @@ BRIDGE_NATIVE(init)
         { SETTINGS, BRIDGE_READ, BRIDGE_OPTIONAL, 0 } };
     const uint32_t changes[1] = { DROP };
 
-    if (!SDL_InitSubSystem(SDL_INIT_EVENTS)) {
-        bridge_native_say(api, BRIDGE_LOG_ERR, "no events: %s", SDL_GetError());
+    if (!common_start_events(api))
         return (1);
-    }
     BRIDGE_NATIVE_COMPONENT(api, "sdl3:Drop", sdl3_drop_t, BRIDGE_STRIP,
         BRIDGE_TABLE, BRIDGE_ON_DESTROY_REMOVE);
     BRIDGE_NATIVE_COMPONENT(api, "sdl3:EventsSettings", sdl3_events_settings_t,
@@ -30,9 +28,7 @@ BRIDGE_NATIVE(init)
 
 BRIDGE_NATIVE(shutdown)
 {
-    SDL_QuitSubSystem(SDL_INIT_EVENTS);
-    if (!SDL_WasInit(0))
-        SDL_Quit();
+    common_stop_subsystem(SDL_INIT_EVENTS);
     return (0);
 }
 
