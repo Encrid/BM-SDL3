@@ -1,6 +1,6 @@
-# include/sdl3_keyboard.h
+# include/keyboard/sdl3_keyboard.h
 
-`include/sdl3_keyboard.h` is the header of the module `sdl3:keyboard@1.0.0`, the keyboard of SDL3 for Bridge.
+`include/keyboard/sdl3_keyboard.h` is the header of the module `sdl3:keyboard@1.0.0`, the keyboard of SDL3 for Bridge.
 The module covers `SDL_keyboard.h` of SDL3: the keys, the modifiers and the typed text.
 It does not cover the screen keyboard, or the text that an input method composes before it is typed.
 
@@ -15,21 +15,19 @@ It does not cover the screen keyboard, or the text that an input method composes
 | `pinned` | `true`, because SDL3 gives the keyboard events on the main thread. |
 | `reloadable` | `false` |
 
-The manifest also gives a default for each of these keys of the module. A deployment that states one of them replaces its default.
+`readme.md`, *The modules*, tells how a deployment replaces a default.
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `4096` | The declarations of `init`, and the value of `sdl3:Keyboard` that it attaches. |
-| `log_ring` | `256` | Room for 8 records of 32 bytes. The module writes at most one line in a call. |
-| `spans` | `1024` | A cell for each of the two types in each table, and the spans of `keys`. |
+| `scratch` | `4096` | `init` declares 2 types, and attaches the value of `sdl3:Keyboard`. |
+| `log_ring` | `256` | Room for 8 records of 32 bytes. Only `init` writes a line. |
+| `spans` | `1024` | Two types, and the spans of `keys`. |
 | `spawns` | `"none"` | The module makes no entity. |
-| `changes` | `1120` | The attach of `sdl3:Keyboard` in `init`: 24 bytes, and its value of 1096 bytes. |
-| `persistent` | `"none"` | The module keeps no data in the arena. |
+| `changes` | `1120` | `init` attaches `sdl3:Keyboard`: 24 bytes, and 1096 for the value. |
+| `persistent` | `"none"` | No data to keep. |
 | `hot_reload` | `false` | The module cannot reload. |
 
-The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
-
-The file of the module is `sdl3_keyboard`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BL-SDL3, which sits beside it.
+The file of the module is `sdl3_keyboard`, with the suffix of a library.
 
 ## The system keys
 
@@ -40,13 +38,12 @@ The file of the module is `sdl3_keyboard`, with the suffix of a library. It runs
 3. It takes the key events and the text events of the round, and writes `sdl3:Keyboard`.
 
 It starts the text input on each window, not only on the window with the focus, because a window can open with no focus.
-If a module detaches `sdl3:KeyboardSettings` or `sdl3:Keyboard`, `keys` does nothing and gives 0 while either is gone.
-The full name of the system for `[order]` is `sdl3:keyboard:keys`.
+While `sdl3:KeyboardSettings` or `sdl3:Keyboard` is detached, `keys` gives 0 and does nothing.
+Its full name for `[order]` is `sdl3:keyboard:keys`.
 
 ## sdl3:KeyboardSettings
 
-`sdl3:KeyboardSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
-After the load, a system with a grant to write it can change it at each round. `keys` uses the new values at its next run.
+`sdl3:KeyboardSettings` is the singleton of the settings: `readme.md`, *The modules*. `keys` reads `text` and `repeat` again at each run.
 
 | Field | C type | Value |
 | --- | --- | --- |
@@ -55,7 +52,7 @@ After the load, a system with a grant to write it can change it at each round. `
 
 ## sdl3:Keyboard
 
-`sdl3:Keyboard` is a singleton that the module writes again at each round.
+`keys` writes the singleton `sdl3:Keyboard` again at each round.
 
 | Field | C type | Value |
 | --- | --- | --- |
@@ -70,40 +67,31 @@ A text of more than 63 bytes in a round is cut after its last whole character th
 
 ## The C types
 
-`include/sdl3_keyboard.h` gives the C type of each type of the module, and its descriptor for Bridge.
-The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
+The header gives these types: `readme.md`, *The modules*.
 
 | Type of Bridge | C type | Descriptor | Macro of the text |
 | --- | --- | --- | --- |
 | `sdl3:KeyboardSettings` | `sdl3_keyboard_settings_t` | `sdl3_keyboard_settings_t_desc` | `SDL3_KEYBOARD_SETTINGS_FIELDS` |
 | `sdl3:Keyboard` | `sdl3_keyboard_t` | `sdl3_keyboard_t_desc` | `SDL3_KEYBOARD_FIELDS` |
 
-Each macro of the text gives the braces of its type and the text between them.
-
 ## The declarations
 
-Each module that reads or writes a type of the module declares it in its `init`. A module in C gives the C type and the descriptor of the header.
-Bridge compares the descriptors byte for byte. It also refuses a second module that states another kind, storage layout or `on_destroy`.
+`readme.md`, *The modules*, tells the rules.
 
 | Type of Bridge | Kind | Storage layout | `on_destroy` |
 | --- | --- | --- | --- |
 | `sdl3:KeyboardSettings` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
 | `sdl3:Keyboard` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
 
-Bridge does not compare `on_unload`, so each module states its own.
-
 ## The deployment
 
-- The module opens no window, and it does not pump the queue. So it needs `sdl3:events`, and a module that opens a window that takes the keyboard focus, for example `sdl3:video`.
+- The module needs `sdl3:events` and a window: `readme.md`, *The modules*.
 - A module that reads the keyboard needs `read = ["sdl3:Keyboard"]` in its table.
-- A module that changes the settings, for example the app, needs `write = ["sdl3:KeyboardSettings"]` in its table.
+- A module that changes `text` or `repeat`, for example the app, needs `write = ["sdl3:KeyboardSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:keyboard@1.0.0".config]`.
-- A deployment holds one SDL3 library, beside the SDL3 modules, so that each module loads that one library.
-- The SDL3 library is no module, so `content.ignore` names it.
-- The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
-The readme of Bridge-Host tells each key of a deployment.
+`readme.md`, *The modules*, tells the rules of each deployment.
 
 ## Messages
 
-- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
+`readme.md`, *The modules*, tells its message.

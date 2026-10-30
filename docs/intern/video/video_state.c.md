@@ -1,4 +1,4 @@
-# src/video_state.c
+# src/video/video_state.c
 
 This file finds the surface of the video driver, and writes `sdl3:Window`.
 It writes the handles at the open, then the close, the size and the flags at each run.
@@ -15,7 +15,7 @@ It writes the handles at the open, then the close, the size and the flags at eac
 | `wayland` | `SDL3_SURFACE_WAYLAND` |
 
 SDL3 gives these names to its drivers: https://wiki.libsdl.org/SDL3/SDL_GetCurrentVideoDriver.
-For each other driver, it gives null, and gives the reason of a driver with no surface to `SDL_SetError`: `docs/extern/sdl3_video.h.md`, *Messages*.
+For each other driver, it gives null, and gives the reason of a driver with no surface to `SDL_SetError`: `docs/extern/video/sdl3_video.h.md`, *Messages*.
 Thus `open_window` reads that reason from `SDL_GetError`, as for each other failure of the open.
 The module holds the video subsystem from `init` to `shutdown`. Thus `SDL_GetCurrentVideoDriver` always gives a name in a run of `window`.
 
@@ -39,7 +39,7 @@ A driver sets only its own properties, and `SDL_Metal_GetLayer` gives null with 
 The module reads the handles one time, at the open. None of them is an object `xdg_*` of Wayland, which SDL3 makes again when the window shows.
 `video_has_handle` tells if a value holds a handle that is not 0. With it, `open_window` finds a window that can give no surface.
 It ORs the seven handles bit by bit, and compares the result with 0.
-As for the property of Metal, a comparison is no condition: `docs/intern/video_window.c.md`, *The window of SDL3*.
+As for the property of Metal, a comparison is no condition: `docs/intern/video/video_window.c.md`, *The window of SDL3*.
 
 ## A run
 
@@ -49,11 +49,11 @@ As for the property of Metal, a comparison is no condition: `docs/intern/video_w
 2. It takes each event from `SDL_EVENT_WINDOW_FIRST` to `SDL_EVENT_WINDOW_LAST` with `SDL_FlushEvents`, and reads no field of these events.
 3. If the window did not close, it writes the size of `SDL_GetWindowSizeInPixels`, and `fullscreen` and `hidden` of `SDL_GetWindowFlags`.
 
-Step 1 writes the value of a close: `docs/extern/sdl3_video.h.md`, *The system*.
+Step 1 writes the value of a close: `docs/extern/video/sdl3_video.h.md`, *The system*.
 Step 2 takes the whole range of the window, so no event of the window stays in the queue.
 `SDL_HasEvent` does not tell which window gets the request. The module covers one window, so it takes each request as a request for that window.
 
-The size and the flags come from SDL3, and not from the settings. Thus `sdl3:Window` is the real state: `docs/extern/sdl3_video.h.md`, *The system*.
+The size and the flags come from SDL3, and not from the settings. Thus `sdl3:Window` is the real state: `docs/extern/video/sdl3_video.h.md`, *The system*.
 `SDL_GetWindowFlags` also gives the requests that wait: a hidden window that asks for the full screen has `SDL_WINDOW_FULLSCREEN`.
 Thus `fullscreen` is one comparison of the flags: `SDL_WINDOW_FULLSCREEN` is set, and `SDL_WINDOW_HIDDEN` is clear.
 Like `video_has_handle`, it is a comparison, and not a condition.

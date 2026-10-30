@@ -1,6 +1,6 @@
-# include/sdl3_mouse.h
+# include/mouse/sdl3_mouse.h
 
-`include/sdl3_mouse.h` is the header of the module `sdl3:mouse@1.0.0`, the mouse of SDL3 for Bridge.
+`include/mouse/sdl3_mouse.h` is the header of the module `sdl3:mouse@1.0.0`, the mouse of SDL3 for Bridge.
 The module covers `SDL_mouse.h` of SDL3: where the mouse is, its buttons and its wheel, and the shape of the cursor.
 It does not cover more than one mouse, or a cursor that an image makes.
 
@@ -15,34 +15,31 @@ It does not cover more than one mouse, or a cursor that an image makes.
 | `pinned` | `true`, because SDL3 gives the mouse events on the main thread. |
 | `reloadable` | `false` |
 
-The manifest also gives a default for each of these keys of the module. A deployment that states one of them replaces its default.
+`readme.md`, *The modules*, tells how a deployment replaces a default.
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `4096` | The declarations of `init`, and the value of `sdl3:Mouse` that it attaches. |
-| `log_ring` | `256` | Room for 8 records of 32 bytes. The module writes at most one line in a call. |
-| `spans` | `1024` | A cell for each of the three types in each table, and the spans of `mouse`. |
+| `scratch` | `4096` | `init` declares 3 types, and attaches the value of `sdl3:Mouse`. |
+| `log_ring` | `256` | Room for 8 records of 32 bytes. Only `init` writes a line. |
+| `spans` | `1024` | Three types, and the spans of `mouse`. |
 | `spawns` | `"none"` | The module makes no entity. |
-| `changes` | `64` | The attach of `sdl3:Mouse` in `init`: 24 bytes, and its value of 36 bytes, rounded up to 40. |
-| `persistent` | `"none"` | The module keeps no data in the arena. |
+| `changes` | `64` | `init` attaches `sdl3:Mouse`: 24 bytes, and 36 for the value, rounded up to 40. |
+| `persistent` | `"none"` | No data to keep. |
 | `hot_reload` | `false` | The module cannot reload. |
 
-The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
-
-The file of the module is `sdl3_mouse`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BL-SDL3, which sits beside it.
+The file of the module is `sdl3_mouse`, with the suffix of a library.
 
 ## The system mouse
 
 `mouse` runs in the phase `input`. It applies the `sdl3:Cursor` that the app wrote: the shape when it changes, and `hidden` and `relative` at each round.
 Then it takes the mouse events of the round, and writes `sdl3:Mouse`.
-If a module detaches `sdl3:MouseSettings` or `sdl3:Mouse`, `mouse` does nothing and gives 0 while either is gone.
+While `sdl3:MouseSettings` or `sdl3:Mouse` is detached, `mouse` gives 0 and does nothing.
 While `sdl3:Cursor` is gone, before the app attaches it or after a module detaches it, `mouse` changes no cursor, but it writes `sdl3:Mouse`.
-The full name of the system for `[order]` is `sdl3:mouse:mouse`.
+Its full name for `[order]` is `sdl3:mouse:mouse`.
 
 ## sdl3:MouseSettings
 
-`sdl3:MouseSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
-After the load, a system with a grant to write it can change it at each round. `mouse` uses the new value at its next run.
+`sdl3:MouseSettings` is the singleton of the settings: `readme.md`, *The modules*. `mouse` reads `natural` again at each run.
 
 | Field | C type | Value |
 | --- | --- | --- |
@@ -50,7 +47,7 @@ After the load, a system with a grant to write it can change it at each round. `
 
 ## sdl3:Mouse
 
-`sdl3:Mouse` is a singleton that the module writes again at each round.
+`mouse` writes the singleton `sdl3:Mouse` again at each round.
 
 | Field | C type | Value |
 | --- | --- | --- |
@@ -76,8 +73,7 @@ When `relative` changes on the window with the keyboard focus, SDL3 drops the mo
 
 ## The C types
 
-`include/sdl3_mouse.h` gives the C type of each type of the module, and its descriptor for Bridge.
-The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
+The header gives these types: `readme.md`, *The modules*.
 
 | Type of Bridge | C type | Descriptor | Macro of the text |
 | --- | --- | --- | --- |
@@ -85,12 +81,9 @@ The header includes `bridge_schema.h` of Bridge. It makes each C type and its de
 | `sdl3:Cursor` | `sdl3_cursor_t` | `sdl3_cursor_t_desc` | `SDL3_CURSOR_FIELDS` |
 | `sdl3:Mouse` | `sdl3_mouse_t` | `sdl3_mouse_t_desc` | `SDL3_MOUSE_FIELDS` |
 
-Each macro of the text gives the braces of its type and the text between them.
-
 ## The declarations
 
-Each module that reads or writes a type of the module declares it in its `init`. A module in C gives the C type and the descriptor of the header.
-Bridge compares the descriptors byte for byte. It also refuses a second module that states another kind, storage layout or `on_destroy`.
+`readme.md`, *The modules*, tells the rules.
 
 | Type of Bridge | Kind | Storage layout | `on_destroy` |
 | --- | --- | --- | --- |
@@ -98,20 +91,15 @@ Bridge compares the descriptors byte for byte. It also refuses a second module t
 | `sdl3:Cursor` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
 | `sdl3:Mouse` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
 
-Bridge does not compare `on_unload`, so each module states its own.
-
 ## The deployment
 
-- The module opens no window, and it does not pump the queue. So it needs `sdl3:events`, and a module that opens a window that takes the mouse, for example `sdl3:video`.
+- The module needs `sdl3:events` and a window: `readme.md`, *The modules*.
 - A module that reads the mouse needs `read = ["sdl3:Mouse"]`, and the module that sets the cursor needs `write = ["sdl3:Cursor"]`.
-- A module that changes the setting, for example the app, needs `write = ["sdl3:MouseSettings"]` in its table.
+- A module that changes `natural`, for example the app, needs `write = ["sdl3:MouseSettings"]` in its table.
 - A deployment gives the settings in `[module."sdl3:mouse@1.0.0".config]`.
-- A deployment holds one SDL3 library, beside the SDL3 modules, so that each module loads that one library.
-- The SDL3 library is no module, so `content.ignore` names it.
-- The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
-The readme of Bridge-Host tells each key of a deployment.
+`readme.md`, *The modules*, tells the rules of each deployment.
 
 ## Messages
 
-- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
+`readme.md`, *The modules*, tells its message.

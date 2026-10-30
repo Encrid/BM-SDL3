@@ -1,6 +1,6 @@
 # tools/convert.py
 
-`convert.py` writes `.toolchain/config/variables.toml`: the sources and the defines of the build of SDL3, for each target.
+`convert.py` writes `.toolchain/config/sdl3_variables.toml`: the sources and the defines of the build of SDL3, for each target.
 It reads them from the zig build of SDL3 by castholm, and from the build of SDL_linux_deps. A `[[source]]` pins each of the two.
 
 ```sh

@@ -1,4 +1,4 @@
-# src/keyboard_text.c
+# src/keyboard/keyboard_text.c
 
 This file holds the typed text of `sdl3:Keyboard`. It adds each typed text of a round, and cuts a text that does not fit.
 
