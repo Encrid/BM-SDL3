@@ -1,0 +1,5 @@
+[[source]]
+name = "sdl3"
+url = "https://github.com/Encrid/BL-SDL3/releases/download/v0.1.0/BL-SDL3-{target}.zip"
+sha256 = "{sdl3_sha256}"
+into = "build/third_party/sdl3/{target}"
