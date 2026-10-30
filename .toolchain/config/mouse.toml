@@ -1,0 +1,62 @@
+[parts.mouse]
+name = "BM-SDL3-Mouse"
+uses = ["sdl3", "common"]
+third_party = []
+
+[parts.mouse.package]
+proof = "tests/mouse/package/proof.c"
+include = ["{bridge}/include"]
+
+[compose.mouse]
+part = "mouse"
+from = "include/mouse"
+headers = ["*.h"]
+into = "include"
+
+[variables]
+mouse_probe_words = [
+    "abi=2", "config=test:Scene", "settings=scene module", "pinned=true", "reloadable=false",
+    "scratch=8192", "log_ring=512", "spans=4096", "spawns=none", "changes=32", "persistent=none",
+    "hot_reload=false", "config.scene=none", "config.module=none",
+]
+
+[[artifact]]
+name = "sdl3_mouse"
+kind = "native_module"
+part = "mouse"
+sources = ["src/mouse/*.c"]
+include = ["include/mouse", "src/common", "{sdl_root}/include"]
+link = ["{out}/common.a", "{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = [
+    "sdl3:mouse@1.0.0", "abi=2", "config=sdl3:MouseSettings", "settings=natural",
+    "pinned=true", "reloadable=false", "hot_reload=false", "scratch=4096", "log_ring=256",
+    "spans=1024", "spawns=none", "persistent=none", "changes=64",
+    "config.natural=false",
+]
+
+[[artifact]]
+name = "mouse_probe"
+kind = "native_module"
+part = "mouse"
+test = true
+sources = ["tests/mouse/probe/probe.c"]
+include = ["include/mouse", "{sdl_root}/include"]
+link = ["{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = ["test:probe@1.0.0", "{mouse_probe_words}"]
+
+[[artifact.variants]]
+name = "mouse_holder"
+defines = ["HOLD"]
+manifest = ["test:holder@1.0.0", "{mouse_probe_words}"]
+
+[[artifact.variants]]
+name = "mouse_writer"
+defines = ["WRITE"]
+manifest = ["test:writer@1.0.0", "{mouse_probe_words}"]
+
+[[artifact.variants]]
+name = "mouse_detacher"
+defines = ["WRITE", "DETACH"]
+manifest = ["test:detacher@1.0.0", "{mouse_probe_words}"]

@@ -1,0 +1,108 @@
+[parts.sdl3]
+name = "BL-SDL3"
+uses = []
+third_party = ["sdl3", "sdl3_linux"]
+
+[compose.sdl3]
+part = "sdl3"
+from = "{sdl_root}"
+headers = ["include/SDL3/*.h"]
+
+[kinds.sdl]
+output = "{name}{library}"
+steps = [
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{define}", "{defines}", "{include}", "{sources}", "{link}", "{flags}", "-o", "{output}"] },
+]
+
+[[artifact]]
+name = "SDL3"
+kind = "sdl"
+part = "sdl3"
+sources = ["{sdl_common}", "{sdl_libm}", "{sdl_sources}"]
+include = ["{sdl_root}/include/build_config", "{sdl_root}/include", "{sdl_root}/src"]
+defines = ["{sdl_defines}"]
+flags = ["{sdl_flags}", "{sdl_system}"]
+
+[[artifact]]
+name = "leaks.toml"
+kind = "file"
+part = "sdl3"
+sources = ["src/sdl3/leaks.toml"]
+
+[[artifact]]
+name = "smoke"
+kind = "program"
+part = "sdl3"
+sources = ["tests/sdl3/smoke/smoke.c"]
+flags = ["-isystem", "{sdl_root}/include", "{sdl_link}"]
+test = true
+
+[[artifact]]
+name = "parts"
+kind = "program"
+part = "sdl3"
+sources = ["tests/sdl3/smoke/parts.c"]
+flags = ["-isystem", "{sdl_root}/include", "{sdl_link}"]
+test = true
+
+[variables]
+macsdk = "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+sdl_defines = ["{sdl_config}", "DLL_EXPORT=1", "SDL_BUILD_MAJOR_VERSION=3", "SDL_BUILD_MINOR_VERSION=4", "SDL_BUILD_MICRO_VERSION=18"]
+sdl_flags = ["-isystem", "{sdl_root}/src/video/khronos", "-fvisibility=hidden", "-fno-strict-aliasing", "-w"]
+sdl_link = "{out}/SDL3{library}"
+sdl_windows_system = [
+    "-lkernel32", "-luser32", "-lgdi32", "-lwinmm", "-limm32", "-lole32", "-loleaut32",
+    "-lversion", "-luuid", "-ladvapi32", "-lsetupapi", "-lshell32", "-ldinput8",
+]
+sdl_linux_system = ["-pthread", "-I", "{sdl_deps}/src", "-isystem", "{sdl_deps}/include"]
+sdl_macos_system = [
+    "-isystem", "{macsdk}/usr/include", "-iframework", "{macsdk}/System/Library/Frameworks",
+    "-F", "{macsdk}/System/Library/Frameworks", "-L", "{macsdk}/usr/lib", "-fobjc-arc",
+    "-framework", "CoreMedia", "-framework", "CoreVideo", "-framework", "Cocoa",
+    "-weak_framework", "UniformTypeIdentifiers", "-framework", "IOKit", "-framework", "ForceFeedback",
+    "-framework", "Carbon", "-framework", "CoreAudio", "-framework", "AudioToolbox",
+    "-framework", "AVFoundation", "-framework", "Foundation", "-framework", "GameController",
+    "-framework", "Metal", "-framework", "QuartzCore", "-weak_framework", "CoreHaptics",
+]
+
+[targets.x86_64-windows-gnu]
+sdl_sources = ["{sdl_windows}"]
+sdl_config = ["{sdl_config_windows}", "{sdl_simd_x86_64}"]
+sdl_system = ["{sdl_windows_system}"]
+default_gl = "0"
+metal_layer = "0"
+
+[targets.aarch64-windows-gnu]
+sdl_sources = ["{sdl_windows}"]
+sdl_config = ["{sdl_config_windows}", "{sdl_simd_aarch64}"]
+sdl_system = ["{sdl_windows_system}"]
+default_gl = "0"
+metal_layer = "0"
+
+[targets.x86_64-linux-gnu]
+sdl_sources = ["{sdl_linux}", "{sdl_wayland}"]
+sdl_config = ["{sdl_config_linux}", "{sdl_simd_x86_64}"]
+sdl_system = ["{sdl_linux_system}", "-isystem", "{sdl_deps}/include/x86_64-linux-gnu"]
+default_gl = "0"
+metal_layer = "0"
+
+[targets.aarch64-linux-gnu]
+sdl_sources = ["{sdl_linux}", "{sdl_wayland}"]
+sdl_config = ["{sdl_config_linux}", "{sdl_simd_aarch64}"]
+sdl_system = ["{sdl_linux_system}", "-isystem", "{sdl_deps}/include/aarch64-linux-gnu"]
+default_gl = "0"
+metal_layer = "0"
+
+[targets.x86_64-macos]
+sdl_sources = ["{sdl_macos}"]
+sdl_config = ["{sdl_config_macos}", "{sdl_simd_core2}"]
+sdl_system = ["{sdl_macos_system}"]
+default_gl = "1"
+metal_layer = "1"
+
+[targets.aarch64-macos]
+sdl_sources = ["{sdl_macos}"]
+sdl_config = ["{sdl_config_macos}", "{sdl_simd_aarch64}"]
+sdl_system = ["{sdl_macos_system}"]
+default_gl = "1"
+metal_layer = "1"
