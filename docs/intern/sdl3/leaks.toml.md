@@ -1,7 +1,8 @@
-# src/leaks.toml
+# src/sdl3/leaks.toml
 
 This file names the resources of SDL3 that a module takes, for the count of `test --leaks` of each SDL3 module.
-A release ships the file as `leaks.toml`, and each SDL3 module names it in `[leaks] with`.
+The modules of this project name it in `[leaks] with` of `.toolchain/config/leaks.toml`.
+The release of the part `sdl3` holds it as `leaks.toml`, so a module of a different project names that copy.
 
 ## The pairs
 

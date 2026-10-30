@@ -1,12 +1,11 @@
-# src/video_window.c
+# src/video/video_window.c
 
-This file holds the system `window`. It opens the window, uses `src/video_settings.c` and `src/video_state.c` at each run, and destroys the window after its close.
+This file holds the system `window`. It opens the window, uses `src/video/video_settings.c` and `src/video/video_state.c` at each run, and destroys the window after its close.
 
 ## The state
 
-A native module gets only its API at each call, so the window has no other place between two rounds.
-The file keeps it in one static `video_kept_t`, `kept`: the window, its Metal view, and the settings of the last run.
-A `[[style.exception]]` of the project excuses this struct from the rule G4, with that reason.
+The file keeps the window in one static `video_kept_t`, `kept`: the window, its Metal view, and the settings of the last run.
+`kept` is static: `.toolchain/project.toml` gives the reason.
 
 ## A round
 
@@ -36,7 +35,7 @@ FUNCTION bridge_window() RETURNS I32
 ENDFUNCTION
 ```
 
-`bridge_native_get_single` gives null for a singleton that a module detached, so the first `IF` gives 0: `docs/extern/sdl3_video.h.md`, *The system*.
+`bridge_native_get_single` gives null for `sdl3:WindowSettings` or `sdl3:Window` after a module detaches it, so the first `IF` gives 0: https://github.com/Encrid/BB-Native/blob/v0.2.0/docs/extern/bridge_native_kept.h.md#functions.
 A window that closed never opens again, because `closed` comes first.
 `now` is a copy of the settings with a zero in the last byte of `title`. Thus SDL3 never reads past the title.
 In the run of the open, `video_apply_settings` finds no change, because `open_window` copies `now` into `kept.last`.
@@ -45,7 +44,7 @@ In the run of the open, `video_apply_settings` finds no change, because `open_wi
 
 `open_window` does these steps:
 
-1. `video_find_driver` gives the row of the video driver: `docs/intern/video_state.c.md`, *The driver*.
+1. `video_find_driver` gives the row of the video driver: `docs/intern/video/video_state.c.md`, *The driver*.
 2. It copies `now` into `kept.last`.
 3. If the driver has a row, `create_window` makes the window.
 4. If the window is there, it makes the Metal view with `SDL_Metal_CreateView`.
@@ -71,7 +70,7 @@ The properties are those of https://wiki.libsdl.org/SDL3/SDL_CreateWindowWithPro
 | Property | Value |
 | --- | --- |
 | `SDL_PROP_WINDOW_CREATE_TITLE_STRING` | `title`. |
-| `SDL_PROP_WINDOW_CREATE_X_NUMBER`, `SDL_PROP_WINDOW_CREATE_Y_NUMBER` | The point that `video_get_place` gives: `docs/intern/video_settings.c.md`, *The place*. |
+| `SDL_PROP_WINDOW_CREATE_X_NUMBER`, `SDL_PROP_WINDOW_CREATE_Y_NUMBER` | The point that `video_get_place` gives: `docs/intern/video/video_settings.c.md`, *The place*. |
 | `SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER`, `SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER` | `width` and `height`. |
 | `SDL_PROP_WINDOW_CREATE_HIDDEN_BOOLEAN`, `SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN` | `hidden` and `resizable`. |
 | `SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN`, `SDL_PROP_WINDOW_CREATE_HIGH_PIXEL_DENSITY_BOOLEAN` | `fullscreen` and `high_dpi`. |
@@ -81,7 +80,7 @@ The properties are those of https://wiki.libsdl.org/SDL3/SDL_CreateWindowWithPro
 On macOS, SDL3 loads OpenGL for a window that names no graphics API, in `SDL_DefaultGraphicsBackends` of `SDL_video.c`.
 The property of Metal stops that load, because the module uses only the Metal view.
 The value of that property is a comparison, and not a condition. Thus it adds no outcome that only one platform reaches.
-The limits of the sides are in `docs/extern/sdl3_video.h.md`, *sdl3:WindowSettings*.
+The limits of the sides are in `docs/extern/video/sdl3_video.h.md`, *sdl3:WindowSettings*.
 
 ## The close
 

@@ -1,15 +1,16 @@
-# src/events_pump.c
+# src/events/events_pump.c
 
 This file holds the system `pump`. It is the only code of the SDL3 modules that pumps the queue of SDL3.
 
 ## A round
 
-`bridge_pump` follows the steps of `docs/extern/sdl3_events.h.md`, *The system pump*.
+`bridge_pump` follows the steps of `docs/extern/events/sdl3_events.h.md`, *The system pump*.
 Step 1 is `SDL_FlushEvents` from `SDL_EVENT_FIRST` to `SDL_EVENT_LAST`, so the queue holds only the events of this round.
 Step 2 is `destroy_drops`, which reads the entity of each row in the spans of `sdl3:Drop`, and destroys it.
 Step 5 uses `SDL_HasEvent`, so the event of the quit stays in the queue for the other modules of the round.
 
-`bridge_native_get_single` gives null for a singleton that a module detached. Then `bridge_pump` stops after step 3, and gives 0:
+`bridge_native_get_single` gives null for `sdl3:EventsSettings` after a module detaches it: https://github.com/Encrid/BB-Native/blob/v0.2.0/docs/extern/bridge_native_kept.h.md#functions.
+Then `bridge_pump` stops after step 3, and gives 0:
 
 ```pseudo
 FUNCTION bridge_pump() RETURNS I32

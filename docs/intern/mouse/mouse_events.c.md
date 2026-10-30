@@ -1,4 +1,4 @@
-# src/mouse_events.c
+# src/mouse/mouse_events.c
 
 This file holds the system `mouse`. It applies `sdl3:Cursor`, and turns the mouse events of a round into `sdl3:Mouse`.
 
@@ -6,14 +6,14 @@ This file holds the system `mouse`. It applies `sdl3:Cursor`, and turns the mous
 
 `bridge_mouse` does these steps:
 
-1. If `sdl3:MouseSettings` or `sdl3:Mouse` is gone, it gives 0 and does nothing more.
+1. If `sdl3:MouseSettings` or `sdl3:Mouse` is gone, it gives 0 at once.
 2. If `sdl3:Cursor` is there, it gives it to `mouse_apply_cursor`.
 3. It clears the motion, the wheel, `pressed` and `released`. The position and `held` keep their values.
-4. It takes each event from `SDL_EVENT_MOUSE_MOTION` to `SDL_EVENT_MOUSE_REMOVED`, and gives it to `apply_event`.
+4. It takes each event from `SDL_EVENT_MOUSE_MOTION` to `SDL_EVENT_MOUSE_REMOVED`, the whole range of the mouse, and gives it to `apply_event`.
 
-`bridge_native_get_single` gives null for a singleton that a module detached, so step 1 finds it: `docs/extern/sdl3_mouse.h.md`, *The system mouse*.
+`bridge_native_get_single` gives null for `sdl3:MouseSettings` or `sdl3:Mouse` after a module detaches it: https://github.com/Encrid/BB-Native/blob/v0.2.0/docs/extern/bridge_native_kept.h.md#functions.
 It also gives null for `sdl3:Cursor` before the app attaches it. So step 2 changes no cursor while `sdl3:Cursor` is gone.
-Step 4 takes the whole range of the mouse, so no event of the mouse stays in the queue.
+Thus no event of the mouse stays in the queue after step 4.
 
 ## An event
 
