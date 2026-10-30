@@ -27,7 +27,7 @@ BRIDGE_NATIVE(init)
         { WINDOW, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     sdl3_window_t none = { .surface = SDL3_SURFACE_NONE };
 
-    if (!common_start_video(api))
+    if (!shared_start_video(api))
         return (1);
     declare_types(api);
     BRIDGE_NATIVE_ATTACH(api, 0, WINDOW, none);
@@ -39,7 +39,7 @@ BRIDGE_NATIVE(init)
 BRIDGE_NATIVE(shutdown)
 {
     video_close_window();
-    common_stop_subsystem(SDL_INIT_VIDEO);
+    shared_stop_subsystem(SDL_INIT_VIDEO);
     return (0);
 }
 

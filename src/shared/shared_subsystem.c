@@ -5,9 +5,9 @@
 */
 #include <SDL3/SDL_error.h>
 
-#include "common_subsystem.h"
+#include "shared_subsystem.h"
 
-bool common_start_video(const bridge_api_t *api)
+bool shared_start_video(const bridge_api_t *api)
 {
     if (SDL_InitSubSystem(SDL_INIT_VIDEO))
         return (true);
@@ -15,7 +15,7 @@ bool common_start_video(const bridge_api_t *api)
     return (false);
 }
 
-bool common_start_events(const bridge_api_t *api)
+bool shared_start_events(const bridge_api_t *api)
 {
     if (SDL_InitSubSystem(SDL_INIT_EVENTS))
         return (true);
@@ -23,7 +23,7 @@ bool common_start_events(const bridge_api_t *api)
     return (false);
 }
 
-void common_stop_subsystem(SDL_InitFlags flags)
+void shared_stop_subsystem(SDL_InitFlags flags)
 {
     SDL_QuitSubSystem(flags);
     if (!SDL_WasInit(0))
