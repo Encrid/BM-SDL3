@@ -7,7 +7,7 @@ Its entries are `init`, `shutdown` and `reload`.
 
 `bridge_init` does these steps:
 
-1. `common_start_events` starts the events of SDL3: `docs/intern/common/common_subsystem.c.md`. If SDL3 refuses, `bridge_init` gives 1.
+1. `shared_start_events` starts the events of SDL3: `docs/intern/shared/shared_subsystem.c.md`. If SDL3 refuses, `bridge_init` gives 1.
 2. It declares `sdl3:Drop` as a table, then `sdl3:EventsSettings` as a singleton.
 3. It adds the system `pump` in the phase `events`.
 
@@ -19,7 +19,7 @@ The first run of `pump` has the settings: `readme.md`, *The modules*.
 
 ## The stop
 
-`bridge_shutdown` stops the events with `common_stop_subsystem`: `docs/intern/common/common_subsystem.c.md`.
+`bridge_shutdown` stops the events with `shared_stop_subsystem`: `docs/intern/shared/shared_subsystem.c.md`.
 `bridge_reload` gives 1: `readme.md`, *The modules*.
 
 ## Functions

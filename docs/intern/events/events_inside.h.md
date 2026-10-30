@@ -1,7 +1,7 @@
 # src/events/events_inside.h
 
 The two sources of `sdl3:events` include this header.
-It includes SDL3, BB-Native, `include/events/sdl3_events.h` and `src/common/common_subsystem.h`, and gives the slots.
+It includes SDL3, BB-Native, `include/events/sdl3_events.h` and `src/shared/shared_subsystem.h`, and gives the slots.
 
 ## The slots
 

@@ -30,7 +30,7 @@ With `--part <part>`, `build`, `pack` and `test` act on that part and on the par
 | `keyboard` | Gives the keys, the modifiers and the text input. | `BM-SDL3-Keyboard.zip`, tag `keyboard-v<version>` |
 | `mouse` | Gives the position, the buttons and the wheel, and sets the cursor. | `BM-SDL3-Mouse.zip`, tag `mouse-v<version>` |
 | `video` | Opens one window, and gives its native handles for a WebGPU surface. | `BM-SDL3-Video.zip`, tag `video-v<version>` |
-| `common` | Starts and stops a subsystem of SDL3 for each module. | No release: each module links it. |
+| `shared` | Starts and stops a subsystem of SDL3 for each module. | No release: each module links it. |
 
 A release holds its zip, with a folder for each target, and `sha256.txt`. A version is `<major>.<minor>.<patch>`: `docs/contributing/pull_request.md`, *The release*.
 For each target, the zip of a module holds the module, its header in `include`, and `license`.

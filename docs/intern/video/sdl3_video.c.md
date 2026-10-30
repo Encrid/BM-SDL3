@@ -7,7 +7,7 @@ Its entries are `init`, `shutdown` and `reload`.
 
 `bridge_init` does these steps:
 
-1. `common_start_video` starts the video of SDL3: `docs/intern/common/common_subsystem.c.md`. If SDL3 refuses, `bridge_init` gives 1.
+1. `shared_start_video` starts the video of SDL3: `docs/intern/shared/shared_subsystem.c.md`. If SDL3 refuses, `bridge_init` gives 1.
 2. `declare_types` declares the four types of the module, in the order of their slots.
 3. It attaches a `sdl3:Window` to the entity 0, with `surface` at `SDL3_SURFACE_NONE` and each other field at zero.
 4. It adds the system `window` in the phase `input`.
@@ -22,7 +22,7 @@ Step 3 does not leave `surface` at zero, because zero is no constant of `sdl3:sd
 ## The stop
 
 `bridge_shutdown` calls `video_close_window` of `src/video/video_window.c`, so the Metal view and the window go before the video of SDL3.
-Then it stops the video with `common_stop_subsystem`: `docs/intern/common/common_subsystem.c.md`.
+Then it stops the video with `shared_stop_subsystem`: `docs/intern/shared/shared_subsystem.c.md`.
 `bridge_reload` gives 1: `readme.md`, *The modules*.
 
 ## Functions
