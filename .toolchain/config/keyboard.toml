@@ -1,6 +1,6 @@
 [parts.keyboard]
 name = "BM-SDL3-Keyboard"
-uses = ["sdl3", "common"]
+uses = ["sdl3", "shared"]
 third_party = []
 
 [parts.keyboard.package]
@@ -25,8 +25,8 @@ name = "sdl3_keyboard"
 kind = "native_module"
 part = "keyboard"
 sources = ["src/keyboard/*.c"]
-include = ["include/keyboard", "src/common", "{sdl_root}/include"]
-link = ["{out}/common.a", "{out}/SDL3{library}"]
+include = ["include/keyboard", "src/shared", "{sdl_root}/include"]
+link = ["{out}/shared.a", "{out}/SDL3{library}"]
 flags = ["{rpath}"]
 manifest = [
     "sdl3:keyboard@1.0.0", "abi=2", "config=sdl3:KeyboardSettings", "settings=text repeat",

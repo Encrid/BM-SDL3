@@ -1,0 +1,37 @@
+[parts.shared]
+name = "BM-SDL3-Shared"
+uses = ["sdl3"]
+third_party = []
+
+[variables]
+shared_probe_words = [
+    "abi=2", "config=none", "pinned=true", "reloadable=false", "hot_reload=false", "scratch=4096",
+    "log_ring=256", "spans=1024", "spawns=none", "changes=none", "persistent=none",
+]
+
+[[artifact]]
+name = "shared"
+kind = "archive"
+part = "shared"
+sources = ["src/shared/*.c"]
+include = ["src/shared", "{sdl_root}/include", "{bridge}/include", "{bb_native}/include"]
+flags = ["-fvisibility=hidden"]
+
+[[artifact]]
+name = "shared_probe"
+kind = "native_module"
+part = "shared"
+test = true
+sources = ["tests/shared/probe/probe.c"]
+include = ["src/shared", "{sdl_root}/include"]
+link = ["{out}/shared.a", "{out}/SDL3{library}"]
+flags = ["{rpath}"]
+manifest = ["test:shared@1.0.0", "{shared_probe_words}"]
+
+[[artifact.variants]]
+name = "shared_events"
+defines = ["EVENTS"]
+
+[[artifact.variants]]
+name = "shared_holder"
+defines = ["HOLD"]
