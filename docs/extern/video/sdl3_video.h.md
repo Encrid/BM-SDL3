@@ -1,0 +1,195 @@
+# include/sdl3_video.h
+
+`include/sdl3_video.h` is the header of the module `sdl3:video@1.0.0`, the window of SDL3 for Bridge.
+The module covers `SDL_video.h` of SDL3 for one window, and gives the native handles of the window for a WebGPU surface.
+On macOS, it also uses `SDL_metal.h` for the CAMetalLayer of the window. It does not cover more windows, the displays, or the GL and Vulkan contexts.
+
+## The module
+
+| Word of the manifest | Value |
+| --- | --- |
+| The identity | `sdl3:video@1.0.0` |
+| `abi` | `2` |
+| `config` | `sdl3:WindowSettings` |
+| `settings` | `title width height hidden resizable fullscreen place x y high_dpi` |
+| `pinned` | `true`, because SDL3 runs a window only on the main thread. |
+| `reloadable` | `false`, because a reload would close the window. |
+
+The manifest also gives a default for each of these keys of the module. A deployment that states one of them replaces its default.
+
+| Key | Default | Reason |
+| --- | --- | --- |
+| `scratch` | `4096` | The declarations of the four types of `init`, and the value of `sdl3:Window` that it attaches. At a run of `window`, the texts of its lines: at most 7. |
+| `log_ring` | `256` | Room for 8 records of 32 bytes. A run of `window` writes at most 7 lines: one for each request that SDL3 refuses, and one for `high_dpi`. |
+| `spans` | `1024` | A cell for each of the four types in each table, and the spans of the system. |
+| `spawns` | `"none"` | The module makes no entity. |
+| `changes` | `96` | The attach of `sdl3:Window` in `init`: 24 bytes, and its value of 72 bytes. |
+| `persistent` | `"none"` | The module keeps no data in the arena. |
+| `hot_reload` | `false` | The module cannot reload. |
+
+The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
+
+The file of the module is `sdl3_video`, with the suffix of a library. It runs on the backend of BB-Native, and loads the SDL3 library of BL-SDL3, which sits beside it.
+
+## The system
+
+| System | Phase | What it does |
+| --- | --- | --- |
+| `window` | `input` | At its first run, it opens the window with the settings, and on macOS its Metal view. At each later run, it asks SDL3 for each setting that changed. At each run until the close, it takes the window events, and writes `sdl3:Window`. |
+
+The settings come after `init`, so the window opens at the first run of `window`.
+If the window does not open, `window` tries again at its next run, until `max_system_failures` stops the module.
+
+`sdl3:WindowSettings` is the wanted state of the window, and `sdl3:Window` is its real state.
+At each run after the open, `window` compares each setting with its value at the last run. It asks SDL3 for each one that changed: the title, the size, `hidden`, `resizable`, `fullscreen` and the place.
+SDL3 can apply a request later, and the windowing system can refuse it. Thus a change shows in `sdl3:Window` only when the window really has it.
+
+A change that the user makes, for example a new size with the mouse, changes `sdl3:Window` and not the settings.
+`high_dpi` acts only when the window opens. A later change of it does nothing, and `window` writes a line.
+
+If a module detaches `sdl3:WindowSettings` or `sdl3:Window`, `window` does nothing and gives 0 while either is gone.
+In a value of `sdl3:Window` that a module attaches again, `window` writes the size, `fullscreen`, `hidden` and the close.
+It writes the surface and the handles only at the open.
+
+When the window is asked to close, `window` sets `closed`, and sets `surface` to `SDL3_SURFACE_NONE` and each other field to 0, in that round.
+At its next run, it destroys the Metal view on macOS, and then the window.
+A window that closed never opens again, also when a setting changes.
+
+`window` takes the window events of each window of SDL3, also of a window that another module makes.
+It takes each request to close a window as a request to close its window.
+The full name of the system for `[order]` is `sdl3:video:window`.
+
+## sdl3:WindowSettings
+
+`sdl3:WindowSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
+After the load, a system with a grant to write it can change it at each round: *The system* tells what follows.
+
+| Field | C type | Value |
+| --- | --- | --- |
+| `title` | `char[64]` | The title of the window, at most 63 bytes. A title of 64 bytes that a system writes keeps its first 63 bytes. The default is `Bridge`. |
+| `width`, `height` | `uint32_t` | The size of the window, in the units of the screen. The defaults are 1280 and 720. SDL3 takes each side as an `int`: at the open, it makes a side below 1 into 1, and after the open, it refuses one. Thus 0, and a side above 2147483647, give `no change of size` after the open. |
+| `hidden` | `bool` | `true`: the window does not show. The default is `false`. |
+| `resizable` | `bool` | `true`: the user can change the size of the window. The default is `false`. |
+| `fullscreen` | `bool` | `true`: the window covers the screen that it opens on. A hidden window covers it only when it shows. The default is `false`. |
+| `place` | `sdl3_place_t` | Where the window opens. The default is `SDL3_PLACE_SYSTEM`. |
+| `x`, `y` | `int32_t` | The place of the window for `SDL3_PLACE_AT`, in the units of the screen. With another `place`, they do nothing. SDL3 takes an x or a y from 536805376 to 536870911 as the place of the system. It takes one from 805240832 to 805306367 as the center. The defaults are 0 and 0. |
+| `high_dpi` | `bool` | `true`: on a screen of high density, the frame gets each pixel of the screen. The default is `false`. |
+
+## sdl3:sdl3_place_t
+
+`sdl3:sdl3_place_t` is an enum of `uint32_t`. A deployment states a constant by its name or by its value.
+Bridge refuses a name or a value that is no constant, and the module does not load.
+
+| Constant | Value | Where the window opens |
+| --- | --- | --- |
+| `SDL3_PLACE_SYSTEM` | 1 | Where the system puts it. With no place from the system, SDL3 puts it at the center. A change to it after the open leaves the window where it is. |
+| `SDL3_PLACE_CENTER` | 2 | At the center of the screen. |
+| `SDL3_PLACE_AT` | 3 | At `x` and `y`. |
+
+A system can write a value that is no constant. `window` takes it as `SDL3_PLACE_SYSTEM`.
+
+## sdl3:Window
+
+`sdl3:Window` is a singleton that only the module writes.
+
+| Field | C type | Value |
+| --- | --- | --- |
+| `surface` | `sdl3_surface_t` | The kind of the window: *sdl3:sdl3_surface_t*. |
+| `width`, `height` | `uint32_t` | The size of the frame, in pixels. |
+| `closed` | `bool` | `true` from the round in which the window is asked to close. |
+| `fullscreen` | `bool` | `true` while the window covers the screen. |
+| `hidden` | `bool` | `true` while the window is hidden. A minimized window is not hidden. |
+| `hinstance`, `hwnd` | `uint64_t` | On Windows: the instance of the program, and the window. |
+| `layer` | `uint64_t` | On macOS: the `CAMetalLayer` of the Metal view of the window. |
+| `x11_display`, `x11_window` | `uint64_t` | On X11: the display, and the number of the window. |
+| `wl_display`, `wl_surface` | `uint64_t` | On Wayland: the display, and the surface of the window. |
+
+`surface` tells which handles hold the window. The handles of the other kinds are 0.
+A renderer releases its surface in the round when `surface` becomes `SDL3_SURFACE_NONE`, because the window goes after that round.
+The app copies `sdl3:Window` into the window of a renderer, for example `webgpu:Window` of BL-WebGPU-Contract, which `webgpu:device` reads.
+
+## sdl3:sdl3_surface_t
+
+`sdl3:sdl3_surface_t` is an enum of `uint32_t`.
+
+| Constant | Value | The window |
+| --- | --- | --- |
+| `SDL3_SURFACE_NONE` | 1 | No window: before the window opens, and from the round of the close. |
+| `SDL3_SURFACE_WINDOWS` | 2 | A window of Windows: `hinstance` and `hwnd`. |
+| `SDL3_SURFACE_METAL` | 3 | A window of macOS: `layer`. |
+| `SDL3_SURFACE_X11` | 4 | A window of X11: `x11_display` and `x11_window`. |
+| `SDL3_SURFACE_WAYLAND` | 5 | A window of Wayland: `wl_display` and `wl_surface`. |
+
+## The C types
+
+`include/sdl3_video.h` gives the C type of each type of the module, and its descriptor for Bridge.
+The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
+
+| Type of Bridge | C type | Descriptor | Macro of the text |
+| --- | --- | --- | --- |
+| `sdl3:sdl3_place_t` | `sdl3_place_t` | `sdl3_place_t_desc` | `SDL3_PLACE_VALUES` |
+| `sdl3:sdl3_surface_t` | `sdl3_surface_t` | `sdl3_surface_t_desc` | `SDL3_SURFACE_VALUES` |
+| `sdl3:WindowSettings` | `sdl3_window_settings_t` | `sdl3_window_settings_t_desc` | `SDL3_WINDOW_SETTINGS_FIELDS` |
+| `sdl3:Window` | `sdl3_window_t` | `sdl3_window_t_desc` | `SDL3_WINDOW_FIELDS` |
+
+Each macro of the text gives the braces of its type and the text between them.
+A module in another language does not include the header. It states the descriptor of each type with these bytes, in the order of the table:
+
+```text
+uint32_t { SDL3_PLACE_SYSTEM = 1, SDL3_PLACE_CENTER = 2, SDL3_PLACE_AT = 3 }
+uint32_t { SDL3_SURFACE_NONE = 1, SDL3_SURFACE_WINDOWS = 2, SDL3_SURFACE_METAL = 3, SDL3_SURFACE_X11 = 4, SDL3_SURFACE_WAYLAND = 5 }
+{ char title[64]; uint32_t width; uint32_t height; bool hidden; bool resizable; bool fullscreen; sdl3_place_t place; int32_t x; int32_t y; bool high_dpi; }
+{ sdl3_surface_t surface; uint32_t width; uint32_t height; bool closed; bool fullscreen; bool hidden; uint64_t hinstance; uint64_t hwnd; uint64_t layer; uint64_t x11_display; uint64_t x11_window; uint64_t wl_display; uint64_t wl_surface; }
+```
+
+## The declarations
+
+Each module that reads or writes a type of the module declares it in its `init`. A module in C gives the C type and the descriptor of the header.
+Bridge compares the descriptors byte for byte. It also refuses a second module that states another kind, storage layout or `on_destroy`.
+
+| Type of Bridge | Kind | Storage layout | `on_destroy` |
+| --- | --- | --- | --- |
+| `sdl3:sdl3_place_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `sdl3:sdl3_surface_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `sdl3:WindowSettings` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `sdl3:Window` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
+
+A module declares an enum before the struct that names it: `sdl3:sdl3_place_t` before `sdl3:WindowSettings`, and `sdl3:sdl3_surface_t` before `sdl3:Window`.
+Bridge finds the type of a field only among the types that are already declared.
+Bridge does not compare `on_unload`, so each module states its own.
+
+## The grants
+
+A module of the namespace `sdl3` needs no grant for these types.
+A module of another namespace needs a grant for each type that it declares. The deployment gives it in `read` or `write` of the module.
+
+| Role | `write` | `read` |
+| --- | --- | --- |
+| A module that reads the window | No type. | `sdl3:Window` and `sdl3:sdl3_surface_t` |
+| A module that changes the window, for example the app | `sdl3:WindowSettings` | `sdl3:sdl3_place_t` |
+
+A module that reads the window and changes it takes the grants of the two rows.
+Two modules that change the window in one phase need an `order` pair.
+The document of `bridge_abi.h` of Bridge tells what each grant allows.
+
+## The deployment
+
+- The module needs `sdl3:events`, which pumps the events of the window.
+- `phases` lists `events`, then `input`, then the phases of the app and of the renderers.
+- `[module."sdl3:video@1.0.0".phases]` can map these phases to other names.
+- `live = true`, because a round with no change and no record ends a run that is not live.
+- A module that reads or changes the window needs the grants of *The grants*.
+- A deployment gives the settings in `[module."sdl3:video@1.0.0".config]`.
+- A deployment holds one SDL3 library, beside the SDL3 modules, so that each module loads that one library.
+- The SDL3 library is no module, so `content.ignore` names it.
+- The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
+
+The readme of Bridge-Host tells each key of a deployment.
+
+## Messages
+
+- `no video: <reason>`: SDL3 cannot start its video. `<reason>` is the text of `SDL_GetError`. Then `init` gives 1, and the module does not load. The module writes it at the level 3.
+- `no window: <reason>`: the window, or its Metal view on macOS, does not open. `<reason>` is the text of `SDL_GetError`. The system then gives 1. The module writes it at the level 3.
+  A video driver that gives no kind of *sdl3:sdl3_surface_t*, for example `offscreen` or `dummy`, opens no window. Its reason is `the video driver <name> gives no surface`.
+- `no change of <setting>: <reason>`: SDL3 refuses to change the window for a setting. `<setting>` is `title`, `size`, `hidden`, `resizable`, `fullscreen` or `place`. `size` is the request of `width` and `height`, and `place` is the request of `place`, `x` and `y`. `<reason>` is the text of `SDL_GetError`. The window keeps its state, and the system gives 0. The module writes it at the level 4.
+- `no change of high_dpi: it acts only when the window opens`: a system changed `high_dpi` after the open. The module writes it at the level 4.

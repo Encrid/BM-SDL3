@@ -1,0 +1,4 @@
+[module."sdl3:video@1.0.0".config]
+hidden = true
+width = 64
+height = 48

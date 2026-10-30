@@ -1,0 +1,627 @@
+[[case]]
+name = "a new title after the open gives the window that title"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ['record[6] test:probe@1.0.0/check: r2 title "new title" 9 0']
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "title"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a new size after the open gives the window that size"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r3 frame 80 60"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "size"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "hidden false after the open shows the window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 flags 0 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "show"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "hidden true after the open hides the window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 flags 0 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "hide"
+[module."sdl3:video@1.0.0".config]
+hidden = false
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."sdl3:video@1.0.0".config]
+hidden = false
+'''
+
+[[case]]
+name = "resizable true after the open lets the user change the size of the window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 resizable 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "resize_on"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "fullscreen true after the open asks for the full screen"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r2 fullscreen 1 0"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "full"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a new y after the open moves the window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r3 at 120 100"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "move_y"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_AT"
+x = 120
+y = 90
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_AT"
+x = 120
+y = 90
+'''
+
+[[case]]
+name = "SDL3_PLACE_SYSTEM after the open leaves the window where it is"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r3 at 120 90"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "system"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_AT"
+x = 120
+y = 90
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "center"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_AT"
+x = 120
+y = 90
+'''
+
+[[case]]
+name = "a place that a system writes and that is no constant is taken as SDL3_PLACE_SYSTEM"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r3 at 120 90"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "place7"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_AT"
+x = 120
+y = 90
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "center"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_AT"
+x = 120
+y = 90
+'''
+
+[[case]]
+name = "a new x and y with SDL3_PLACE_CENTER after the open do not move the window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/check: r3 center 1 1"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "move_xy"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_CENTER"
+x = 120
+y = 90
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "move_at"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_CENTER"
+x = 120
+y = 90
+'''
+
+[[case]]
+name = "a new size and SDL3_PLACE_CENTER in one run center the window with its new size"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = [
+    "record[6] test:probe@1.0.0/check: r4 frame 80 60",
+    "record[6] test:probe@1.0.0/check: r4 center 1 1",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "grow_center"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_AT"
+x = 120
+y = 90
+hidden = false
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "center_grow"
+[module."sdl3:video@1.0.0".config]
+place = "SDL3_PLACE_AT"
+x = 120
+y = 90
+hidden = false
+'''
+
+[[case]]
+name = "high_dpi after the open writes no change of high_dpi at the level 4"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+has = ["record[4] sdl3:video@1.0.0/window: no change of high_dpi: it acts only when the window opens"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "dpi"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a height of 0 after the open writes no change of size at the level 4, and the window keeps its size"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+has = ["record[4] sdl3:video@1.0.0/window: no change of size: Parameter 'h' is invalid"]
+line = ["record[6] test:probe@1.0.0/check: r3 frame 64 48"]
+lacks = ["system 'window' failed"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "flat"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "tall"
+'''
+
+[[case]]
+name = "a width above 2147483647 after the open writes no change of size"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+has = ["record[4] sdl3:video@1.0.0/window: no change of size: Parameter 'w' is invalid"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "wide"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "size"
+'''
+
+[[case]]
+name = "a refused change is asked one time, and its line is written one time"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+has = ["no change of size: Parameter 'h' is invalid"]
+matches_not = ["no change of size: .*no change of size: "]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "flat"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "flat_twice"
+'''
+
+[[case]]
+name = "a title of 64 bytes that a system writes keeps its first 63 bytes"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ['record[6] test:probe@1.0.0/check: r2 title "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 63 0']
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "title64"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "title62"
+'''

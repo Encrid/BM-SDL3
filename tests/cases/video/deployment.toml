@@ -1,0 +1,305 @@
+[[case]]
+name = "a module that reads the window needs the grant read sdl3:Window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'sdl3:Window': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = ["sdl3:sdl3_place_t", "sdl3:sdl3_surface_t"]
+write = ["sdl3:WindowSettings"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "a module that reads the window needs the grant read sdl3:sdl3_surface_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'sdl3:sdl3_surface_t': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = ["sdl3:sdl3_place_t", "sdl3:Window"]
+write = ["sdl3:WindowSettings"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "a module that changes the window needs the grant write sdl3:WindowSettings"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: system 'drive' may not write 'sdl3:WindowSettings': no grant says so 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = ["sdl3:sdl3_place_t", "sdl3:sdl3_surface_t", "sdl3:Window", "sdl3:WindowSettings"]
+write = []
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "a module that changes the window needs the grant read sdl3:sdl3_place_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'sdl3:sdl3_place_t': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = ["sdl3:sdl3_surface_t", "sdl3:Window"]
+write = ["sdl3:WindowSettings"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "two modules that change the window in one phase need an order pair"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+has = ["both touch 'sdl3:WindowSettings' in phase 'drive', one of them writing it, and no pair orders them"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "holder", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:holder@1.0.0"]
+read = ["sdl3:sdl3_place_t", "sdl3:sdl3_surface_t", "sdl3:Window"]
+write = ["sdl3:WindowSettings"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:holder@1.0.0"]
+read = ["sdl3:sdl3_place_t", "sdl3:sdl3_surface_t", "sdl3:Window"]
+write = ["sdl3:WindowSettings"]
+[order]
+before = [["test:probe:drive", "test:holder:drive"]]
+'''
+
+[[case]]
+name = "content.ignore keeps the SDL3 library out of the modules"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["loaded: sdl3:video@1.0.0, native, m/sdl3_video{library}"]
+lacks = ["not a module: m/SDL3{library}"]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "BB-Native refuses a limit of the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'sdl3:video@1.0.0' is refused: it states work_limit, which backend 'native' cannot keep 0 0",
+    "not loaded: m/sdl3_video{library}: sdl3:video@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:video@1.0.0"]
+work_limit = 1000
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."sdl3:video@1.0.0"]
+work_limit = "none"
+'''
+
+[[case]]
+name = "a setting of the wrong type does not load the module, and its shutdown stops the video"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'sdl3:video@1.0.0' did not load: its setting 'hidden' is an integer, and the field it names is a bool 0 0",
+    "not loaded: m/sdl3_video{library}: sdl3:video@1.0.0 was refused",
+    "record[6] test:probe@1.0.0/check: r1 video 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["sdl3_video", "probe", "{sdl3}/SDL3{library}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "video"
+[module."sdl3:video@1.0.0".config]
+hidden = 1
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "video"
+[module."sdl3:video@1.0.0".config]
+hidden = true
+'''
