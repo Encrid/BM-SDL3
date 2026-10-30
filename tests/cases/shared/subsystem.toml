@@ -8,7 +8,7 @@ status = 0
 line = ["sdl quit 1"]
 
 [case.folders]
-"{case}/m" = ["common_probe", "SDL3"]
+"{case}/m" = ["shared_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -23,7 +23,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["common_holder", "SDL3"]
+"{case}/m" = ["shared_holder", "SDL3"]
 
 [[case]]
 name = "the stop keeps SDL3 while another subsystem holds it"
@@ -35,7 +35,7 @@ status = 0
 line = ["sdl quit 0"]
 
 [case.folders]
-"{case}/m" = ["common_holder", "SDL3"]
+"{case}/m" = ["shared_holder", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -50,7 +50,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["common_probe", "SDL3"]
+"{case}/m" = ["shared_probe", "SDL3"]
 
 [[case]]
 name = "the start of the video writes no video when SDL3 cannot start its video"
@@ -59,10 +59,10 @@ env = { SDL_VIDEO_DRIVER = "nothing" }
 
 [case.claims]
 status = 1
-has = ["record[3] test:common@1.0.0/-: no video: nothing not available"]
+has = ["record[3] test:shared@1.0.0/-: no video: nothing not available"]
 
 [case.folders]
-"{case}/m" = ["common_probe", "SDL3"]
+"{case}/m" = ["shared_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -88,7 +88,7 @@ status = 0
 line = ["sdl quit 1"]
 
 [case.folders]
-"{case}/m" = ["common_events", "SDL3"]
+"{case}/m" = ["shared_events", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -112,10 +112,10 @@ fail = { SDL_InitSubSystem = 1 }
 
 [case.claims]
 status = 1
-has = ["record[3] test:common@1.0.0/-: no events:"]
+has = ["record[3] test:shared@1.0.0/-: no events:"]
 
 [case.folders]
-"{case}/m" = ["common_events", "SDL3"]
+"{case}/m" = ["shared_events", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
