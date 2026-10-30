@@ -1,4 +1,4 @@
-presets = ["test.toml"]
+presets = ["../../presets/test.toml"]
 phases = ["events", "drive", "check"]
 rounds = 8
 

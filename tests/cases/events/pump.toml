@@ -10,11 +10,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -26,7 +26,7 @@ scene = "flush"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 phases = ["drive", "events", "check"]
 [content]
 paths = ["m"]
@@ -46,11 +46,11 @@ status = 0
 line = ["ended at round 2: a module asked for the end"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -62,7 +62,7 @@ scene = "quit"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -83,11 +83,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r3 quit 0 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -101,7 +101,7 @@ quit = false
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -120,11 +120,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 quit 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -136,7 +136,7 @@ scene = "quit"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -155,7 +155,7 @@ status = 0
 line = ["record[6] test:writer@1.0.0/check: r3 quit 0 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "writer", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_writer", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -200,11 +200,11 @@ status = 0
 line = ["ended at round 2: a module asked for the end"]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -216,7 +216,7 @@ scene = "signal"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/events/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -243,7 +243,7 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_events", "detacher", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_events", "events_detacher", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''

@@ -8,11 +8,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 key4 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -24,7 +24,7 @@ scene = "keys"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -44,11 +44,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r2 key4 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -60,7 +60,7 @@ scene = "keys"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -80,11 +80,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r4 key4 0 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -96,7 +96,7 @@ scene = "keys"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -116,11 +116,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 mods 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -132,7 +132,7 @@ scene = "mods"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -152,11 +152,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r3 key4 1 0"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -168,7 +168,7 @@ scene = "keys"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -190,11 +190,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r3 key4 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -208,7 +208,7 @@ repeat = true
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -228,11 +228,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/check: r1 key511 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -244,7 +244,7 @@ scene = "edge"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -267,11 +267,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -283,7 +283,7 @@ scene = "over"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -306,11 +306,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -322,7 +322,7 @@ scene = "range"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 phases = ["input", "drive", "check"]
 [content]
 paths = ["m"]
@@ -343,7 +343,7 @@ status = 0
 line = ["record[6] test:writer@1.0.0/check: r2 key4 1 1"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "writer", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_writer", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -392,11 +392,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "probe", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_probe", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -408,7 +408,7 @@ scene = "waiting"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/keyboard/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -429,11 +429,11 @@ line = ["record[6] test:detacher@1.0.0/check: r2 queue 1 0"]
 lacks = ["system 'keys' failed"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "detacher", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_detacher", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/detacher.toml"]
+presets = ["{root}/tests/keyboard/presets/detacher.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -445,7 +445,7 @@ scene = "detach_settings"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/detacher.toml"]
+presets = ["{root}/tests/keyboard/presets/detacher.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -469,11 +469,11 @@ line = [
 lacks = ["system 'keys' failed"]
 
 [case.folders]
-"{case}/m" = ["sdl3_keyboard", "detacher", "{sdl3}/SDL3{library}"]
+"{case}/m" = ["sdl3_keyboard", "keyboard_detacher", "SDL3"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/detacher.toml"]
+presets = ["{root}/tests/keyboard/presets/detacher.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]
@@ -485,7 +485,7 @@ scene = "detach_keyboard"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/detacher.toml"]
+presets = ["{root}/tests/keyboard/presets/detacher.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}"]

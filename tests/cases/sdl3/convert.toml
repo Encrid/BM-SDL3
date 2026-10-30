@@ -1,24 +1,24 @@
 [[case]]
 name = "convert writes the variables of the project"
 run = ["{python}", "{root}/tools/convert.py", "{castholm}/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
-claims = { status = 0, output = ".toolchain/config/variables.toml" }
+claims = { status = 0, output = ".toolchain/config/sdl3_variables.toml" }
 false = { run = ["{python}", "{root}/tools/convert.py", "{sdl3_linux}/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert writes the variables into the file that it gets"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "{case}/variables.toml"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "{case}/variables.toml"]
 claims = { status = 0, files = { "{case}/variables.toml" = 'sdl_root = "build/third_party/sdl3/SDL3-3.4.18"' } }
 false = { run = ["{python}", "{root}/tools/convert.py", "{sdl3_linux}/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "{case}/variables.toml"] }
 
 [[case]]
 name = "convert writes an empty list as []"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/empty.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/empty.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
 claims = { status = 0, line = ["sdl_macos = []"] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert takes the versions from its input"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/versions.zig", "{root}/tests/convert/deps.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/versions.zig", "{root}/tests/sdl3/convert/deps.zig", "{sdl3}", "-"]
 claims = { status = 0, has = ["SDL_XKBCOMMON_VERSION_MAJOR=7", "SDL_LIBDECOR_VERSION_MAJOR=9"] }
 false = { run = ["{python}", "{root}/tools/convert.py", "{castholm}/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
@@ -30,60 +30,60 @@ false = { run = ["{python}", "{root}/tools/convert.py", "{castholm}/build.zig", 
 
 [[case]]
 name = "convert stops on an expression that it cannot read"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/unreadable.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/unreadable.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
 claims = { status = 1, has = ["cannot evaluate SDL_VIDEO_DRIVER_HAIKU = target.result.os.tag == .haiku"] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert stops on an operand that is no boolean"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/not_boolean.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/not_boolean.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
 claims = { status = 1, has = ["not a boolean: SDL_DEFAULT_ASSERT_LEVEL = windows and null"] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert stops on a file that SDL3 does not hold"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/missing.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/missing.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
 claims = { status = 1, has = ["src/video/cocoa/SDL_cocoamissing.m is not in SDL3"] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert stops if the defines of a CPU differ between systems"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/cpu_differs.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/cpu_differs.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
 claims = { status = 1, has = ["cpu aarch64 differs between systems: aarch64-linux-gnu"] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert finds each marker only after the marker before it"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/early.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/early.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
 claims = { status = 0, has = ['/src/video/windows/SDL_windowsevents.c"'], lacks = ['/src/video/windows/SDL_windowsvideo.c"'] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert leaves out the block if (msvc) of the sources of Windows"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/msvc.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/msvc.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
 claims = { status = 0, has = ['/src/video/windows/SDL_windowsvideo.c"'], lacks = ['/src/video/windows/SDL_windowsevents.c"'] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/early.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/early.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert gives no define for a false value, for null and for an empty text"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/values.zig", "{root}/tests/sdl3/convert/values_deps.zig", "{sdl3}", "-"]
 claims = { status = 0, has = ['"SDL_CASE_TRUE=1"'], lacks = ["SDL_CASE_FALSE", "SDL_CASE_NULL"], matches_not = ['sdl_config_windows = \[[^\]]*SDL_CASE_SONAME', 'sdl_config_macos = \[[^\]]*SDL_CASE_SONAME'] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{root}/tests/sdl3/convert/values_deps.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert gives a soname of SDL_linux_deps in quotes on Linux"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/values.zig", "{root}/tests/sdl3/convert/values_deps.zig", "{sdl3}", "-"]
 claims = { status = 0, has = ["'SDL_CASE_SONAME=\"libcase.so.1\"'"] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/deps.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/values.zig", "{root}/tests/sdl3/convert/deps.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert stops on a line of its input that is not there"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/no_end.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
-claims = { status = 1, line = ["{root}/tests/convert/no_end.zig: no line holds if (emscripten) {"] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/no_end.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"]
+claims = { status = 1, line = ["{root}/tests/sdl3/convert/no_end.zig: no line holds if (emscripten) {"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/build.zig", "{sdl3_linux}/build.zig", "{sdl3}", "-"] }
 
 [[case]]
 name = "convert stops on a value that SDL_linux_deps does not give"
-run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/deps.zig", "{sdl3}", "-"]
+run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/values.zig", "{root}/tests/sdl3/convert/deps.zig", "{sdl3}", "-"]
 claims = { status = 1, has = ["SDL_linux_deps has no case_soname: SDL_CASE_SONAME = if (linux_deps_values) |x|"] }
-false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/convert/values.zig", "{root}/tests/convert/values_deps.zig", "{sdl3}", "-"] }
+false = { run = ["{python}", "{root}/tools/convert.py", "{root}/tests/sdl3/convert/values.zig", "{root}/tests/sdl3/convert/values_deps.zig", "{sdl3}", "-"] }
