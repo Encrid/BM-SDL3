@@ -1,7 +1,7 @@
 # src/mouse/mouse_inside.h
 
 The three sources of `sdl3:mouse` include this header.
-It includes SDL3, BB-Native, `include/mouse/sdl3_mouse.h` and `src/common/common_subsystem.h`. It gives the slots and the private type of the cursor, and declares the functions of the cursor.
+It includes SDL3, BB-Native, `include/mouse/sdl3_mouse.h` and `src/shared/shared_subsystem.h`. It gives the slots and the private type of the cursor, and declares the functions of the cursor.
 
 ## The slots
 
